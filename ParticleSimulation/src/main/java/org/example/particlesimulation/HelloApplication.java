@@ -1,12 +1,7 @@
 package org.example.particlesimulation;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -16,7 +11,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    private Particle particle = new Particle(100, 100, 10, Color.BLUE);
+    private static final int PANE_WIDTH = 500;
+    private static final int PANE_HEIGHT = 500;
+
+    private static final int PARTICLE_RADIUS = 10;
+    private Particle particle = new Particle(100, 100, PARTICLE_RADIUS, Color.BLUE);
 
     private Pane createContent(){
         Pane root = new Pane();
@@ -28,7 +27,7 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         stage.setTitle("Particle Simulation");
         Pane root = createContent();
-        Scene scene = new Scene(root, 500, 500);
+        Scene scene = new Scene(root, PANE_HEIGHT, PANE_WIDTH);
         pressedKeyHandling(scene);
         stage.setScene(scene);
         stage.show();
@@ -38,19 +37,29 @@ public class HelloApplication extends Application {
         scene.setOnKeyPressed(e -> {
             double speed = 10.0; // Adjust the speed as needed
             KeyCode keyPressed = e.getCode();
+            double particleCenterY = particle.getCenterY();
+            double particleCenterX = particle.getCenterX();
 
             switch (keyPressed) {
                 case UP:
-                    particle.setCenterY(particle.getCenterY() - speed);
+                    if(particleCenterY > PARTICLE_RADIUS){
+                        particle.setCenterY(particle.getCenterY() - speed);
+                    }
                     break;
                 case DOWN:
-                    particle.setCenterY(particle.getCenterY() + speed);
+                    if(particleCenterY < PANE_HEIGHT - PARTICLE_RADIUS){
+                        particle.setCenterY(particle.getCenterY() + speed);
+                    }
                     break;
                 case LEFT:
-                    particle.setCenterX(particle.getCenterX() - speed);
+                    if(particleCenterX > PARTICLE_RADIUS){
+                        particle.setCenterX(particle.getCenterX() - speed);
+                    }
                     break;
                 case RIGHT:
-                    particle.setCenterX(particle.getCenterX() + speed);
+                    if(particleCenterX < PANE_WIDTH - PARTICLE_RADIUS){
+                        particle.setCenterX(particle.getCenterX() + speed);
+                    }
                     break;
             }
         });
