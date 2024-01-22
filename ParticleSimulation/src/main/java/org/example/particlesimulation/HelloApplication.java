@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -27,13 +28,20 @@ public class HelloApplication extends Application {
     private Wall wallBottom = new Wall(0, PANE_HEIGHT, PANE_WIDTH, 10);
     private Wall wallLeft = new Wall(-10, 0, 10, PANE_HEIGHT);
 
+    private Wall testWall = new Wall(200, 100, 70, 150);
+    private Wall[] walls = {wallBottom, wallLeft, wallTop, wallRight, testWall};
+
+    Pane root = new Pane();
+
+
     private Pane createContent(){
-        Pane root = new Pane();
         root.getChildren().add(particle);
         root.getChildren().add(wallTop);
         root.getChildren().add(wallRight);
         root.getChildren().add(wallBottom);
         root.getChildren().add(wallLeft);
+        root.getChildren().add(testWall);
+//        root.requestLayout();
         return root;
     }
 
@@ -109,9 +117,65 @@ public class HelloApplication extends Application {
         }
 
         public void move(){
-            setCenterX(getCenterX() + speed[0] * direction[0]);
-            setCenterY(getCenterY() + speed[1] * direction[1]);
 
+            for (int i = 0; i < walls.length; i++) {
+                if(getBoundsInParent().intersects(walls[i].getBoundsInParent())){
+                    System.out.println("Collision detected");
+
+                    Rectangle rectangle = walls[i];
+
+                    // the coordinate where the intersection happened is just the particle x and y coordinates
+                    // and the radius going in some direction
+
+                    double particleX = getCenterX();
+                    double particleY = getCenterY();
+
+                    double rectangleX = rectangle.getX();
+                    double rectangleY = rectangle.getY();
+                    double rectangleWidth = rectangle.getWidth();
+                    double rectangleHeight = rectangle.getHeight();
+                    double rectangleOriginX = rectangleX + rectangleWidth / 2;
+                    double rectangleOriginY = rectangleY + rectangleHeight / 2;
+
+                    double deltaXRectangleParticle = rectangleOriginX - particleX;
+                    double deltaYRectangleParticle = rectangleOriginY - particleY;
+
+                    double collisionOriginX = 0;
+                    double collisionOriginY = 0;
+
+                    if(deltaXRectangleParticle > rectangleWidth / 2){
+//                        collisionOriginX = particleX + (deltaXRectangleParticle - rectangleWidth);
+                        collisionOriginX = particleX + PARTICLE_RADIUS;
+                    } else if (deltaXRectangleParticle < rectangleWidth / 2) {
+//                        collisionOriginX = particleX - (deltaXRectangleParticle  + rectangleWidth);
+                        collisionOriginX = particleX - PARTICLE_RADIUS;
+                    }
+
+                    if(deltaYRectangleParticle > rectangleHeight / 2){
+                        collisionOriginY = particleY + PARTICLE_RADIUS;
+//                        collisionOriginY = particleY + (deltaYRectangleParticle - rectangleHeight);
+                    } else if (deltaYRectangleParticle < rectangleHeight / 2) {
+                        collisionOriginY = particleY - PARTICLE_RADIUS;
+//                        collisionOriginY = particleY - (deltaYRectangleParticle + rectangleHeight);
+                    }
+
+                    Circle collisionPlaceholder = new Circle(collisionOriginX, collisionOriginY, 5,Color.RED );
+                    root.getChildren().add(collisionPlaceholder);
+
+
+
+//                    double particleAngleImpactRAD = Math.atan2(direction[0], direction[1]);
+//                    System.out.println(particleAngleImpactRAD);
+
+
+                    for (int j = 0; j < direction.length; j++) {
+                        direction[j] = -direction[j] ;
+                    }
+                }
+
+            }
+//            setCenterX(getCenterX() + speed[0] * direction[0]);
+//            setCenterY(getCenterY() + speed[1] * direction[1]);
         }
 
     }
