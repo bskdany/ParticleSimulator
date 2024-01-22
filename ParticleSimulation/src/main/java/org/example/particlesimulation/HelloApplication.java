@@ -107,8 +107,8 @@ public class HelloApplication extends Application {
 
     private class Particle extends Circle {
         public static final double mass = 1;
-        public int[] direction = {1,1};
-        public int[] speed = {1,1};
+        public double[] direction = {1,1};
+        public double[] speed = {3,3};
 
         Particle(int x, int y, int radius, Color color){
             super(x,y,radius,color);
@@ -142,36 +142,64 @@ public class HelloApplication extends Application {
 
                     double collisionOriginX = particleX;
                     double collisionOriginY = particleY;
+                    double[] normalVector = {0,0};
 
                     if(deltaXRectangleParticle > rectangleWidth / 2){
                         collisionOriginX = particleX + (deltaXRectangleParticle - rectangleWidth/2);
+                        normalVector[0] = -1;
                     } else if (deltaXRectangleParticle < -(rectangleWidth / 2)) {
                         collisionOriginX = particleX + (deltaXRectangleParticle  + rectangleWidth/2);
+                        normalVector[0] = 1;
                     }
 
                     if(deltaYRectangleParticle > rectangleHeight / 2){
                         collisionOriginY = particleY + (deltaYRectangleParticle - rectangleHeight/2);
+                        normalVector[1] = -1;
                     } else if (deltaYRectangleParticle < -(rectangleHeight / 2)) {
                         collisionOriginY = particleY + (deltaYRectangleParticle + rectangleHeight/2);
+                        normalVector[1] = 1;
                     }
 
                     Circle collisionPlaceholder = new Circle(collisionOriginX, collisionOriginY, 3,Color.RED );
                     root.getChildren().add(collisionPlaceholder);
 
+                    double particleAngleImpactRAD = Math.atan2(direction[0], direction[1]);
+//                    double
+                    direction = calculateReflectionVector(direction, normalVector);
 
 
-//                    double particleAngleImpactRAD = Math.atan2(direction[0], direction[1]);
 //                    System.out.println(particleAngleImpactRAD);
 
 
-                    for (int j = 0; j < direction.length; j++) {
-                        direction[j] = -direction[j] ;
-                    }
-                }
 
+                }
             }
-//            setCenterX(getCenterX() + speed[0] * direction[0]);
-//            setCenterY(getCenterY() + speed[1] * direction[1]);
+            setCenterX(getCenterX() + speed[0] * direction[0]);
+            setCenterY(getCenterY() + speed[1] * direction[1]);
+        }
+
+        public static double[] normalizeVector(double[] vector) {
+            double magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
+            return new double[]{vector[0] / magnitude, vector[1] / magnitude};
+        }
+
+        public static double[] calculateReflectionVector(double[] directionVector, double[] normalVector) {
+            // Normalize the direction vector
+            directionVector = normalizeVector(directionVector);
+
+            // Calculate the dot product
+            double dotProduct = directionVector[0] * normalVector[0] + directionVector[1] * normalVector[1];
+
+            // Calculate the reflection vector
+            double[] reflectionVector = {
+                    directionVector[0] - 2 * dotProduct * normalVector[0],
+                    directionVector[1] - 2 * dotProduct * normalVector[1]
+            };
+
+            // Normalize the reflection vector
+            reflectionVector = normalizeVector(reflectionVector);
+
+            return reflectionVector;
         }
 
     }
