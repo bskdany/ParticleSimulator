@@ -144,22 +144,18 @@ public class HelloApplication extends Application {
                     double collisionOriginY = particleY;
 
                     if(deltaXRectangleParticle > rectangleWidth / 2){
-//                        collisionOriginX = particleX + (deltaXRectangleParticle - rectangleWidth);
-                        collisionOriginX = particleX + PARTICLE_RADIUS;
+                        collisionOriginX = particleX + (deltaXRectangleParticle - rectangleWidth/2);
                     } else if (deltaXRectangleParticle < -(rectangleWidth / 2)) {
-//                        collisionOriginX = particleX - (deltaXRectangleParticle  + rectangleWidth);
-                        collisionOriginX = particleX - PARTICLE_RADIUS;
+                        collisionOriginX = particleX + (deltaXRectangleParticle  + rectangleWidth/2);
                     }
 
                     if(deltaYRectangleParticle > rectangleHeight / 2){
-                        collisionOriginY = particleY + PARTICLE_RADIUS;
-//                        collisionOriginY = particleY + (deltaYRectangleParticle - rectangleHeight);
+                        collisionOriginY = particleY + (deltaYRectangleParticle - rectangleHeight/2);
                     } else if (deltaYRectangleParticle < -(rectangleHeight / 2)) {
-                        collisionOriginY = particleY - PARTICLE_RADIUS;
-//                        collisionOriginY = particleY - (deltaYRectangleParticle + rectangleHeight);
+                        collisionOriginY = particleY + (deltaYRectangleParticle + rectangleHeight/2);
                     }
 
-                    Circle collisionPlaceholder = new Circle(collisionOriginX, collisionOriginY, 5,Color.RED );
+                    Circle collisionPlaceholder = new Circle(collisionOriginX, collisionOriginY, 3,Color.RED );
                     root.getChildren().add(collisionPlaceholder);
 
 
