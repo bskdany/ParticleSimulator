@@ -140,13 +140,13 @@ public class HelloApplication extends Application {
                     double deltaXRectangleParticle = rectangleOriginX - particleX;
                     double deltaYRectangleParticle = rectangleOriginY - particleY;
 
-                    double collisionOriginX = 0;
-                    double collisionOriginY = 0;
+                    double collisionOriginX = particleX;
+                    double collisionOriginY = particleY;
 
                     if(deltaXRectangleParticle > rectangleWidth / 2){
 //                        collisionOriginX = particleX + (deltaXRectangleParticle - rectangleWidth);
                         collisionOriginX = particleX + PARTICLE_RADIUS;
-                    } else if (deltaXRectangleParticle < rectangleWidth / 2) {
+                    } else if (deltaXRectangleParticle < -(rectangleWidth / 2)) {
 //                        collisionOriginX = particleX - (deltaXRectangleParticle  + rectangleWidth);
                         collisionOriginX = particleX - PARTICLE_RADIUS;
                     }
@@ -154,7 +154,7 @@ public class HelloApplication extends Application {
                     if(deltaYRectangleParticle > rectangleHeight / 2){
                         collisionOriginY = particleY + PARTICLE_RADIUS;
 //                        collisionOriginY = particleY + (deltaYRectangleParticle - rectangleHeight);
-                    } else if (deltaYRectangleParticle < rectangleHeight / 2) {
+                    } else if (deltaYRectangleParticle < -(rectangleHeight / 2)) {
                         collisionOriginY = particleY - PARTICLE_RADIUS;
 //                        collisionOriginY = particleY - (deltaYRectangleParticle + rectangleHeight);
                     }
