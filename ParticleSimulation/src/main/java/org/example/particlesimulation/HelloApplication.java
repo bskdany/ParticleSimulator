@@ -29,26 +29,28 @@ public class HelloApplication extends Application {
 
     private Particle particle1 = new Particle(100, 200, PARTICLE_RADIUS, Color.BLUE);
 
+    private Particle particle2 = new Particle(300, 400, PARTICLE_RADIUS, Color.BLUE);
+
     private Wall wallTop = new Wall(0, -10, PANE_WIDTH, 10);
     private Wall wallRight = new Wall(PANE_WIDTH, 0, 10, PANE_HEIGHT);
     private Wall wallBottom = new Wall(0, PANE_HEIGHT, PANE_WIDTH, 10);
     private Wall wallLeft = new Wall(-10, 0, 10, PANE_HEIGHT);
 
-    private Wall testWall = new Wall(200, 100, 70, 150);
-    private Wall[] walls = {wallBottom, wallLeft, wallTop, wallRight, testWall};
+//    private Wall testWall = new Wall(200, 100, 70, 150);
+    private Wall[] walls = {wallBottom, wallLeft, wallTop, wallRight};
 
-    private Particle[] particles = {particle, particle1};
+    private Particle[] particles = {particle, particle1, particle2};
 
     Pane root = new Pane();
 
 
     private Pane createContent(){
-        root.getChildren().addAll(particle, particle1);
+        root.getChildren().addAll(particles);
         root.getChildren().add(wallTop);
         root.getChildren().add(wallRight);
         root.getChildren().add(wallBottom);
         root.getChildren().add(wallLeft);
-        root.getChildren().add(testWall);
+//        root.getChildren().add(testWall);
 //        root.requestLayout();
         return root;
     }
@@ -70,9 +72,9 @@ public class HelloApplication extends Application {
 
         Timeline timeline = new Timeline(
             new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
-//                particle.move();
-////                particle1.move();
-                particle.simulate();
+                for(Particle particle : particles){
+                    particle.simulate();
+                }
             })
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -116,7 +118,7 @@ public class HelloApplication extends Application {
     }
 
     private class Particle extends Circle {
-        public final double MASS = 1;
+        public final double MASS = 10;
         public final double ATTRACTION = 1;
         public double[] FORCE = {0,0};
         public double[] VELOCITY = {0,0};
@@ -135,19 +137,22 @@ public class HelloApplication extends Application {
         }
 
         public void simulate(){
-            System.out.println(FORCE[0] + ", " + FORCE[1]);
-            handleCollisionWalls();
+            for(Particle particle : particles){
+                if(particle != this){
+                    FORCE = calculateAttractionForce(this, particle);
+                    // F = m / a
+                    double accelerationX = FORCE[0] / MASS;
+                    double accelerationY = FORCE[1] / MASS;
 
-            FORCE = calculateAttractionForce(this, particle1);
-            // F = m / a
-            double accelerationX = FORCE[0] / MASS;
-            double accelerationY = FORCE[1] / MASS;
+                    VELOCITY[0] += accelerationX / deltaTime;
+                    VELOCITY[1] += accelerationY / deltaTime;
 
-            VELOCITY[0] += accelerationX / deltaTime;
-            VELOCITY[1] += accelerationY / deltaTime;
+                    setCenterX(getCenterX() + VELOCITY[0] * deltaTime);
+                    setCenterY(getCenterY() + VELOCITY[1] * deltaTime);
+                }
+//                handleCollisionWalls();
+            }
 
-            setCenterX(getCenterX() + VELOCITY[0] * deltaTime);
-            setCenterY(getCenterY() + VELOCITY[1] * deltaTime);
         }
 
         private static double[] normalizeVector(double[] vector) {
