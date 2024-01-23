@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -19,10 +20,15 @@ import java.util.Vector;
 public class HelloApplication extends Application {
     private static final int PANE_WIDTH = 500;
     private static final int PANE_HEIGHT = 500;
+
+//    private static final double UPDATE_RATE_MS = 1000;
     private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
 
     private static final int PARTICLE_RADIUS = 10;
     private Particle particle = new Particle(100, 100, PARTICLE_RADIUS, Color.BLUE);
+
+    private Particle particle1 = new Particle(100, 200, PARTICLE_RADIUS, Color.BLUE);
+
     private Wall wallTop = new Wall(0, -10, PANE_WIDTH, 10);
     private Wall wallRight = new Wall(PANE_WIDTH, 0, 10, PANE_HEIGHT);
     private Wall wallBottom = new Wall(0, PANE_HEIGHT, PANE_WIDTH, 10);
@@ -31,11 +37,13 @@ public class HelloApplication extends Application {
     private Wall testWall = new Wall(200, 100, 70, 150);
     private Wall[] walls = {wallBottom, wallLeft, wallTop, wallRight, testWall};
 
+    private Particle[] particles = {particle, particle1};
+
     Pane root = new Pane();
 
 
     private Pane createContent(){
-        root.getChildren().add(particle);
+        root.getChildren().addAll(particle, particle1);
         root.getChildren().add(wallTop);
         root.getChildren().add(wallRight);
         root.getChildren().add(wallBottom);
@@ -62,7 +70,9 @@ public class HelloApplication extends Application {
 
         Timeline timeline = new Timeline(
             new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
-                particle.move();
+//                particle.move();
+////                particle1.move();
+                particle.simulate();
             })
         );
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -106,9 +116,12 @@ public class HelloApplication extends Application {
     }
 
     private class Particle extends Circle {
-        public static final double mass = 1;
-        public double[] direction = {1,1};
-        public double[] speed = {3,3};
+        public final double MASS = 1;
+        public final double ATTRACTION = 1;
+        public double[] FORCE = {0,0};
+        public double[] VELOCITY = {0,0};
+
+        public double deltaTime = UPDATE_RATE_MS;
 
         Particle(int x, int y, int radius, Color color){
             super(x,y,radius,color);
@@ -120,70 +133,33 @@ public class HelloApplication extends Application {
 
             for (int i = 0; i < walls.length; i++) {
                 if(getBoundsInParent().intersects(walls[i].getBoundsInParent())){
-                    System.out.println("Collision detected");
-
-                    Rectangle rectangle = walls[i];
-
-                    // the coordinate where the intersection happened is just the particle x and y coordinates
-                    // and the radius going in some direction
-
-                    double particleX = getCenterX();
-                    double particleY = getCenterY();
-
-                    double rectangleX = rectangle.getX();
-                    double rectangleY = rectangle.getY();
-                    double rectangleWidth = rectangle.getWidth();
-                    double rectangleHeight = rectangle.getHeight();
-                    double rectangleOriginX = rectangleX + rectangleWidth / 2;
-                    double rectangleOriginY = rectangleY + rectangleHeight / 2;
-
-                    double deltaXRectangleParticle = rectangleOriginX - particleX;
-                    double deltaYRectangleParticle = rectangleOriginY - particleY;
-
-                    double collisionOriginX = particleX;
-                    double collisionOriginY = particleY;
-                    double[] normalVector = {0,0};
-
-                    if(deltaXRectangleParticle > rectangleWidth / 2){
-                        collisionOriginX = particleX + (deltaXRectangleParticle - rectangleWidth/2);
-                        normalVector[0] = -1;
-                    } else if (deltaXRectangleParticle < -(rectangleWidth / 2)) {
-                        collisionOriginX = particleX + (deltaXRectangleParticle  + rectangleWidth/2);
-                        normalVector[0] = 1;
-                    }
-
-                    if(deltaYRectangleParticle > rectangleHeight / 2){
-                        collisionOriginY = particleY + (deltaYRectangleParticle - rectangleHeight/2);
-                        normalVector[1] = -1;
-                    } else if (deltaYRectangleParticle < -(rectangleHeight / 2)) {
-                        collisionOriginY = particleY + (deltaYRectangleParticle + rectangleHeight/2);
-                        normalVector[1] = 1;
-                    }
-
-                    Circle collisionPlaceholder = new Circle(collisionOriginX, collisionOriginY, 3,Color.RED );
-                    root.getChildren().add(collisionPlaceholder);
-
-                    double particleAngleImpactRAD = Math.atan2(direction[0], direction[1]);
-//                    double
-                    direction = calculateReflectionVector(direction, normalVector);
-
-
-//                    System.out.println(particleAngleImpactRAD);
-
-
-
+                    handleCollisionWalls(walls[i]);
                 }
             }
-            setCenterX(getCenterX() + speed[0] * direction[0]);
-            setCenterY(getCenterY() + speed[1] * direction[1]);
+            setCenterX(getCenterX() + VELOCITY[0] * FORCE[0]);
+            setCenterY(getCenterY() + VELOCITY[1] * FORCE[1]);
         }
 
-        public static double[] normalizeVector(double[] vector) {
+        public void simulate(){
+
+            FORCE = calculateAttractionForce(this, particle1);
+            // F = m / a
+            double accelerationX = FORCE[0] / MASS;
+            double accelerationY = FORCE[1] / MASS;
+
+            VELOCITY[0] += accelerationX / deltaTime;
+            VELOCITY[1] += accelerationY / deltaTime;
+
+            setCenterX(getCenterX() + VELOCITY[0] * deltaTime);
+            setCenterY(getCenterY() + VELOCITY[1] * deltaTime);
+        }
+
+        private static double[] normalizeVector(double[] vector) {
             double magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
             return new double[]{vector[0] / magnitude, vector[1] / magnitude};
         }
 
-        public static double[] calculateReflectionVector(double[] directionVector, double[] normalVector) {
+        private static double[] calculateReflectionVector(double[] directionVector, double[] normalVector) {
             // Normalize the direction vector
             directionVector = normalizeVector(directionVector);
 
@@ -202,6 +178,59 @@ public class HelloApplication extends Application {
             return reflectionVector;
         }
 
+        private void handleCollisionWalls(Wall rectangle){
+            // the coordinate where the intersection happened is just the particle x and y coordinates
+            // and the radius going in some direction
+
+            double particleX = getCenterX();
+            double particleY = getCenterY();
+
+            double rectangleX = rectangle.getX();
+            double rectangleY = rectangle.getY();
+            double rectangleWidth = rectangle.getWidth();
+            double rectangleHeight = rectangle.getHeight();
+            double rectangleOriginX = rectangleX + rectangleWidth / 2;
+            double rectangleOriginY = rectangleY + rectangleHeight / 2;
+
+            double deltaXRectangleParticle = rectangleOriginX - particleX;
+            double deltaYRectangleParticle = rectangleOriginY - particleY;
+
+            double collisionOriginX = particleX;
+            double collisionOriginY = particleY;
+            double[] normalVector = {0,0};
+
+            if(deltaXRectangleParticle > rectangleWidth / 2){
+                collisionOriginX = particleX + (deltaXRectangleParticle - rectangleWidth/2);
+                normalVector[0] = -1;
+            } else if (deltaXRectangleParticle < -(rectangleWidth / 2)) {
+                collisionOriginX = particleX + (deltaXRectangleParticle  + rectangleWidth/2);
+                normalVector[0] = 1;
+            }
+
+            if(deltaYRectangleParticle > rectangleHeight / 2){
+                collisionOriginY = particleY + (deltaYRectangleParticle - rectangleHeight/2);
+                normalVector[1] = -1;
+            } else if (deltaYRectangleParticle < -(rectangleHeight / 2)) {
+                collisionOriginY = particleY + (deltaYRectangleParticle + rectangleHeight/2);
+                normalVector[1] = 1;
+            }
+
+            Circle collisionPlaceholder = new Circle(collisionOriginX, collisionOriginY, 3,Color.RED );
+            root.getChildren().add(collisionPlaceholder);
+
+            FORCE = calculateReflectionVector(FORCE, normalVector);
+        }
+
+        private double[] calculateAttractionForce(Particle source, Particle target){
+            // vector from source to target
+            double[] directionVector = {target.getCenterX() - source.getCenterX(), target.getCenterY() - source.getCenterY()};
+            // length of the distance
+            double distance = Math.sqrt(Math.pow(directionVector[0],2) + Math.pow(directionVector[1], 2));
+            // F = G * (m1 * m2) / r^2
+            double magnitude =  ATTRACTION / (distance * distance);
+
+            return new double[]{directionVector[0] * magnitude, directionVector[1] * magnitude};
+        }
     }
 
     private class Wall extends Rectangle {
