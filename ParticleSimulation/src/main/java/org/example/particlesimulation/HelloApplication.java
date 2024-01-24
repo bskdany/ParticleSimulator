@@ -21,15 +21,17 @@ public class HelloApplication extends Application {
     private static final int PANE_WIDTH = 500;
     private static final int PANE_HEIGHT = 500;
 
-//    private static final double UPDATE_RATE_MS = 100;
+//    private static final double UPDATE_RATE_MS = 1000;
     private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
 
     private static final int PARTICLE_RADIUS = 10;
-    private Particle particle = new Particle(100, 100, PARTICLE_RADIUS, Color.BLUE);
+    private Particle particle = new Particle(100, 100, PARTICLE_RADIUS, Color.BLUE, 1);
 
-    private Particle particle1 = new Particle(100, 200, PARTICLE_RADIUS, Color.BLUE);
+    private Particle particle1 = new Particle(300, 300, PARTICLE_RADIUS, Color.BLUE, 1);
 
-    private Particle particle2 = new Particle(300, 400, PARTICLE_RADIUS, Color.BLUE);
+
+    private Particle particle3 = new Particle(150, 150, PARTICLE_RADIUS + 10, Color.RED, 1000);
+
 
     private Wall wallTop = new Wall(0, -10, PANE_WIDTH, 10);
     private Wall wallRight = new Wall(PANE_WIDTH, 0, 10, PANE_HEIGHT);
@@ -39,7 +41,7 @@ public class HelloApplication extends Application {
 //    private Wall testWall = new Wall(200, 100, 70, 150);
     private Wall[] walls = {wallBottom, wallLeft, wallTop, wallRight};
 
-    private Particle[] particles = {particle, particle1, particle2};
+    private Particle[] particles = {particle, particle1};
 
     Pane root = new Pane();
 
@@ -74,6 +76,9 @@ public class HelloApplication extends Application {
             new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
                 for(Particle particle : particles){
                     particle.simulate();
+                }
+                for(Particle particle : particles){
+                    particle.move();
                 }
             })
         );
@@ -118,46 +123,60 @@ public class HelloApplication extends Application {
     }
 
     private class Particle extends Circle {
-        public final double MASS = 10;
+        public double MASS;
         public final double ATTRACTION = 1;
+        public double[] POSITION = {0, 0};
+        public final double MAX_ATTRACTION_DISTANCE = 400;
+        public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
         public double[] FORCE = {0,0};
         public double[] VELOCITY = {0,0};
+        public double FRICTION = 0.04;
 
-        public double deltaTime = UPDATE_RATE_MS;
+        public double deltaTime = UPDATE_RATE_MS / 1000;
 
-        Particle(int x, int y, int radius, Color color){
+        public double FORCE_MULTIPLIER = 40;
+
+        Particle(int x, int y, int radius, Color color, double mass){
             super(x,y,radius,color);
-            setCenterX(x);
-            setCenterY(y);
+            POSITION[0] = x;
+            POSITION[1] = y;
+            MASS = mass;
         }
 
         public void move(){
-            setCenterX(getCenterX() + VELOCITY[0] * FORCE[0]);
-            setCenterY(getCenterY() + VELOCITY[1] * FORCE[1]);
+            setCenterX(POSITION[0]);
+            setCenterY(POSITION[1]);
         }
 
         public void simulate(){
+            double[] SUM_FORCE = {0,0};
             for(Particle particle : particles){
                 if(particle != this){
-                    FORCE = calculateAttractionForce(this, particle);
-                    // F = m / a
-                    double accelerationX = FORCE[0] / MASS;
-                    double accelerationY = FORCE[1] / MASS;
-
-                    VELOCITY[0] += accelerationX / deltaTime;
-                    VELOCITY[1] += accelerationY / deltaTime;
-
-                    setCenterX(getCenterX() + VELOCITY[0] * deltaTime);
-                    setCenterY(getCenterY() + VELOCITY[1] * deltaTime);
+                    double[] result =  calculateAttractionForceNew(this, particle);
+                    SUM_FORCE[0] += result[0];
+                    SUM_FORCE[1] += result[1];
                 }
-//                handleCollisionWalls();
             }
+            // F = m / a
+            double accelerationX = SUM_FORCE[0] * FORCE_MULTIPLIER / MASS;
+            double accelerationY = SUM_FORCE[1] * FORCE_MULTIPLIER / MASS;
 
+            VELOCITY[0] *= FRICTION;
+            VELOCITY[1] *= FRICTION;
+
+            VELOCITY[0] += accelerationX * deltaTime;
+            VELOCITY[1] += accelerationY * deltaTime;
+
+            POSITION[0] += VELOCITY[0] * deltaTime;
+            POSITION[1] += VELOCITY[1] * deltaTime;
         }
 
         private static double[] normalizeVector(double[] vector) {
             double magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
-            return new double[]{vector[0] / magnitude, vector[1] / magnitude};
+            if(magnitude != 0){
+                return new double[]{vector[0] / magnitude, vector[1] / magnitude};
+            }
+            return vector;
         }
 
         private static double[] calculateReflectionVector(double[] directionVector, double[] normalVector) {
@@ -231,9 +250,34 @@ public class HelloApplication extends Application {
             // length of the distance
             double distance = Math.sqrt(Math.pow(directionVector[0],2) + Math.pow(directionVector[1], 2));
             // F = G * (m1 * m2) / r^2
-            double magnitude =  ATTRACTION / (distance * distance);
+            double magnitude =  ATTRACTION * (source.MASS * target.MASS) / (distance * distance);
 
             return normalizeVector(new double[]{directionVector[0] * magnitude, directionVector[1] * magnitude});
+        }
+
+        private double[] calculateAttractionForceNew(Particle source, Particle target){
+            // vector from source to target
+            double[] directionVector = {target.getCenterX() - source.getCenterX(), target.getCenterY() - source.getCenterY()};
+            // length of the distance
+            double distance = Math.sqrt(Math.pow(directionVector[0],2) + Math.pow(directionVector[1], 2));
+
+            double relativeDistance = distance / MAX_ATTRACTION_DISTANCE;
+
+            double magnitude = 0;
+            double attractionFactor = 0.4;
+
+            if(relativeDistance < ATTRACTION_RELATIVE_DISTANCE_CUTOUT){
+                magnitude = relativeDistance / ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 1;
+            } else if (relativeDistance < 1.0) {
+                magnitude = (-Math.abs(relativeDistance - ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 0.5) + 0.5 ) * 2 * attractionFactor;
+            }
+            else if( 1 < relativeDistance){
+                magnitude = 0;
+            }
+
+            double[] normalisedDirectionVector = normalizeVector(directionVector);
+
+            return new double[]{normalisedDirectionVector[0] * magnitude * MAX_ATTRACTION_DISTANCE, normalisedDirectionVector[1] * magnitude * MAX_ATTRACTION_DISTANCE};
         }
     }
 
