@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class HelloApplication extends Application {
-    private static final int PANE_WIDTH = 500;
-    private static final int PANE_HEIGHT = 500;
+    private static final int PANE_WIDTH = 1400;
+    private static final int PANE_HEIGHT = 800;
     private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
-    private static final int PARTICLE_RADIUS = 10;
-    private static final int PARTICLES_TO_CREATE = 10;
-    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.BLUE, Color.RED, Color.GREEN};
+    private static final int PARTICLE_RADIUS = 2;
+    private static final int PARTICLES_TO_CREATE = 100;
+    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW, Color.PINK};
     private double[][] ATTRACTION_MATRIX = new double[PARTICLE_SPECIES.length][PARTICLE_SPECIES.length];
+    private Particle testParticle = new Particle(100,100, 10, Color.GRAY, 1, 0);
     private ArrayList<Particle> particles = new ArrayList<>();
-
     Pane root = new Pane();
 
     private Pane createContent(){
@@ -40,16 +40,17 @@ public class HelloApplication extends Application {
                 particles.add(new Particle((int) (Math.random() * PANE_WIDTH), (int) (Math.random() * PANE_HEIGHT), PARTICLE_RADIUS, PARTICLE_SPECIES[j], 1, j));
             }
         }
-
         root.getChildren().addAll(particles);
+//        root.getChildren().add(testParticle);
         return root;
     }
     @Override
     public void start(Stage stage) throws IOException {
         stage.setTitle("Particle Simulation");
         Pane root = createContent();
-        Scene scene = new Scene(root, PANE_HEIGHT, PANE_WIDTH);
+        Scene scene = new Scene(root, PANE_WIDTH, PANE_HEIGHT, Color.BLACK);
         stage.setScene(scene);
+        pressedKeyHandling(scene);
         stage.show();
         startUpdate();
     }
@@ -75,21 +76,67 @@ public class HelloApplication extends Application {
     }
 
     public static double[][] generateAttractionMatrix(int size){
+//        double[][] attractionMatrix = {
+//                {-0.08107187750636491, 0.7359548417603424, -0.7100706611540691, 0.11666661944421064, -0.6008519290416389},
+//                {-0.26172083436753957, 0.7197511005998479, 0.5704957933274387, 0.6064088193212608, -0.32064612038964324},
+//                {-0.5936838674310888, 0.641235332032943, 0.8091235092568326, 0.3394994361766158, 1.0727223378844815},
+//                {0.6002815957745079, 0.8131670263871386, 0.940292618860865, -0.5353126027886103, -0.2067875926053041},
+//                {-0.6201721480615886, 0.3606964499070032, -0.28842948154868375, 0.13856416475485311, 0.8414390975408145},
+//        };
+
+//        double[][] attractionMatrix1 = {
+//                {-0.19972632532133072, -0.5001391299558663, -0.10840563685155946, -0.384214674293719, 0.9411458756781387, 0.2694121348527364},
+//                {0.788322083332805 ,-0.7012069591040996, -0.4177407685768749, 0.27599904544074205, 0.8860377279526489, 0.34098896723600103},
+//                {0.2915985323790543, -0.7214472571507881, -0.4825329121349121, 0.4639146221234215, 0.1709788181295474, 0.8928580692014204},
+//                {0.44923748885076364, -0.8768560022521236, -0.8757866089178984, 0.6343599209613223, 0.3341514842854024, 0.1932410412783373},
+//                { -0.35597831399761726, -0.5977302675436847, 0.23154757222996059, -0.8964292357171652, 0.12310856453395991, 0.881597942632326},
+//                {0.39746840312635856, 0.011938335083090501, 0.9780512319276281, 1.076062105543309, -0.13918867491302145, -0.3793896399713822}
+//        };
+
         double[][] attractionMatrix = new double[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                attractionMatrix[i][j] = Math.random();
+                // generate values between -0.9 and 1.1
+                attractionMatrix[i][j] = Math.random() * 2 - 0.9;
             }
         }
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                System.out.print(attractionMatrix[i][j] + " ");
+            }
+            System.out.println("");
+        }
+
         return attractionMatrix;
     }
 
+    private void pressedKeyHandling(Scene scene){
+        scene.setOnKeyPressed(e -> {
+            KeyCode keyPressed = e.getCode();
+
+            switch (keyPressed) {
+                case UP:
+                    testParticle.POSITION[1] += -3;
+                    break;
+                case DOWN:
+                    testParticle.POSITION[1] += 3;
+                    break;
+                case LEFT:
+                    testParticle.POSITION[0] += -3;
+                    break;
+                case RIGHT:
+                    testParticle.POSITION[0] += 3;
+                    break;
+            }
+            testParticle.move();
+        });
+    }
 
     private class Particle extends Circle {
         public double MASS;
         public int SPECIES;
         public double[] POSITION = {0, 0};
-        public final double MAX_ATTRACTION_DISTANCE = 400;
+        public final double MAX_ATTRACTION_DISTANCE = 70;
         public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
         public double[] VELOCITY = {0,0};
         public double FRICTION = 0.04;
@@ -103,6 +150,16 @@ public class HelloApplication extends Application {
             SPECIES = species;
         }
         public void move(){
+            if(POSITION[0] <= 0){
+                POSITION[0] += PANE_WIDTH;
+            } else if (POSITION[0] >= PANE_WIDTH) {
+                POSITION[0] -= PANE_WIDTH;
+            }
+            if(POSITION[1] <= 0){
+                POSITION[1] += PANE_HEIGHT;
+            } else if (POSITION[1] >= PANE_HEIGHT) {
+                POSITION[1] -= PANE_HEIGHT;
+            }
             setCenterX(POSITION[0]);
             setCenterY(POSITION[1]);
         }
@@ -110,11 +167,26 @@ public class HelloApplication extends Application {
             double[] SUM_FORCE = {0,0};
             for(Particle particle : particles){
                 if(particle != this){
-                    double[] result =  calculateAttractionForceNew(this, particle);
-                    SUM_FORCE[0] += result[0];
-                    SUM_FORCE[1] += result[1];
+                    double[] directionVector = calculateDirectionVector(particle);
+
+                    // length of the distance
+                    double distance = Math.sqrt(Math.pow(directionVector[0],2) + Math.pow(directionVector[1], 2)) / MAX_ATTRACTION_DISTANCE;
+
+                    if(distance < 1){
+                        double attractionFactor = ATTRACTION_MATRIX[SPECIES][particle.SPECIES];
+                        double magnitude =  calculateAttractionForce(distance, attractionFactor);
+                        double[] normalisedDirectionVector = normalizeVector(directionVector);
+
+                        SUM_FORCE[0] += normalisedDirectionVector[0] * magnitude * MAX_ATTRACTION_DISTANCE;
+                        SUM_FORCE[1] += normalisedDirectionVector[1] * magnitude * MAX_ATTRACTION_DISTANCE;
+                    }
                 }
             }
+            // all particles move towards the center slowly
+            double[] vectorTowardsCenter = normalizeVector(new double[] {(((double) PANE_WIDTH / 2) - POSITION[0]), ((double) PANE_HEIGHT / 2) - POSITION[1]});
+            SUM_FORCE[0] += vectorTowardsCenter[0] *10;
+            SUM_FORCE[1] += vectorTowardsCenter[1] *10;
+
             // F = m / a
             double accelerationX = SUM_FORCE[0] * FORCE_MULTIPLIER / MASS;
             double accelerationY = SUM_FORCE[1] * FORCE_MULTIPLIER / MASS;
@@ -209,29 +281,27 @@ public class HelloApplication extends Application {
 //
 //            return normalizeVector(new double[]{directionVector[0] * magnitude, directionVector[1] * magnitude});
 //        }
-        private double[] calculateAttractionForceNew(Particle source, Particle target){
-            // vector from source to target
-            double[] directionVector = {target.getCenterX() - source.getCenterX(), target.getCenterY() - source.getCenterY()};
-            // length of the distance
-            double distance = Math.sqrt(Math.pow(directionVector[0],2) + Math.pow(directionVector[1], 2));
-
-            double relativeDistance = distance / MAX_ATTRACTION_DISTANCE;
-
-            double magnitude = 0;
-            double attractionFactor = ATTRACTION_MATRIX[SPECIES][target.SPECIES];
-
+        private double calculateAttractionForce(double relativeDistance, double attractionFactor){
             if(relativeDistance < ATTRACTION_RELATIVE_DISTANCE_CUTOUT){
-                magnitude = relativeDistance / ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 1;
+                return relativeDistance / ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 1;
             } else if (relativeDistance < 1.0) {
-                magnitude = (-Math.abs(relativeDistance - ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 0.5) + 0.5 ) * 2 * attractionFactor;
+                return (-Math.abs(relativeDistance - ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 0.5) + 0.5 ) * 2 * attractionFactor;
             }
-            else if( 1 < relativeDistance){
-                magnitude = 0;
+            return 0;
+        }
+
+        private double[] calculateDirectionVector(Particle target){
+            // vector from source to target
+            double[] directionVector = {(target.POSITION[0] - POSITION[0]), (target.POSITION[1] - POSITION[1])};
+
+            if(directionVector[0] < -(PANE_WIDTH - MAX_ATTRACTION_DISTANCE)){
+                directionVector[0] = PANE_WIDTH + directionVector[0];
             }
 
-            double[] normalisedDirectionVector = normalizeVector(directionVector);
-
-            return new double[]{normalisedDirectionVector[0] * magnitude * MAX_ATTRACTION_DISTANCE, normalisedDirectionVector[1] * magnitude * MAX_ATTRACTION_DISTANCE};
+            if(directionVector[1] < -(PANE_HEIGHT - MAX_ATTRACTION_DISTANCE)){
+                directionVector[1] = PANE_HEIGHT + directionVector[1];
+            }
+            return directionVector;
         }
     }
     private class Wall extends Rectangle {
