@@ -6,15 +6,15 @@ import javafx.scene.shape.Circle;
 import java.util.List;
 
 public class Particle extends Circle {
-    private double PANE_WIDTH;
-    private double PANE_HEIGHT;
-    private double[] RELATIVE_ATTRACTION_MATRIX;
-    public double DELTATIME;
+    private final double PANE_WIDTH;
+    private final double PANE_HEIGHT;
+    private final double[] RELATIVE_ATTRACTION_MATRIX;
+    public double DELTA_TIME;
     public double MASS;
     public int SPECIES;
-    private double NEGATIVE_DIRECTION_LIMIT_WIDTH;
-    private double NEGATIVE_DIRECTION_LIMIT_HEIGHT;
-    private double[] FORCE = {0,0};
+    private final double NEGATIVE_DIRECTION_LIMIT_WIDTH;
+    private final double NEGATIVE_DIRECTION_LIMIT_HEIGHT;
+    private final double[] FORCE = {0,0};
     public double[] POSITION = {0, 0};
     public final double MAX_ATTRACTION_DISTANCE;
     public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
@@ -29,7 +29,7 @@ public class Particle extends Circle {
         POSITION[1] = y;
         MASS = mass;
         SPECIES = species;
-        DELTATIME = deltaTime;
+        DELTA_TIME = deltaTime;
         RELATIVE_ATTRACTION_MATRIX = relativeAttractionMatrix;
         PANE_WIDTH = paneWidth;
         PANE_HEIGHT = paneHeight;
@@ -38,7 +38,6 @@ public class Particle extends Circle {
         NEGATIVE_DIRECTION_LIMIT_HEIGHT = -(PANE_HEIGHT - MAX_ATTRACTION_DISTANCE);
     }
     public void move(){
-        adjustPositionWrapping();
         setCenterX(POSITION[0]);
         setCenterY(POSITION[1]);
     }
@@ -97,11 +96,13 @@ public class Particle extends Circle {
         VELOCITY[0] *= FRICTION;
         VELOCITY[1] *= FRICTION;
 
-        VELOCITY[0] += accelerationX * DELTATIME;
-        VELOCITY[1] += accelerationY * DELTATIME;
+        VELOCITY[0] += accelerationX * DELTA_TIME;
+        VELOCITY[1] += accelerationY * DELTA_TIME;
 
-        POSITION[0] += VELOCITY[0] * DELTATIME;
-        POSITION[1] += VELOCITY[1] * DELTATIME;
+        POSITION[0] += VELOCITY[0] * DELTA_TIME;
+        POSITION[1] += VELOCITY[1] * DELTA_TIME;
+
+        adjustPositionWrapping();
     }
 
     private static double[] normalizeVector(double[] vector) {

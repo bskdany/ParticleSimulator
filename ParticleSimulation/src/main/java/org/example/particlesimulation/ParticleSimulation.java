@@ -4,13 +4,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,17 +16,17 @@ import java.util.List;
 public class ParticleSimulation extends Application {
     private static final int PANE_WIDTH = 1400;
     private static final int PANE_HEIGHT = 800;
-    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
+//    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
+    private static final double UPDATE_RATE_MS = 33.3; // for 30 fps
     private static final int PARTICLE_RADIUS = 1;
-    private static final int PARTICLES_TO_CREATE = 200;
+    private static final int PARTICLES_TO_CREATE = 260;
     private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW, Color.PINK, Color.ORANGE};
-    private double[][] ATTRACTION_MATRIX = new double[PARTICLE_SPECIES.length][PARTICLE_SPECIES.length];
-//    private Particle testParticle = new Particle(100,100, 10, Color.GRAY, 1, 0);
-    private List<Particle> particles = new ArrayList<>();
+    //    private Particle testParticle = new Particle(100,100, 10, Color.GRAY, 1, 0);
+    private final List<Particle> particles = new ArrayList<>();
     Pane root = new Pane();
 
     private Pane createContent(){
-        ATTRACTION_MATRIX = generateAttractionMatrix(PARTICLE_SPECIES.length);
+        double[][] ATTRACTION_MATRIX = generateAttractionMatrix(PARTICLE_SPECIES.length);
 
         for (int j = 0; j < PARTICLE_SPECIES.length; j++) {
             for (int i = 0; i < PARTICLES_TO_CREATE; i++) {
@@ -40,7 +38,7 @@ public class ParticleSimulation extends Application {
         return root;
     }
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage){
         stage.setTitle("Particle Simulation");
         Pane root = createContent();
         Scene scene = new Scene(root, PANE_WIDTH, PANE_HEIGHT, Color.BLACK);
@@ -55,9 +53,7 @@ public class ParticleSimulation extends Application {
         Timeline timeline = new Timeline(
             new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
 
-                particles.parallelStream().forEach(particle -> {
-                    particle.simulate(particles);
-                });
+                particles.parallelStream().forEach(particle -> particle.simulate(particles));
 
                 for(Particle particle : particles){
                     particle.move();
