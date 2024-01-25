@@ -12,8 +12,8 @@ public class Particle extends Circle {
     public double DELTA_TIME;
     public double MASS;
     public int SPECIES;
-    private final double NEGATIVE_DIRECTION_LIMIT_WIDTH;
-    private final double NEGATIVE_DIRECTION_LIMIT_HEIGHT;
+    private final double WRAP_DIRECTION_LIMIT_WIDTH;
+    private final double WRAP_DIRECTION_LIMIT_HEIGHT;
     private final double[] FORCE = {0,0};
     public double[] POSITION = {0, 0};
     public final double MAX_ATTRACTION_DISTANCE;
@@ -37,24 +37,25 @@ public class Particle extends Circle {
         PANE_HEIGHT = paneHeight;
         MAX_ATTRACTION_DISTANCE = radius * 100;
         RADIUS = radius;
-        NEGATIVE_DIRECTION_LIMIT_WIDTH = -(PANE_WIDTH - MAX_ATTRACTION_DISTANCE);
-        NEGATIVE_DIRECTION_LIMIT_HEIGHT = -(PANE_HEIGHT - MAX_ATTRACTION_DISTANCE);
+        WRAP_DIRECTION_LIMIT_WIDTH = PANE_WIDTH - MAX_ATTRACTION_DISTANCE - 1; // -1 because you have to consider 0 as a coordinate, so in total you would have PANE_WIDTH + 1
+        WRAP_DIRECTION_LIMIT_HEIGHT = PANE_HEIGHT - MAX_ATTRACTION_DISTANCE -1;
     }
     public void move(){
+        adjustPositionWrapping();
         setCenterX(POSITION[0]);
         setCenterY(POSITION[1]);
     }
 
     public void adjustPositionWrapping(){
-        if(POSITION[0] <= 0){
-            POSITION[0] += PANE_WIDTH;
+        if(POSITION[0] < 0){
+            POSITION[0] += PANE_WIDTH + 1;
         } else if (POSITION[0] > PANE_WIDTH) {
-            POSITION[0] -= PANE_WIDTH;
+            POSITION[0] -= PANE_WIDTH - 1;
         }
-        if(POSITION[1] <= 0){
-            POSITION[1] += PANE_HEIGHT;
+        if(POSITION[1] < 0){
+            POSITION[1] += PANE_HEIGHT +1;
         } else if (POSITION[1] > PANE_HEIGHT) {
-            POSITION[1] -= PANE_HEIGHT;
+            POSITION[1] -= PANE_HEIGHT -1;
         }
     }
     public void simulate(List<Particle> particles){
@@ -63,15 +64,15 @@ public class Particle extends Circle {
         for(Particle particle : particles){
             if(particle != this){
                 directionVector[0] = particle.POSITION[0] - POSITION[0];
-                if(directionVector[0] > MAX_ATTRACTION_DISTANCE || directionVector[0] < NEGATIVE_DIRECTION_LIMIT_WIDTH){
+                if(Math.abs(directionVector[0]) > MAX_ATTRACTION_DISTANCE && Math.abs(directionVector[0]) < WRAP_DIRECTION_LIMIT_WIDTH){
                     continue;
                 }
                 directionVector[1] = particle.POSITION[1] - POSITION[1];
-                if(directionVector[1] > MAX_ATTRACTION_DISTANCE || directionVector[1] < NEGATIVE_DIRECTION_LIMIT_HEIGHT){
+                if(Math.abs(directionVector[1]) > MAX_ATTRACTION_DISTANCE && Math.abs(directionVector[1]) < WRAP_DIRECTION_LIMIT_HEIGHT){
                     continue;
                 }
 
-                double[] directionVector = calculateDirectionVector();
+                double[] directionVector = calculateVectorWrap();
 
                 // length of the relative distance
                 double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / MAX_ATTRACTION_DISTANCE;
@@ -88,9 +89,9 @@ public class Particle extends Circle {
             }
         }
         // all particles move towards the center slowly
-        double[] vectorTowardsCenter = normalizeVector(new double[] {(( PANE_WIDTH / 2) - POSITION[0]), ( PANE_HEIGHT / 2) - POSITION[1]});
-        FORCE[0] += vectorTowardsCenter[0];
-        FORCE[1] += vectorTowardsCenter[1];
+//        double[] vectorTowardsCenter = normalizeVector(new double[] {(( PANE_WIDTH / 2) - POSITION[0]), ( PANE_HEIGHT / 2) - POSITION[1]});
+//        FORCE[0] += vectorTowardsCenter[0];
+//        FORCE[1] += vectorTowardsCenter[1];
 
         // F = m / a
         double accelerationX = FORCE[0] * FORCE_MULTIPLIER / MASS;
@@ -109,15 +110,9 @@ public class Particle extends Circle {
             // explode
         }
 
-
-
         POSITION[0] += VELOCITY[0] * DELTA_TIME;
         POSITION[1] += VELOCITY[1] * DELTA_TIME;
-
-        adjustPositionWrapping();
     }
-
-
 
     private static double[] normalizeVector(double[] vector) {
         double magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
@@ -208,14 +203,20 @@ public class Particle extends Circle {
         return 0;
     }
 
-    private double[] calculateDirectionVector(){
+    private double[] calculateVectorWrap(){
         // vector from source to target
-        if(directionVector[0] < NEGATIVE_DIRECTION_LIMIT_WIDTH){
-            directionVector[0] = PANE_WIDTH + directionVector[0];
+        if(directionVector[0] > WRAP_DIRECTION_LIMIT_WIDTH){  // warp left
+            directionVector[0] = directionVector[0] - PANE_WIDTH -1;
+        }
+        else if(directionVector[0] < -WRAP_DIRECTION_LIMIT_WIDTH){ // warp right
+            directionVector[0] = directionVector[0] + PANE_WIDTH +1;
         }
 
-        if(directionVector[1] < NEGATIVE_DIRECTION_LIMIT_HEIGHT){
-            directionVector[1] = PANE_HEIGHT + directionVector[1];
+        if(directionVector[1] > WRAP_DIRECTION_LIMIT_HEIGHT){ // warp top
+            directionVector[1] = directionVector[1] - PANE_HEIGHT -1;
+        }
+        else if(directionVector[1] < -WRAP_DIRECTION_LIMIT_HEIGHT){ // warp bottom
+            directionVector[1] = directionVector[1] + PANE_HEIGHT +1;
         }
         return directionVector;
     }

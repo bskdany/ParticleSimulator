@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -17,26 +18,27 @@ import java.util.Random;
 
 public class ParticleSimulation extends Application {
     private static final int PANE_WIDTH = 1400;
-    private static final int PANE_HEIGHT = 800;
+    private static final int PANE_HEIGHT = 700;
 //    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
     private static final double UPDATE_RATE_MS = 33.3; // for 30 fps
     private static final double PARTICLE_RADIUS = 1;
-    private static final int PARTICLES_TO_CREATE = 400;
+    private static final int PARTICLES_TO_CREATE = 300;
+//    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.BLUE};
     private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.GREEN, Color.YELLOW, Color.PINK, Color.ORANGE};
-    //    private Particle testParticle = new Particle(100,100, 10, Color.GRAY, 1, 0);
+
+//    private Particle testParticle = new Particle((int) (Math.random() * PANE_WIDTH), (int) (Math.random() * PANE_HEIGHT), PARTICLE_RADIUS, Color.BLUE, 1, 0, UPDATE_RATE_MS / 1000, new double[]{0,0}, PANE_WIDTH, PANE_HEIGHT);
     private final List<Particle> particles = new ArrayList<>();
     Pane root = new Pane();
 
     private Pane createContent(){
         double[][] ATTRACTION_MATRIX = generateAttractionMatrix(PARTICLE_SPECIES.length);
-
+//        particles.add(testParticle);
         for (int j = 0; j < PARTICLE_SPECIES.length; j++) {
             for (int i = 0; i < PARTICLES_TO_CREATE; i++) {
                 particles.add(new Particle((int) (Math.random() * PANE_WIDTH), (int) (Math.random() * PANE_HEIGHT), PARTICLE_RADIUS, PARTICLE_SPECIES[j], 1, j, UPDATE_RATE_MS / 1000, ATTRACTION_MATRIX[j], PANE_WIDTH, PANE_HEIGHT));
             }
         }
         root.getChildren().addAll(particles);
-//        root.getChildren().add(testParticle);
         return root;
     }
     @Override
@@ -45,7 +47,7 @@ public class ParticleSimulation extends Application {
         Pane root = createContent();
         Scene scene = new Scene(root, PANE_WIDTH, PANE_HEIGHT, Color.BLACK);
         stage.setScene(scene);
-//        pressedKeyHandling(scene);
+        pressedKeyHandling(scene);
         stage.show();
         startUpdate();
     }
@@ -59,6 +61,7 @@ public class ParticleSimulation extends Application {
 
                 for(Particle particle : particles){
                     particle.move();
+//                    System.out.println("yes");
                 }
             })
         );
@@ -87,9 +90,9 @@ public class ParticleSimulation extends Application {
 //                { -0.35597831399761726, -0.5977302675436847, 0.23154757222996059, -0.8964292357171652, 0.12310856453395991, 0.881597942632326},
 //                {0.39746840312635856, 0.011938335083090501, 0.9780512319276281, 1.076062105543309, -0.13918867491302145, -0.3793896399713822}
 //        };
+        double[][] attractionMatrix = new double[size][size];
         DecimalFormat decimalFormat = new DecimalFormat("#.###");
         Random random = new Random();
-        double[][] attractionMatrix = new double[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 attractionMatrix[i][j] =  Double.parseDouble(decimalFormat.format(random.nextGaussian() * 0.5));
@@ -105,25 +108,25 @@ public class ParticleSimulation extends Application {
         return attractionMatrix;
     }
 
-//    private void pressedKeyHandling(Scene scene){
-//        scene.setOnKeyPressed(e -> {
-//            KeyCode keyPressed = e.getCode();
-//
-//            switch (keyPressed) {
-//                case UP:
-//                    testParticle.POSITION[1] += -3;
-//                    break;
-//                case DOWN:
-//                    testParticle.POSITION[1] += 3;
-//                    break;
-//                case LEFT:
-//                    testParticle.POSITION[0] += -3;
-//                    break;
-//                case RIGHT:
-//                    testParticle.POSITION[0] += 3;
-//                    break;
-//            }
+    private void pressedKeyHandling(Scene scene){
+        scene.setOnKeyPressed(e -> {
+            KeyCode keyPressed = e.getCode();
+
+            switch (keyPressed) {
+                case UP:
+                    particles.getFirst().POSITION[1] += -3;
+                    break;
+                case DOWN:
+                    particles.getFirst().POSITION[1] += 3;
+                    break;
+                case LEFT:
+                    particles.getFirst().POSITION[0] += -3;
+                    break;
+                case RIGHT:
+                    particles.getFirst().POSITION[0] += 3;
+                    break;
+            }
 //            testParticle.move();
-//        });
-//    }
+        });
+    }
 }
