@@ -20,10 +20,12 @@ public class Particle extends Circle {
     public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
     public double[] VELOCITY = {0,0};
     public double FRICTION = 0.04;
+    private final double RADIUS;
+    private double[] DELTA_POSITION = {0,0};
 
     double[] directionVector = new double[2];
-    public double FORCE_MULTIPLIER = 40;
-    Particle(int x, int y, int radius, Color color, double mass, int species, double deltaTime, double[] relativeAttractionMatrix, double paneWidth, double paneHeight){
+    public double FORCE_MULTIPLIER = 7;
+    Particle(int x, int y, double radius, Color color, double mass, int species, double deltaTime, double[] relativeAttractionMatrix, double paneWidth, double paneHeight){
         super(x,y,radius,color);
         POSITION[0] = x;
         POSITION[1] = y;
@@ -33,7 +35,8 @@ public class Particle extends Circle {
         RELATIVE_ATTRACTION_MATRIX = relativeAttractionMatrix;
         PANE_WIDTH = paneWidth;
         PANE_HEIGHT = paneHeight;
-        MAX_ATTRACTION_DISTANCE = radius * 30;
+        MAX_ATTRACTION_DISTANCE = radius * 100;
+        RADIUS = radius;
         NEGATIVE_DIRECTION_LIMIT_WIDTH = -(PANE_WIDTH - MAX_ATTRACTION_DISTANCE);
         NEGATIVE_DIRECTION_LIMIT_HEIGHT = -(PANE_HEIGHT - MAX_ATTRACTION_DISTANCE);
     }
@@ -45,12 +48,12 @@ public class Particle extends Circle {
     public void adjustPositionWrapping(){
         if(POSITION[0] <= 0){
             POSITION[0] += PANE_WIDTH;
-        } else if (POSITION[0] >= PANE_WIDTH) {
+        } else if (POSITION[0] > PANE_WIDTH) {
             POSITION[0] -= PANE_WIDTH;
         }
         if(POSITION[1] <= 0){
             POSITION[1] += PANE_HEIGHT;
-        } else if (POSITION[1] >= PANE_HEIGHT) {
+        } else if (POSITION[1] > PANE_HEIGHT) {
             POSITION[1] -= PANE_HEIGHT;
         }
     }
@@ -99,11 +102,22 @@ public class Particle extends Circle {
         VELOCITY[0] += accelerationX * DELTA_TIME;
         VELOCITY[1] += accelerationY * DELTA_TIME;
 
+        DELTA_POSITION[0] = VELOCITY[0] * DELTA_TIME;
+        DELTA_POSITION[1] = VELOCITY[1] * DELTA_TIME;
+
+        if(DELTA_POSITION[0] > RADIUS * 10){
+            // explode
+        }
+
+
+
         POSITION[0] += VELOCITY[0] * DELTA_TIME;
         POSITION[1] += VELOCITY[1] * DELTA_TIME;
 
         adjustPositionWrapping();
     }
+
+
 
     private static double[] normalizeVector(double[] vector) {
         double magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);

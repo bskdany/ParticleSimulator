@@ -9,8 +9,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class ParticleSimulation extends Application {
@@ -18,9 +20,9 @@ public class ParticleSimulation extends Application {
     private static final int PANE_HEIGHT = 800;
 //    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
     private static final double UPDATE_RATE_MS = 33.3; // for 30 fps
-    private static final int PARTICLE_RADIUS = 1;
-    private static final int PARTICLES_TO_CREATE = 260;
-    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW, Color.PINK, Color.ORANGE};
+    private static final double PARTICLE_RADIUS = 1;
+    private static final int PARTICLES_TO_CREATE = 400;
+    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.GREEN, Color.YELLOW, Color.PINK, Color.ORANGE};
     //    private Particle testParticle = new Particle(100,100, 10, Color.GRAY, 1, 0);
     private final List<Particle> particles = new ArrayList<>();
     Pane root = new Pane();
@@ -85,11 +87,12 @@ public class ParticleSimulation extends Application {
 //                { -0.35597831399761726, -0.5977302675436847, 0.23154757222996059, -0.8964292357171652, 0.12310856453395991, 0.881597942632326},
 //                {0.39746840312635856, 0.011938335083090501, 0.9780512319276281, 1.076062105543309, -0.13918867491302145, -0.3793896399713822}
 //        };
-
+        DecimalFormat decimalFormat = new DecimalFormat("#.###");
+        Random random = new Random();
         double[][] attractionMatrix = new double[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                attractionMatrix[i][j] = Math.random() * 2 - 1;
+                attractionMatrix[i][j] =  Double.parseDouble(decimalFormat.format(random.nextGaussian() * 0.5));
             }
         }
         for (int i = 0; i < size; i++) {
