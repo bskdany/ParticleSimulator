@@ -19,9 +19,9 @@ public class ParticleSimulation extends Application {
     private static final int PANE_WIDTH = 1400;
     private static final int PANE_HEIGHT = 800;
     private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
-    private static final int PARTICLE_RADIUS = 2;
-    private static final int PARTICLES_TO_CREATE = 100;
-    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW, Color.PINK};
+    private static final int PARTICLE_RADIUS = 1;
+    private static final int PARTICLES_TO_CREATE = 200;
+    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW, Color.PINK, Color.ORANGE};
     private double[][] ATTRACTION_MATRIX = new double[PARTICLE_SPECIES.length][PARTICLE_SPECIES.length];
 //    private Particle testParticle = new Particle(100,100, 10, Color.GRAY, 1, 0);
     private List<Particle> particles = new ArrayList<>();
@@ -93,8 +93,7 @@ public class ParticleSimulation extends Application {
         double[][] attractionMatrix = new double[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                // generate values between -0.9 and 1.1
-                attractionMatrix[i][j] = Math.random() * 2 - 0.9;
+                attractionMatrix[i][j] = Math.random() * 2 - 1;
             }
         }
         for (int i = 0; i < size; i++) {

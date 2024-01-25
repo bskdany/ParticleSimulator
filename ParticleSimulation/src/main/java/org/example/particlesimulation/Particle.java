@@ -12,9 +12,11 @@ public class Particle extends Circle {
     public double DELTATIME;
     public double MASS;
     public int SPECIES;
+    private double NEGATIVE_DIRECTION_LIMIT_WIDTH;
+    private double NEGATIVE_DIRECTION_LIMIT_HEIGHT;
     private double[] FORCE = {0,0};
     public double[] POSITION = {0, 0};
-    public final double MAX_ATTRACTION_DISTANCE = 70;
+    public final double MAX_ATTRACTION_DISTANCE;
     public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
     public double[] VELOCITY = {0,0};
     public double FRICTION = 0.04;
@@ -31,6 +33,9 @@ public class Particle extends Circle {
         RELATIVE_ATTRACTION_MATRIX = relativeAttractionMatrix;
         PANE_WIDTH = paneWidth;
         PANE_HEIGHT = paneHeight;
+        MAX_ATTRACTION_DISTANCE = radius * 30;
+        NEGATIVE_DIRECTION_LIMIT_WIDTH = -(PANE_WIDTH - MAX_ATTRACTION_DISTANCE);
+        NEGATIVE_DIRECTION_LIMIT_HEIGHT = -(PANE_HEIGHT - MAX_ATTRACTION_DISTANCE);
     }
     public void move(){
         adjustPositionWrapping();
@@ -55,9 +60,18 @@ public class Particle extends Circle {
         FORCE[1] = 0;
         for(Particle particle : particles){
             if(particle != this){
-                double[] directionVector = calculateDirectionVector(particle);
+                directionVector[0] = particle.POSITION[0] - POSITION[0];
+                if(directionVector[0] > MAX_ATTRACTION_DISTANCE || directionVector[0] < NEGATIVE_DIRECTION_LIMIT_WIDTH){
+                    continue;
+                }
+                directionVector[1] = particle.POSITION[1] - POSITION[1];
+                if(directionVector[1] > MAX_ATTRACTION_DISTANCE || directionVector[1] < NEGATIVE_DIRECTION_LIMIT_HEIGHT){
+                    continue;
+                }
 
-                // length of the distance
+                double[] directionVector = calculateDirectionVector();
+
+                // length of the relative distance
                 double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / MAX_ATTRACTION_DISTANCE;
 
                 if(distance > 1) {
@@ -73,8 +87,8 @@ public class Particle extends Circle {
         }
         // all particles move towards the center slowly
         double[] vectorTowardsCenter = normalizeVector(new double[] {(( PANE_WIDTH / 2) - POSITION[0]), ( PANE_HEIGHT / 2) - POSITION[1]});
-        FORCE[0] += vectorTowardsCenter[0] * 10;
-        FORCE[1] += vectorTowardsCenter[1] * 10;
+        FORCE[0] += vectorTowardsCenter[0];
+        FORCE[1] += vectorTowardsCenter[1];
 
         // F = m / a
         double accelerationX = FORCE[0] * FORCE_MULTIPLIER / MASS;
@@ -179,15 +193,13 @@ public class Particle extends Circle {
         return 0;
     }
 
-    private double[] calculateDirectionVector(Particle target){
+    private double[] calculateDirectionVector(){
         // vector from source to target
-        double[] directionVector = {(target.POSITION[0] - POSITION[0]), (target.POSITION[1] - POSITION[1])};
-
-        if(directionVector[0] < -(PANE_WIDTH - MAX_ATTRACTION_DISTANCE)){
+        if(directionVector[0] < NEGATIVE_DIRECTION_LIMIT_WIDTH){
             directionVector[0] = PANE_WIDTH + directionVector[0];
         }
 
-        if(directionVector[1] < -(PANE_HEIGHT - MAX_ATTRACTION_DISTANCE)){
+        if(directionVector[1] < NEGATIVE_DIRECTION_LIMIT_HEIGHT){
             directionVector[1] = PANE_HEIGHT + directionVector[1];
         }
         return directionVector;
