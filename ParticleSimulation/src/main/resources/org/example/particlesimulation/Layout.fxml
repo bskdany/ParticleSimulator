@@ -5,10 +5,11 @@
 
 
 <?import javafx.scene.control.Button?>
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="org.example.particlesimulation.SidebarController">
     <children>
         <AnchorPane fx:id="leftPane" >
-            <Button>Hello</Button>
+            <Button onAction="#handleResetButton">Reset</Button>
         </AnchorPane>
         <AnchorPane style="-fx-background-color: BLACK" fx:id="rightPane" layoutX="115.0"/>
     </children>
