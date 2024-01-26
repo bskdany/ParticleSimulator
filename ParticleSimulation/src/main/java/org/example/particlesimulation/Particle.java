@@ -19,12 +19,12 @@ public class Particle extends Circle {
     public final double MAX_ATTRACTION_DISTANCE;
     public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
     public double[] VELOCITY = {0,0};
-    public double FRICTION = 0.04;
+    public double FRICTION = 0.05;
     private final double RADIUS;
     private double[] DELTA_POSITION = {0,0};
 
     double[] directionVector = new double[2];
-    public double FORCE_MULTIPLIER = 7;
+    public double FORCE_MULTIPLIER = 5;
     Particle(int x, int y, double radius, Color color, double mass, int species, double deltaTime, double[] relativeAttractionMatrix, double paneWidth, double paneHeight){
         super(x,y,radius,color);
         POSITION[0] = x;
@@ -35,7 +35,7 @@ public class Particle extends Circle {
         RELATIVE_ATTRACTION_MATRIX = relativeAttractionMatrix;
         PANE_WIDTH = paneWidth;
         PANE_HEIGHT = paneHeight;
-        MAX_ATTRACTION_DISTANCE = radius * 100;
+        MAX_ATTRACTION_DISTANCE = radius * 200;
         RADIUS = radius;
         WRAP_DIRECTION_LIMIT_WIDTH = PANE_WIDTH - MAX_ATTRACTION_DISTANCE - 1; // -1 because you have to consider 0 as a coordinate, so in total you would have PANE_WIDTH + 1
         WRAP_DIRECTION_LIMIT_HEIGHT = PANE_HEIGHT - MAX_ATTRACTION_DISTANCE -1;
@@ -89,9 +89,9 @@ public class Particle extends Circle {
             }
         }
         // all particles move towards the center slowly
-//        double[] vectorTowardsCenter = normalizeVector(new double[] {(( PANE_WIDTH / 2) - POSITION[0]), ( PANE_HEIGHT / 2) - POSITION[1]});
-//        FORCE[0] += vectorTowardsCenter[0];
-//        FORCE[1] += vectorTowardsCenter[1];
+        double[] vectorTowardsCenter = normalizeVector(new double[] {(( PANE_WIDTH / 2) - POSITION[0]), ( PANE_HEIGHT / 2) - POSITION[1]});
+        FORCE[0] += vectorTowardsCenter[0];
+        FORCE[1] += vectorTowardsCenter[1];
 
         // F = m / a
         double accelerationX = FORCE[0] * FORCE_MULTIPLIER / MASS;
