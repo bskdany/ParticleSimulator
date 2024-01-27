@@ -1,13 +1,12 @@
 package org.example.particlesimulation;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 import java.util.List;
 
-public class Particle extends Circle {
-    private final double PANE_WIDTH;
-    private final double PANE_HEIGHT;
+public class Particle {
+    private final double CANVAS_WIDTH;
+    private final double CANVAS_HEIGTH;
     private final double[] RELATIVE_ATTRACTION_MATRIX;
     public double DELTA_TIME;
     public double MASS;
@@ -20,42 +19,39 @@ public class Particle extends Circle {
     public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
     public double[] VELOCITY = {0,0};
     public double FRICTION = 0.05;
-    private final double RADIUS;
-    private double[] DELTA_POSITION = {0,0};
+    public final double RADIUS;
+    private final double[] DELTA_POSITION = {0,0};
+    public Color COLOR;
 
     double[] directionVector = new double[2];
     public double FORCE_MULTIPLIER = 5;
     Particle(int x, int y, double radius, Color color, double mass, int species, double deltaTime, double[] relativeAttractionMatrix, double paneWidth, double paneHeight){
-        super(x,y,radius,color);
         POSITION[0] = x;
         POSITION[1] = y;
+        RADIUS = radius;
+        COLOR = color;
         MASS = mass;
         SPECIES = species;
         DELTA_TIME = deltaTime;
         RELATIVE_ATTRACTION_MATRIX = relativeAttractionMatrix;
-        PANE_WIDTH = paneWidth;
-        PANE_HEIGHT = paneHeight;
+        CANVAS_WIDTH = paneWidth;
+        CANVAS_HEIGTH = paneHeight;
         MAX_ATTRACTION_DISTANCE = radius * 200;
-        RADIUS = radius;
-        WRAP_DIRECTION_LIMIT_WIDTH = PANE_WIDTH - MAX_ATTRACTION_DISTANCE - 1; // -1 because you have to consider 0 as a coordinate, so in total you would have PANE_WIDTH + 1
-        WRAP_DIRECTION_LIMIT_HEIGHT = PANE_HEIGHT - MAX_ATTRACTION_DISTANCE -1;
-    }
-    public void move(){
-        adjustPositionWrapping();
-        setCenterX(POSITION[0]);
-        setCenterY(POSITION[1]);
+
+        WRAP_DIRECTION_LIMIT_WIDTH = CANVAS_WIDTH - MAX_ATTRACTION_DISTANCE - 1; // -1 because you have to consider 0 as a coordinate, so in total you would have CANVAS_WIDTH + 1
+        WRAP_DIRECTION_LIMIT_HEIGHT = CANVAS_HEIGTH - MAX_ATTRACTION_DISTANCE -1;
     }
 
     public void adjustPositionWrapping(){
         if(POSITION[0] < 0){
-            POSITION[0] += PANE_WIDTH + 1;
-        } else if (POSITION[0] > PANE_WIDTH) {
-            POSITION[0] -= PANE_WIDTH - 1;
+            POSITION[0] += CANVAS_WIDTH + 1;
+        } else if (POSITION[0] > CANVAS_WIDTH) {
+            POSITION[0] -= CANVAS_WIDTH - 1;
         }
         if(POSITION[1] < 0){
-            POSITION[1] += PANE_HEIGHT +1;
-        } else if (POSITION[1] > PANE_HEIGHT) {
-            POSITION[1] -= PANE_HEIGHT -1;
+            POSITION[1] += CANVAS_HEIGTH +1;
+        } else if (POSITION[1] > CANVAS_HEIGTH) {
+            POSITION[1] -= CANVAS_HEIGTH -1;
         }
     }
     public void simulate(List<Particle> particles){
@@ -64,10 +60,11 @@ public class Particle extends Circle {
         for(Particle particle : particles){
             if(particle != this){
                 directionVector[0] = particle.POSITION[0] - POSITION[0];
+                directionVector[1] = particle.POSITION[1] - POSITION[1];
+
                 if(Math.abs(directionVector[0]) > MAX_ATTRACTION_DISTANCE && Math.abs(directionVector[0]) < WRAP_DIRECTION_LIMIT_WIDTH){
                     continue;
                 }
-                directionVector[1] = particle.POSITION[1] - POSITION[1];
                 if(Math.abs(directionVector[1]) > MAX_ATTRACTION_DISTANCE && Math.abs(directionVector[1]) < WRAP_DIRECTION_LIMIT_HEIGHT){
                     continue;
                 }
@@ -89,7 +86,7 @@ public class Particle extends Circle {
             }
         }
         // all particles move towards the center slowly
-        double[] vectorTowardsCenter = normalizeVector(new double[] {(( PANE_WIDTH / 2) - POSITION[0]), ( PANE_HEIGHT / 2) - POSITION[1]});
+        double[] vectorTowardsCenter = normalizeVector(new double[] {(( CANVAS_WIDTH / 2) - POSITION[0]), ( CANVAS_HEIGTH / 2) - POSITION[1]});
         FORCE[0] += vectorTowardsCenter[0];
         FORCE[1] += vectorTowardsCenter[1];
 
@@ -112,6 +109,7 @@ public class Particle extends Circle {
 
         POSITION[0] += VELOCITY[0] * DELTA_TIME;
         POSITION[1] += VELOCITY[1] * DELTA_TIME;
+
     }
 
     private static double[] normalizeVector(double[] vector) {
@@ -121,79 +119,7 @@ public class Particle extends Circle {
         }
         return vector;
     }
-    //        private static double[] calculateReflectionVector(double[] directionVector, double[] normalVector) {
-//            // Normalize the direction vector
-//            directionVector = normalizeVector(directionVector);
-//
-//            // Calculate the dot product
-//            double dotProduct = directionVector[0] * normalVector[0] + directionVector[1] * normalVector[1];
-//
-//            // Calculate the reflection vector
-//            double[] reflectionVector = {
-//                    directionVector[0] - 2 * dotProduct * normalVector[0],
-//                    directionVector[1] - 2 * dotProduct * normalVector[1]
-//            };
-//
-//            // Normalize the reflection vector
-//            reflectionVector = normalizeVector(reflectionVector);
-//
-//            return reflectionVector;
-//        }
-//        private void handleCollisionWalls(){
-//
-//            for (Wall wall : walls) {
-//                if (getBoundsInParent().intersects(wall.getBoundsInParent())) {
-//
-//                    double particleX = getCenterX();
-//                    double particleY = getCenterY();
-//
-//                    double rectangleX = wall.getX();
-//                    double rectangleY = wall.getY();
-//                    double rectangleWidth = wall.getWidth();
-//                    double rectangleHeight = wall.getHeight();
-//                    double rectangleOriginX = rectangleX + rectangleWidth / 2;
-//                    double rectangleOriginY = rectangleY + rectangleHeight / 2;
-//
-//                    double deltaXRectangleParticle = rectangleOriginX - particleX;
-//                    double deltaYRectangleParticle = rectangleOriginY - particleY;
-//
-//                    double collisionOriginX = particleX;
-//                    double collisionOriginY = particleY;
-//                    double[] normalVector = {0, 0};
-//
-//                    if (deltaXRectangleParticle > rectangleWidth / 2) {
-//                        collisionOriginX = particleX + (deltaXRectangleParticle - rectangleWidth / 2);
-//                        normalVector[0] = -1;
-//                    } else if (deltaXRectangleParticle < -(rectangleWidth / 2)) {
-//                        collisionOriginX = particleX + (deltaXRectangleParticle + rectangleWidth / 2);
-//                        normalVector[0] = 1;
-//                    }
-//
-//                    if (deltaYRectangleParticle > rectangleHeight / 2) {
-//                        collisionOriginY = particleY + (deltaYRectangleParticle - rectangleHeight / 2);
-//                        normalVector[1] = -1;
-//                    } else if (deltaYRectangleParticle < -(rectangleHeight / 2)) {
-//                        collisionOriginY = particleY + (deltaYRectangleParticle + rectangleHeight / 2);
-//                        normalVector[1] = 1;
-//                    }
-//
-//                    Circle collisionPlaceholder = new Circle(collisionOriginX, collisionOriginY, 3, Color.RED);
-//                    root.getChildren().add(collisionPlaceholder);
-//
-//                    FORCE = calculateReflectionVector(FORCE, normalVector);
-//                }
-//            }
-//        }
-//        private double[] calculateAttractionForce(Particle source, Particle target){
-//            // vector from source to target
-//            double[] directionVector = {target.getCenterX() - source.getCenterX(), target.getCenterY() - source.getCenterY()};
-//            // length of the distance
-//            double distance = Math.sqrt(Math.pow(directionVector[0],2) + Math.pow(directionVector[1], 2));
-//            // F = G * (m1 * m2) / r^2
-//            double magnitude =  ATTRACTION * (source.MASS * target.MASS) / (distance * distance);
-//
-//            return normalizeVector(new double[]{directionVector[0] * magnitude, directionVector[1] * magnitude});
-//        }
+
     private double calculateAttractionForce(double relativeDistance, double attractionFactor){
         if(relativeDistance < ATTRACTION_RELATIVE_DISTANCE_CUTOUT){
             return relativeDistance / ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 1;
@@ -206,17 +132,17 @@ public class Particle extends Circle {
     private double[] calculateVectorWrap(){
         // vector from source to target
         if(directionVector[0] > WRAP_DIRECTION_LIMIT_WIDTH){  // warp left
-            directionVector[0] = directionVector[0] - PANE_WIDTH -1;
+            directionVector[0] = directionVector[0] - CANVAS_WIDTH -1;
         }
         else if(directionVector[0] < -WRAP_DIRECTION_LIMIT_WIDTH){ // warp right
-            directionVector[0] = directionVector[0] + PANE_WIDTH +1;
+            directionVector[0] = directionVector[0] + CANVAS_WIDTH +1;
         }
 
         if(directionVector[1] > WRAP_DIRECTION_LIMIT_HEIGHT){ // warp top
-            directionVector[1] = directionVector[1] - PANE_HEIGHT -1;
+            directionVector[1] = directionVector[1] - CANVAS_HEIGTH -1;
         }
         else if(directionVector[1] < -WRAP_DIRECTION_LIMIT_HEIGHT){ // warp bottom
-            directionVector[1] = directionVector[1] + PANE_HEIGHT +1;
+            directionVector[1] = directionVector[1] + CANVAS_HEIGTH +1;
         }
         return directionVector;
     }

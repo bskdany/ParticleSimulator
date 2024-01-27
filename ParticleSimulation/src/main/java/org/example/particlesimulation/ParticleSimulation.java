@@ -6,6 +6,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -23,29 +25,25 @@ import java.util.Random;
 
 
 public class ParticleSimulation{
-    private static final double PARTICLE_RADIUS = 1;
-    private static final int PARTICLES_TO_CREATE = 100 ;
-//    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.BLUE};
+    private static final double PARTICLE_RADIUS = 0.5;
+    private static final int PARTICLES_TO_CREATE = 400 ;
     private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.GREEN, Color.YELLOW, Color.PINK, Color.ORANGE, Color.CORAL};
-
-//    private Particle testParticle = new Particle((int) (Math.random() * PANE_WIDTH), (int) (Math.random() * PANE_HEIGHT), PARTICLE_RADIUS, Color.BLUE, 1, 0, UPDATE_RATE_MS / 1000, new double[]{0,0}, PANE_WIDTH, PANE_HEIGHT);
     private final List<Particle> particles = new ArrayList<>();
     private final int PANE_WIDTH;
     private final int PANE_HEIGHT;
     private final double UPDATE_RATE_MS;
-    private final Pane root;
-
+    private final GraphicsContext gc;
     private Timeline timeline;
 
-    ParticleSimulation(Pane root, int paneWidth, int paneHeight, double updateTimeMs){
+    ParticleSimulation(GraphicsContext gc, int paneWidth, int paneHeight, double updateTimeMs){
         PANE_WIDTH = paneWidth;
         PANE_HEIGHT = paneHeight;
         UPDATE_RATE_MS = updateTimeMs;
-        this.root = root;
+        this.gc = gc;
     }
 
     public void initContent(){
-        root.getChildren().clear();
+
         particles.clear();
 
         double[][] ATTRACTION_MATRIX = generateAttractionMatrix(PARTICLE_SPECIES.length);
@@ -54,7 +52,6 @@ public class ParticleSimulation{
                 particles.add(new Particle((int) (Math.random() * PANE_WIDTH), (int) (Math.random() * PANE_HEIGHT), PARTICLE_RADIUS, PARTICLE_SPECIES[j], 1, j, UPDATE_RATE_MS / 1000, ATTRACTION_MATRIX[j], PANE_WIDTH, PANE_HEIGHT));
             }
         }
-        root.getChildren().addAll(particles);
     }
     public static double[][] generateAttractionMatrix(int size){
         double[][] attractionMatrix = new double[size][size];
@@ -79,8 +76,10 @@ public class ParticleSimulation{
         timeline = new Timeline(
                 new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
                     particles.parallelStream().forEach(particle -> particle.simulate(particles));
+                    clearCanvas();
                     for(Particle particle : particles){
-                        particle.move();
+                        particle.adjustPositionWrapping();
+                        drawParticle(particle);
                     }
                 })
         );
@@ -93,6 +92,19 @@ public class ParticleSimulation{
         initContent();
         update();
     }
+
+    public void drawParticle(Particle particle) {
+        gc.setFill(particle.COLOR);
+        double radius = particle.RADIUS;
+        gc.fillOval(particle.POSITION[0] - radius, particle.POSITION[1] - radius, 2 * radius, 2 * radius);
+    }
+
+    public void clearCanvas(){
+        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+        gc.setFill(javafx.scene.paint.Color.BLACK);
+        gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+    }
+
 
 //    private void pressedKeyHandling(Scene scene){
 //        scene.setOnKeyPressed(e -> {
