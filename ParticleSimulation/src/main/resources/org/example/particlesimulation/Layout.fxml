@@ -3,17 +3,20 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.text.Text?>
+
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.particlesimulation.SidebarController">
     <children>
         <VBox fx:id="leftPane" alignment="TOP_CENTER" prefHeight="400.0" prefWidth="168.0" spacing="10">
             <Button onAction="#handleResetButton">Reset</Button>
             <Button onAction="#handleResetAttractionMatrixButton">Reset Attraction Matrix</Button>
             <Text>Max attraction distance</Text>
-            <Slider fx:id="particleMaxAttractionDistanceSlider" prefHeight="16.0" min="10" max="200" value="100" showTickMarks="true" showTickLabels="true" />
+            <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10" prefHeight="16.0" showTickLabels="true" showTickMarks="true" value="100" />
+            <Spinner fx:id="particleCounterSpinner" min="0" max="1000" initialValue="100" />
+
         </VBox>
         <Canvas fx:id="canvas" height="2.0" />
     </children>

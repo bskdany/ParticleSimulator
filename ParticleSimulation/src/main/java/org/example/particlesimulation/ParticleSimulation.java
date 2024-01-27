@@ -2,74 +2,73 @@ package org.example.particlesimulation;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.SplitPane;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 public class ParticleSimulation{
-    private static final double PARTICLE_RADIUS = 1;
-    private static final int PARTICLES_TO_CREATE = 350 ;
-    private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.GREEN, Color.YELLOW, Color.PINK, Color.ORANGE, Color.CORAL};
+    private double PARTICLE_RADIUS = 1;
+
+    private double[][] ATTRACTION_MATRIX;
+
+    private Map<Color, ParticleSpeciesData> PARTICLE_DATA = new HashMap<Color, ParticleSpeciesData>(){{
+        put(Color.WHITE, new ParticleSpeciesData(100, 1));
+        put(Color.BLUE, new ParticleSpeciesData(100, 1));
+        put(Color.GREEN, new ParticleSpeciesData(100, 1));
+        put(Color.YELLOW, new ParticleSpeciesData(100, 1));
+        put(Color.PINK, new ParticleSpeciesData(100, 1));
+        put(Color.ORANGE,new ParticleSpeciesData(100, 1));
+        put(Color.CORAL,new ParticleSpeciesData(100, 1));
+    }};
     private final List<Particle> particles = new ArrayList<>();
-    private final int PANE_WIDTH;
-    private final int PANE_HEIGHT;
+    private final int CANVAS_WIDTH;
+    private final int CANVAS_HEIGHT;
     private final double UPDATE_RATE_MS;
     private final GraphicsContext gc;
     private Timeline timeline;
 
-    ParticleSimulation(GraphicsContext gc, int paneWidth, int paneHeight, double updateTimeMs){
-        PANE_WIDTH = paneWidth;
-        PANE_HEIGHT = paneHeight;
-        UPDATE_RATE_MS = updateTimeMs;
+    ParticleSimulation(GraphicsContext gc, int canvasWidth, int canvasHeight, double updateTimeMs){
+        this.CANVAS_WIDTH = canvasWidth;
+        this.CANVAS_HEIGHT = canvasHeight;
+        this.UPDATE_RATE_MS = updateTimeMs;
         this.gc = gc;
     }
 
-    public void initContent(){
+    public void initContent() {
+        generateAttractionMatrix();
+        initParticles();
+    }
 
+    public void initParticles(){
         particles.clear();
-
-        double[][] ATTRACTION_MATRIX = generateAttractionMatrix(PARTICLE_SPECIES.length);
-        for (int j = 0; j < PARTICLE_SPECIES.length; j++) {
-            for (int i = 0; i < PARTICLES_TO_CREATE; i++) {
-                particles.add(new Particle((int) (Math.random() * PANE_WIDTH), (int) (Math.random() * PANE_HEIGHT), PARTICLE_RADIUS, PARTICLE_SPECIES[j], 1, j, UPDATE_RATE_MS / 1000,  ATTRACTION_MATRIX[j], 5, PANE_WIDTH, PANE_HEIGHT));
+        for(Map.Entry<Color, ParticleSpeciesData> speciesData : PARTICLE_DATA.entrySet()){
+            for (int i = 0; i < speciesData.getValue().getQuantity(); i++) {
+                createParticle(speciesData.getKey());
             }
         }
     }
-    public static double[][] generateAttractionMatrix(int size){
-        double[][] attractionMatrix = new double[size][size];
+
+    public void generateAttractionMatrix(){
+        int size = PARTICLE_DATA.size();
+        ATTRACTION_MATRIX = new double[size][size];
         DecimalFormat decimalFormat = new DecimalFormat("#.###");
         Random random = new Random();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                attractionMatrix[i][j] =  Double.parseDouble(decimalFormat.format(random.nextGaussian() * 0.5));
+                ATTRACTION_MATRIX[i][j] =  Double.parseDouble(decimalFormat.format(random.nextGaussian() * 0.5));
             }
         }
         for (int i = 0; i < size; i++) {
             System.out.print("{");
             for (int j = 0; j < size; j++) {
-                System.out.print(attractionMatrix[i][j] + ", ");
+                System.out.print(ATTRACTION_MATRIX[i][j] + ", ");
             }
             System.out.println("},");
         }
-        return attractionMatrix;
     }
 
     public void update(){
@@ -95,17 +94,9 @@ public class ParticleSimulation{
 
     public void resetAttractionMatrix(){
         timeline.stop();
-        double[][] newAttractionMatrix = generateAttractionMatrix(PARTICLE_SPECIES.length);
-
-        int counter = 0;
-        int attractionMatrixCounter = 0;
-        for(Particle particle : particles){
-            particle.setRelativeAttractionMatrix(newAttractionMatrix[attractionMatrixCounter]);
-            if(counter > PARTICLES_TO_CREATE){
-                attractionMatrixCounter++;
-                counter = 0;
-            }
-            counter ++;
+        generateAttractionMatrix();
+        for(Particle particle :particles){
+            particle.setRelativeAttractionMatrix(ATTRACTION_MATRIX[particle.SPECIES]);
         }
         timeline.play();
     }
@@ -116,6 +107,54 @@ public class ParticleSimulation{
             particle.setMaxAttractionDistance(distance);
         }
         timeline.play();
+    }
+
+    public void setParticleQuantity(int quantity, Color color){
+        timeline.stop();
+        ParticleSpeciesData speciesData = PARTICLE_DATA.get(color);
+        if(speciesData == null){
+            timeline.play();
+            return;
+        }
+        int particleDifference = Math.abs(quantity - speciesData.getQuantity());
+        System.out.println(quantity);
+
+        if(quantity > speciesData.getQuantity()){
+            for (int i = 0; i < particleDifference; i++) {
+                createParticle(color);
+            }
+        }
+        else if (quantity < speciesData.getQuantity()) {
+            if (speciesData.getQuantity() != 0){
+                for (int i = 0; i < particleDifference; i++) {
+                    Particle particleToRemove = null;
+                    for(Particle particle :particles){
+                        if (particle.COLOR == color){
+                            particleToRemove = particle;
+                            break;
+                        }
+                    }
+                    if(particleToRemove != null){
+                        particles.remove(particleToRemove);
+                    }
+                }
+            }
+        }
+        timeline.play();
+    }
+
+    private void createParticle(Color color){
+        int particleX = (int) (Math.random() * CANVAS_WIDTH);
+        int particleY = (int) (Math.random() * CANVAS_HEIGHT);
+        int particleRadius = PARTICLE_DATA.get(color).getRadius();
+        int species = 0;
+        for(Color key : PARTICLE_DATA.keySet()){
+            if(key == color){
+                break;
+            }
+            species++;
+        }
+        particles.add(new Particle(particleX, particleY, particleRadius, color, 1, species , UPDATE_RATE_MS / 1000,  ATTRACTION_MATRIX[species], 5, CANVAS_WIDTH, CANVAS_HEIGHT));
     }
 
     public void drawParticle(Particle particle) {
@@ -130,26 +169,4 @@ public class ParticleSimulation{
         gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
     }
 
-
-//    private void pressedKeyHandling(Scene scene){
-//        scene.setOnKeyPressed(e -> {
-//            KeyCode keyPressed = e.getCode();
-//
-//            switch (keyPressed) {
-//                case UP:
-//                    particles.getFirst().POSITION[1] += -3;
-//                    break;
-//                case DOWN:
-//                    particles.getFirst().POSITION[1] += 3;
-//                    break;
-//                case LEFT:
-//                    particles.getFirst().POSITION[0] += -3;
-//                    break;
-//                case RIGHT:
-//                    particles.getFirst().POSITION[0] += 3;
-//                    break;
-//            }
-////            testParticle.move();
-//        });
-//    }
 }
