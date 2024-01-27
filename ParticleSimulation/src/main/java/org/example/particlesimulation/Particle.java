@@ -7,7 +7,7 @@ import java.util.List;
 public class Particle {
     private final double CANVAS_WIDTH;
     private final double CANVAS_HEIGTH;
-    private final double[] RELATIVE_ATTRACTION_MATRIX;
+    private double[] RELATIVE_ATTRACTION_MATRIX;
     public double DELTA_TIME;
     public double MASS;
     public int SPECIES;
@@ -15,17 +15,16 @@ public class Particle {
     private final double WRAP_DIRECTION_LIMIT_HEIGHT;
     private final double[] FORCE = {0,0};
     public double[] POSITION = {0, 0};
-    public final double MAX_ATTRACTION_DISTANCE;
-    public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
+    public int MAX_ATTRACTION_DISTANCE;
+    public final double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.4;
     public double[] VELOCITY = {0,0};
     public double FRICTION = 0.05;
     public final double RADIUS;
     private final double[] DELTA_POSITION = {0,0};
     public Color COLOR;
-
     double[] directionVector = new double[2];
-    public double FORCE_MULTIPLIER = 5;
-    Particle(int x, int y, double radius, Color color, double mass, int species, double deltaTime, double[] relativeAttractionMatrix, double paneWidth, double paneHeight){
+    public double FORCE_MULTIPLIER;
+    Particle(int x, int y, double radius, Color color, double mass, int species, double deltaTime, double[] relativeAttractionMatrix, double forceMultiplier, double paneWidth, double paneHeight){
         POSITION[0] = x;
         POSITION[1] = y;
         RADIUS = radius;
@@ -36,7 +35,8 @@ public class Particle {
         RELATIVE_ATTRACTION_MATRIX = relativeAttractionMatrix;
         CANVAS_WIDTH = paneWidth;
         CANVAS_HEIGTH = paneHeight;
-        MAX_ATTRACTION_DISTANCE = radius * 200;
+        MAX_ATTRACTION_DISTANCE = 100;
+        FORCE_MULTIPLIER = forceMultiplier;
 
         WRAP_DIRECTION_LIMIT_WIDTH = CANVAS_WIDTH - MAX_ATTRACTION_DISTANCE - 1; // -1 because you have to consider 0 as a coordinate, so in total you would have CANVAS_WIDTH + 1
         WRAP_DIRECTION_LIMIT_HEIGHT = CANVAS_HEIGTH - MAX_ATTRACTION_DISTANCE -1;
@@ -146,4 +146,13 @@ public class Particle {
         }
         return directionVector;
     }
+
+    public void setRelativeAttractionMatrix(double[] attractionMatrix){
+        this.RELATIVE_ATTRACTION_MATRIX = attractionMatrix;
+    }
+
+    public void setMaxAttractionDistance(int distance){
+        MAX_ATTRACTION_DISTANCE = distance;
+    }
+
 }

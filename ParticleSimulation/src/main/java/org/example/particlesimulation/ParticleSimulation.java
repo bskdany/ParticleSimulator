@@ -25,8 +25,8 @@ import java.util.Random;
 
 
 public class ParticleSimulation{
-    private static final double PARTICLE_RADIUS = 0.5;
-    private static final int PARTICLES_TO_CREATE = 400 ;
+    private static final double PARTICLE_RADIUS = 1;
+    private static final int PARTICLES_TO_CREATE = 350 ;
     private static final Color[] PARTICLE_SPECIES = new Color[]{Color.WHITE, Color.BLUE, Color.GREEN, Color.YELLOW, Color.PINK, Color.ORANGE, Color.CORAL};
     private final List<Particle> particles = new ArrayList<>();
     private final int PANE_WIDTH;
@@ -49,7 +49,7 @@ public class ParticleSimulation{
         double[][] ATTRACTION_MATRIX = generateAttractionMatrix(PARTICLE_SPECIES.length);
         for (int j = 0; j < PARTICLE_SPECIES.length; j++) {
             for (int i = 0; i < PARTICLES_TO_CREATE; i++) {
-                particles.add(new Particle((int) (Math.random() * PANE_WIDTH), (int) (Math.random() * PANE_HEIGHT), PARTICLE_RADIUS, PARTICLE_SPECIES[j], 1, j, UPDATE_RATE_MS / 1000, ATTRACTION_MATRIX[j], PANE_WIDTH, PANE_HEIGHT));
+                particles.add(new Particle((int) (Math.random() * PANE_WIDTH), (int) (Math.random() * PANE_HEIGHT), PARTICLE_RADIUS, PARTICLE_SPECIES[j], 1, j, UPDATE_RATE_MS / 1000,  ATTRACTION_MATRIX[j], 5, PANE_WIDTH, PANE_HEIGHT));
             }
         }
     }
@@ -90,7 +90,32 @@ public class ParticleSimulation{
     public void reset(){
         timeline.stop();
         initContent();
-        update();
+        timeline.play();
+    }
+
+    public void resetAttractionMatrix(){
+        timeline.stop();
+        double[][] newAttractionMatrix = generateAttractionMatrix(PARTICLE_SPECIES.length);
+
+        int counter = 0;
+        int attractionMatrixCounter = 0;
+        for(Particle particle : particles){
+            particle.setRelativeAttractionMatrix(newAttractionMatrix[attractionMatrixCounter]);
+            if(counter > PARTICLES_TO_CREATE){
+                attractionMatrixCounter++;
+                counter = 0;
+            }
+            counter ++;
+        }
+        timeline.play();
+    }
+
+    public void setMaxAttractionDistance(int distance){
+        timeline.stop();
+        for(Particle particle : particles){
+            particle.setMaxAttractionDistance(distance);
+        }
+        timeline.play();
     }
 
     public void drawParticle(Particle particle) {

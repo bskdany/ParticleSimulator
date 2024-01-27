@@ -15,7 +15,7 @@ import java.io.IOException;
 public class ParticleSimulationGUI extends Application {
     private static final int WINDOW_WIDTH = 1400;
     private static final int WINDOW_HEIGHT = 700;
-    private static final int CANVAS_WIDTH = 1300;
+    private static final int CANVAS_WIDTH = 1200;
     private static final int CANVAS_HEIGHT = 700;
     //    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
     private static final double UPDATE_RATE_MS = 33.3; // for 30 fps
@@ -48,6 +48,7 @@ public class ParticleSimulationGUI extends Application {
         simulation.update();
         stage.show();
     }
+
 
 
 
