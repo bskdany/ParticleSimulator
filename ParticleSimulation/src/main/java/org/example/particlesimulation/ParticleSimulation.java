@@ -11,18 +11,16 @@ import java.util.*;
 
 
 public class ParticleSimulation{
-    private double PARTICLE_RADIUS = 1;
-
     private double[][] ATTRACTION_MATRIX;
 
     private Map<Color, ParticleSpeciesData> PARTICLE_DATA = new HashMap<Color, ParticleSpeciesData>(){{
-        put(Color.WHITE, new ParticleSpeciesData(100, 1));
-        put(Color.BLUE, new ParticleSpeciesData(100, 1));
-        put(Color.GREEN, new ParticleSpeciesData(100, 1));
-        put(Color.YELLOW, new ParticleSpeciesData(100, 1));
-        put(Color.PINK, new ParticleSpeciesData(100, 1));
-        put(Color.ORANGE,new ParticleSpeciesData(100, 1));
-        put(Color.CORAL,new ParticleSpeciesData(100, 1));
+        put(Color.WHITE, new ParticleSpeciesData(200, 1));
+        put(Color.BLUE, new ParticleSpeciesData(200, 1));
+        put(Color.GREEN, new ParticleSpeciesData(200, 1));
+        put(Color.YELLOW, new ParticleSpeciesData(200, 1));
+        put(Color.PINK, new ParticleSpeciesData(200, 1));
+        put(Color.ORANGE,new ParticleSpeciesData(200, 1));
+        put(Color.CORAL,new ParticleSpeciesData(200, 1));
     }};
     private final List<Particle> particles = new ArrayList<>();
     private final int CANVAS_WIDTH;
@@ -117,7 +115,6 @@ public class ParticleSimulation{
             return;
         }
         int particleDifference = Math.abs(quantity - speciesData.getQuantity());
-        System.out.println(quantity);
 
         if(quantity > speciesData.getQuantity()){
             for (int i = 0; i < particleDifference; i++) {
@@ -140,6 +137,7 @@ public class ParticleSimulation{
                 }
             }
         }
+        PARTICLE_DATA.get(color).setQuantity(quantity);
         timeline.play();
     }
 
@@ -167,6 +165,14 @@ public class ParticleSimulation{
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
         gc.setFill(javafx.scene.paint.Color.BLACK);
         gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+    }
+
+    public List<Color> getParticleColors(){
+        return new ArrayList<>(PARTICLE_DATA.keySet());
+    }
+
+    public int getParticleQuantity(Color color){
+        return PARTICLE_DATA.get(color).getQuantity();
     }
 
 }
