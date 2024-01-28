@@ -14,10 +14,10 @@
     <children>
         <VBox fx:id="leftPane" alignment="TOP_CENTER" prefHeight="400.0" prefWidth="168.0" spacing="10">
             <ChoiceBox fx:id="speciesChoiceBox" />
-            <Spinner fx:id="particleCounterSpinner" initialValue="100" max="1000" min="0" />
+            <Spinner fx:id="particleCounterSpinner" initialValue="100" max="1000"  min="0"  amountToStepBy="10"/>
          <Separator prefWidth="200.0" />
             <Text>Max attraction distance</Text>
-            <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10" prefHeight="16.0" showTickLabels="true" showTickMarks="true" value="100" />
+            <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10"  showTickLabels="true" showTickMarks="true" value="100" />
             <Button onAction="#handleResetAttractionMatrixButton">Reset Attraction Matrix</Button>
             <Button onAction="#handleResetButton">Reset</Button>
 

@@ -11,8 +11,6 @@ import java.util.*;
 
 
 public class ParticleSimulation{
-    private double[][] ATTRACTION_MATRIX;
-
     private Map<Color, ParticleSpeciesData> PARTICLE_DATA = new HashMap<Color, ParticleSpeciesData>(){{
         put(Color.WHITE, new ParticleSpeciesData(200, 1));
         put(Color.BLUE, new ParticleSpeciesData(200, 1));
@@ -23,16 +21,25 @@ public class ParticleSimulation{
         put(Color.CORAL,new ParticleSpeciesData(200, 1));
     }};
     private final List<Particle> particles = new ArrayList<>();
-    private final int CANVAS_WIDTH;
-    private final int CANVAS_HEIGHT;
-    private final double UPDATE_RATE_MS;
+    public static double[][] ATTRACTION_MATRIX;
+    public static int CANVAS_WIDTH;
+    public static int CANVAS_HEIGHT;
+    public static double UPDATE_RATE_MS;
     private final GraphicsContext gc;
     private Timeline timeline;
+    public static double FRICTION = 0.04;
+    public static double MAX_ATTRACTION_DISTANCE = 100;
+    public static double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
+    public static double FORCE_MULTIPLIER = 5;
+    public static double WRAP_DIRECTION_LIMIT_HEIGHT;
+    public static double WRAP_DIRECTION_LIMIT_WIDTH;
 
     ParticleSimulation(GraphicsContext gc, int canvasWidth, int canvasHeight, double updateTimeMs){
-        this.CANVAS_WIDTH = canvasWidth;
-        this.CANVAS_HEIGHT = canvasHeight;
-        this.UPDATE_RATE_MS = updateTimeMs;
+        CANVAS_WIDTH = canvasWidth;
+        CANVAS_HEIGHT = canvasHeight;
+        UPDATE_RATE_MS = updateTimeMs;
+        WRAP_DIRECTION_LIMIT_WIDTH = CANVAS_WIDTH - MAX_ATTRACTION_DISTANCE - 1;
+        WRAP_DIRECTION_LIMIT_HEIGHT = CANVAS_HEIGHT - MAX_ATTRACTION_DISTANCE - 1;
         this.gc = gc;
     }
 
@@ -93,17 +100,12 @@ public class ParticleSimulation{
     public void resetAttractionMatrix(){
         timeline.stop();
         generateAttractionMatrix();
-        for(Particle particle :particles){
-            particle.setRelativeAttractionMatrix(ATTRACTION_MATRIX[particle.SPECIES]);
-        }
         timeline.play();
     }
 
     public void setMaxAttractionDistance(int distance){
         timeline.stop();
-        for(Particle particle : particles){
-            particle.setMaxAttractionDistance(distance);
-        }
+        MAX_ATTRACTION_DISTANCE = distance;
         timeline.play();
     }
 
@@ -152,7 +154,7 @@ public class ParticleSimulation{
             }
             species++;
         }
-        particles.add(new Particle(particleX, particleY, particleRadius, color, 1, species , UPDATE_RATE_MS / 1000,  ATTRACTION_MATRIX[species], 5, CANVAS_WIDTH, CANVAS_HEIGHT));
+        particles.add(new Particle(particleX, particleY, particleRadius, color, 1, species));
     }
 
     public void drawParticle(Particle particle) {
