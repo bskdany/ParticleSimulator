@@ -7,8 +7,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -39,7 +41,6 @@ public class SidebarController {
 
     private Map<Color, String> colorMap = createColorMap();
     DecimalFormat decimalFormat = new DecimalFormat("0.00");
-
 
     public void setMainApp(ParticleSimulation simulation){
         this.simulation = simulation;

@@ -2,21 +2,24 @@ package org.example.particlesimulation;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 
 public class ParticleSimulationGUI extends Application {
-    private static final int WINDOW_WIDTH = 1400;
-    private static final int WINDOW_HEIGHT = 700;
-    private static final int CANVAS_WIDTH = 1200;
-    private static final int CANVAS_HEIGHT = 700;
+    private static final double WINDOW_WIDTH = 1400;
+    private static final double WINDOW_HEIGHT = 700;
+    private static final double CANVAS_WIDTH = 1200;
+    private static final double CANVAS_HEIGHT = 700;
     //    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
     private static final double UPDATE_RATE_MS = 33.3; // for 30 fps
 
@@ -44,7 +47,7 @@ public class ParticleSimulationGUI extends Application {
 
         Scene scene = new Scene(main, WINDOW_WIDTH, WINDOW_HEIGHT);
         stage.setScene(scene);
-//        pressedKeyHandling(scene);
+        stage.setMaximized(true);
         simulation.update();
         stage.show();
     }

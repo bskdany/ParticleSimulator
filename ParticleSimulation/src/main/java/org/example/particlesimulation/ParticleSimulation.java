@@ -22,8 +22,8 @@ public class ParticleSimulation{
     }};
     private final List<Particle> particles = new ArrayList<>();
     public static double[][] ATTRACTION_MATRIX;
-    public static int CANVAS_WIDTH;
-    public static int CANVAS_HEIGHT;
+    public static double CANVAS_WIDTH;
+    public static double CANVAS_HEIGHT;
     public static double UPDATE_RATE_MS;
     private final GraphicsContext gc;
     private Timeline timeline;
@@ -34,7 +34,7 @@ public class ParticleSimulation{
     public static double WRAP_DIRECTION_LIMIT_HEIGHT;
     public static double WRAP_DIRECTION_LIMIT_WIDTH;
 
-    ParticleSimulation(GraphicsContext gc, int canvasWidth, int canvasHeight, double updateTimeMs){
+    ParticleSimulation(GraphicsContext gc, double canvasWidth, double canvasHeight, double updateTimeMs){
         CANVAS_WIDTH = canvasWidth;
         CANVAS_HEIGHT = canvasHeight;
         UPDATE_RATE_MS = updateTimeMs;
@@ -67,13 +67,13 @@ public class ParticleSimulation{
                 ATTRACTION_MATRIX[i][j] =  Double.parseDouble(decimalFormat.format(random.nextGaussian() * 0.5));
             }
         }
-        for (int i = 0; i < size; i++) {
-            System.out.print("{");
-            for (int j = 0; j < size; j++) {
-                System.out.print(ATTRACTION_MATRIX[i][j] + ", ");
-            }
-            System.out.println("},");
-        }
+//        for (int i = 0; i < size; i++) {
+//            System.out.print("{");
+//            for (int j = 0; j < size; j++) {
+//                System.out.print(ATTRACTION_MATRIX[i][j] + ", ");
+//            }
+//            System.out.println("},");
+//        }
     }
 
     public void update(){

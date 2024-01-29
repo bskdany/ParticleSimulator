@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Text?>
 
 <?import javafx.scene.control.Label?>
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.particlesimulation.SidebarController">
+<Pane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.particlesimulation.SidebarController">
     <children>
         <VBox fx:id="leftPane" alignment="TOP_CENTER" prefHeight="400.0" prefWidth="168.0" spacing="10">
             <ChoiceBox fx:id="speciesChoiceBox" />
