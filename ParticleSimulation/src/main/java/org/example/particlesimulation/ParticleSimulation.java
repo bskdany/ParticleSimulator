@@ -2,6 +2,7 @@ package org.example.particlesimulation;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -34,13 +35,13 @@ public class ParticleSimulation{
     public static double WRAP_DIRECTION_LIMIT_HEIGHT;
     public static double WRAP_DIRECTION_LIMIT_WIDTH;
 
-    ParticleSimulation(GraphicsContext gc, double canvasWidth, double canvasHeight, double updateTimeMs){
-        CANVAS_WIDTH = canvasWidth;
-        CANVAS_HEIGHT = canvasHeight;
+    ParticleSimulation(Canvas canvas, double updateTimeMs){
+        this.gc = canvas.getGraphicsContext2D();
         UPDATE_RATE_MS = updateTimeMs;
+        CANVAS_WIDTH = canvas.getWidth();
+        CANVAS_HEIGHT = canvas.getHeight();
         WRAP_DIRECTION_LIMIT_WIDTH = CANVAS_WIDTH - MAX_ATTRACTION_DISTANCE - 1;
         WRAP_DIRECTION_LIMIT_HEIGHT = CANVAS_HEIGHT - MAX_ATTRACTION_DISTANCE - 1;
-        this.gc = gc;
     }
 
     public void initContent() {
@@ -198,4 +199,5 @@ public class ParticleSimulation{
     public double getMinAttractionRelativeDistance(){
         return ATTRACTION_RELATIVE_DISTANCE_CUTOUT;
     }
+
 }
