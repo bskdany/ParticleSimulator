@@ -10,14 +10,28 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.Label?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.particlesimulation.SidebarController">
     <children>
         <VBox fx:id="leftPane" alignment="TOP_CENTER" prefHeight="400.0" prefWidth="168.0" spacing="10">
             <ChoiceBox fx:id="speciesChoiceBox" />
             <Spinner fx:id="particleCounterSpinner" initialValue="100" max="1000"  min="0"  amountToStepBy="10"/>
+
          <Separator prefWidth="200.0" />
-            <Text>Max attraction distance</Text>
+            <Label fx:id="particleMaxAttractionDistanceLabel" text="Max attraction distance: 100"/>
             <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10"  showTickLabels="true" showTickMarks="true" value="100" />
+        <Separator prefWidth="200.0" />
+            <Label fx:id="particleMinAttractionLabel" text="Min attraction distance: 0.30"/>
+            <Slider fx:id="particleMinAttractionSlider"  min="0"  max="1" value="0.30" showTickLabels="true" showTickMarks="true"  />
+        <Separator prefWidth="200.0" />
+            <Label fx:id="particleFrictionLabel" text="Friction: 0.04"/>
+            <Slider fx:id="particleFrictionSlider" max="1" min="0"  value="0.04"  showTickLabels="true" showTickMarks="true" />
+        <Separator prefWidth="200.0" />
+            <Label fx:id="particleForceMultiplierLabel" text="Force multiplier: 5"/>
+            <Slider fx:id="particleForceMultiplierSlider" min="0"  max="20" value="5"  showTickLabels="true" showTickMarks="true" />
+        <Separator prefWidth="200.0" />
+
+
             <Button onAction="#handleResetAttractionMatrixButton">Reset Attraction Matrix</Button>
             <Button onAction="#handleResetButton">Reset</Button>
 

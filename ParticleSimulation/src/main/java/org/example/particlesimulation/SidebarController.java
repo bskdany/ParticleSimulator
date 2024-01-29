@@ -3,20 +3,34 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.paint.Color;
 
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class SidebarController {
     private ParticleSimulation simulation;
     private Color selectedSpecies;
-
     @FXML
     private Slider particleMaxAttractionDistanceSlider;
-
+    @FXML
+    private Label particleMaxAttractionDistanceLabel;
+    @FXML
+    private Slider particleFrictionSlider;
+    @FXML
+    private Label particleFrictionLabel;
+    @FXML
+    private Slider particleForceMultiplierSlider;
+    @FXML
+    private Label particleForceMultiplierLabel;
+    @FXML
+    private Slider particleMinAttractionSlider;
+    @FXML
+    private Label particleMinAttractionLabel;
     @FXML
     private ChoiceBox<String> speciesChoiceBox;
 
@@ -24,6 +38,7 @@ public class SidebarController {
     private Spinner<Integer> particleCounterSpinner;
 
     private Map<Color, String> colorMap = createColorMap();
+    DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
 
     public void setMainApp(ParticleSimulation simulation){
@@ -55,10 +70,35 @@ public class SidebarController {
             particleCounterSpinner.getValueFactory().setValue(simulation.getParticleQuantity(selectedSpecies));
         });
 
+        // MAX ATTRACTION DISTANCE
         particleMaxAttractionDistanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             simulation.setMaxAttractionDistance(newValue.intValue());
+            particleMaxAttractionDistanceLabel.setText("Max attraction distance: " + newValue.intValue());
         });
 
+        // MIN ATTRACTION DISTANCE
+        particleMinAttractionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            double val = Double.parseDouble(decimalFormat.format(newValue));
+            simulation.setMinAttractionDistance(val);
+            particleMinAttractionLabel.setText("Min attraction distance: " + decimalFormat.format(newValue));
+        });
+
+        // FRICTION
+        particleFrictionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            double val = Double.parseDouble(decimalFormat.format(newValue));
+            simulation.setFriction(val);
+            particleFrictionLabel.setText("Friction: " + val);
+        });
+
+        // FORCE MULTIPLIER
+        particleForceMultiplierSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            simulation.setForceMultiplier(newValue.intValue());
+            particleForceMultiplierLabel.setText("Force multiplier: " + newValue.intValue());
+        });
+
+
+
+        // PARTICLE COUNT
         particleCounterSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             simulation.setParticleQuantity(newValue.intValue(), selectedSpecies);
         });

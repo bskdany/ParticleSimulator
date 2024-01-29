@@ -5,22 +5,26 @@ import javafx.scene.paint.Color;
 import java.util.List;
 
 public class Particle {
+    public double[] POSITION;
+    public final double RADIUS;
+    public Color COLOR;
     public double MASS;
     public int SPECIES;
-    private final double[] FORCE = {0,0};
-    public double[] POSITION = {0, 0};
-    public double[] VELOCITY = {0,0};
-    public final double RADIUS;
-    private final double[] DELTA_POSITION = {0,0};
-    public Color COLOR;
+    private final double[] DELTA_POSITION;
+    private final double[] FORCE;
+    public double[] VELOCITY;
+
     double[] directionVector = new double[2];
     Particle(int x, int y, double radius, Color color, double mass, int species){
-        POSITION[0] = x;
-        POSITION[1] = y;
-        RADIUS = radius;
-        COLOR = color;
-        MASS = mass;
-        SPECIES = species;
+        this.POSITION = new double[]{x,y};
+        this.RADIUS = radius;
+        this.COLOR = color;
+        this.MASS = mass;
+        this.SPECIES = species;
+        this.DELTA_POSITION = new double[]{0, 0};
+        this.FORCE = new double[]{0,0};
+        this.VELOCITY = new double[]{0,0};
+
     }
 
     public void adjustPositionWrapping(){

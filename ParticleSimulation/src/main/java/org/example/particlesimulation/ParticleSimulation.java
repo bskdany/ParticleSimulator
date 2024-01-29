@@ -29,8 +29,8 @@ public class ParticleSimulation{
     private Timeline timeline;
     public static double FRICTION = 0.04;
     public static double MAX_ATTRACTION_DISTANCE = 100;
-    public static double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
-    public static double FORCE_MULTIPLIER = 5;
+    public static double ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3; // 30%
+    public static int FORCE_MULTIPLIER = 5;
     public static double WRAP_DIRECTION_LIMIT_HEIGHT;
     public static double WRAP_DIRECTION_LIMIT_WIDTH;
 
@@ -104,9 +104,7 @@ public class ParticleSimulation{
     }
 
     public void setMaxAttractionDistance(int distance){
-        timeline.stop();
         MAX_ATTRACTION_DISTANCE = distance;
-        timeline.play();
     }
 
     public void setParticleQuantity(int quantity, Color color){
@@ -177,4 +175,27 @@ public class ParticleSimulation{
         return PARTICLE_DATA.get(color).getQuantity();
     }
 
+    public void setFriction(double value){
+        FRICTION = value;
+    }
+
+    public double getFriction(){
+        return FRICTION;
+    }
+
+    public void setForceMultiplier(int value){
+        FORCE_MULTIPLIER = value;
+    }
+
+    public int getForceMultiplier(){
+        return FORCE_MULTIPLIER;
+    }
+
+    public void setMinAttractionDistance(double value){
+        ATTRACTION_RELATIVE_DISTANCE_CUTOUT = value;
+    }
+
+    public double getMinAttractionRelativeDistance(){
+        return ATTRACTION_RELATIVE_DISTANCE_CUTOUT;
+    }
 }
