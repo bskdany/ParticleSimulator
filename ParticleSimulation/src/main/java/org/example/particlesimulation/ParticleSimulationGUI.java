@@ -6,7 +6,9 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
@@ -16,12 +18,7 @@ import java.io.IOException;
 
 
 public class ParticleSimulationGUI extends Application {
-    private static final double WINDOW_WIDTH = 1400;
-    private static final double WINDOW_HEIGHT = 700;
-
-    private static final double SIDEBAR_WIDTH = 200;
-    private static final double CANVAS_WIDTH = 1200;
-    private static final double CANVAS_HEIGHT = 700;
+    private static final double SIDEBAR_WIDTH = 300;
     //    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
     private static final double UPDATE_RATE_MS = 33.3; // for 30 fps
 
@@ -39,10 +36,18 @@ public class ParticleSimulationGUI extends Application {
         sideBar.setPrefHeight(bounds.getHeight());
         sideBar.setPrefWidth(SIDEBAR_WIDTH);
 
+        VBox canvasContainer = (VBox) loader.getNamespace().get("canvasContainer");
+        canvasContainer.setLayoutX(SIDEBAR_WIDTH);
+        canvasContainer.setPrefHeight(bounds.getHeight());
+
         Canvas canvas = (Canvas) loader.getNamespace().get("canvas");
         canvas.setWidth(bounds.getWidth() - SIDEBAR_WIDTH);
-        canvas.setHeight(bounds.getHeight());
-        canvas.setLayoutX(SIDEBAR_WIDTH);
+        // HARDCODE THE FUCKING  HEIGHT OFFSET FROM THE BOTTOM BECAUSE THERE IS NO ABSOLUTE RELIABLE WAY
+        // TO DO IT NORMALLY. SCENE HEIGHT DOES NOT INCLUDE THE TOP BAR, THERE IS NO ABSOLUTE WAY OF GETTING THE TOP
+        // BAR HEIGHT. YOU CAN SET A LISTENER OF THE SCENE HEIGHT PROPERTY BUT IT DOES NOT FUCKING TRIGGER ON WINDOW
+        // MAXIMISE SO I GIVE UP FUCK YOU
+        double heightVooDooOffset = 40;
+        canvas.setHeight(bounds.getHeight() - heightVooDooOffset);
 
         ParticleSimulation simulation = new ParticleSimulation(canvas, UPDATE_RATE_MS);
 
