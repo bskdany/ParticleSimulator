@@ -18,7 +18,7 @@ import java.io.IOException;
 
 
 public class ParticleSimulationGUI extends Application {
-    private static final double SIDEBAR_WIDTH = 300;
+    private static final double SIDEBAR_WIDTH = 200;
     //    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
     private static final double UPDATE_RATE_MS = 33.3; // for 30 fps
 
@@ -38,7 +38,6 @@ public class ParticleSimulationGUI extends Application {
 
         VBox canvasContainer = (VBox) loader.getNamespace().get("canvasContainer");
         canvasContainer.setLayoutX(SIDEBAR_WIDTH);
-        canvasContainer.setPrefHeight(bounds.getHeight());
 
         Canvas canvas = (Canvas) loader.getNamespace().get("canvas");
         canvas.setWidth(bounds.getWidth() - SIDEBAR_WIDTH);
@@ -50,11 +49,9 @@ public class ParticleSimulationGUI extends Application {
         canvas.setHeight(bounds.getHeight() - heightVooDooOffset);
 
         ParticleSimulation simulation = new ParticleSimulation(canvas, UPDATE_RATE_MS);
-
+        simulation.initContent();
         SidebarController controller = loader.getController();
         controller.setMainApp(simulation);
-
-        simulation.initContent();
 
         Scene scene = new Scene(main, bounds.getWidth(), bounds.getHeight());
         stage.setScene(scene);
