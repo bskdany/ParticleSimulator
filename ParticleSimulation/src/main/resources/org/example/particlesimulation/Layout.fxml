@@ -28,7 +28,7 @@
                  <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="300.0">
                      <VBox alignment="TOP_CENTER" prefWidth="194.0" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
                          <children>
-                             <GridPane gridLinesVisible="true" layoutX="9.0" layoutY="14.0" prefHeight="192.0" prefWidth="192.0">
+                             <GridPane fx:id="attractionGrid" gridLinesVisible="true" layoutX="9.0" layoutY="14.0" prefHeight="192.0" prefWidth="192.0">
                                  <columnConstraints>
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />

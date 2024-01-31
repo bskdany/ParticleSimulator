@@ -14,13 +14,13 @@ import java.util.*;
 
 public class ParticleSimulation{
     private Map<Color, ParticleSpeciesData> PARTICLE_DATA = new HashMap<Color, ParticleSpeciesData>(){{
-        put(Color.WHITE, new ParticleSpeciesData(200, 1));
-        put(Color.BLUE, new ParticleSpeciesData(200, 1));
-        put(Color.GREEN, new ParticleSpeciesData(200, 1));
-        put(Color.YELLOW, new ParticleSpeciesData(200, 1));
+        put(Color.RED, new ParticleSpeciesData(200, 1));
         put(Color.PINK, new ParticleSpeciesData(200, 1));
-        put(Color.ORANGE,new ParticleSpeciesData(200, 1));
-        put(Color.CORAL,new ParticleSpeciesData(200, 1));
+        put(Color.ORANGE, new ParticleSpeciesData(200, 1));
+        put(Color.YELLOW, new ParticleSpeciesData(200, 1));
+        put(Color.LIME, new ParticleSpeciesData(200, 1));
+        put(Color.CYAN,new ParticleSpeciesData(200, 1));
+        put(Color.WHITE,new ParticleSpeciesData(200, 1));
     }};
     private final List<Particle> particles = new ArrayList<>();
     public static double[][] ATTRACTION_MATRIX;
@@ -62,7 +62,7 @@ public class ParticleSimulation{
     public void generateAttractionMatrix(){
         int size = PARTICLE_DATA.size();
         ATTRACTION_MATRIX = new double[size][size];
-        DecimalFormat decimalFormat = new DecimalFormat("#.###");
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
         Random random = new Random();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {

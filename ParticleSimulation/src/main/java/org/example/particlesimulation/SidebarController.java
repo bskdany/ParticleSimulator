@@ -3,8 +3,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.lang.reflect.Field;
@@ -31,6 +33,7 @@ public class SidebarController {
     // PARTICLE TAB
     @FXML private ChoiceBox<String> speciesChoiceBox;       // SPECIES CHOICE BOX
     @FXML private Spinner<Integer> particleCounterSpinner;  // PARTICLE COUNTER
+    @FXML private GridPane attractionGrid;
 
     private ParticleSimulation simulation;
     private Map<Color, String> colorMap = Util.createColorMap();
@@ -54,6 +57,7 @@ public class SidebarController {
     @FXML
     private void handleResetAttractionMatrixButton(){
         simulation.resetAttractionMatrix();
+        generateAttractionGrid();
     }
 
     @FXML private void handleStopButton(){
@@ -118,5 +122,25 @@ public class SidebarController {
         particleCounterSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             simulation.setParticleQuantity(newValue.intValue(), selectedSpecies);
         });
+
+        generateAttractionGrid();
+    }
+
+    private void generateAttractionGrid(){
+        // ATTRACTION GRID
+        for (int i = 0 ; i < ParticleSimulation.ATTRACTION_MATRIX.length ; i++) {
+            for (int j = 0; j < ParticleSimulation.ATTRACTION_MATRIX.length; j++) {
+                double value = ParticleSimulation.ATTRACTION_MATRIX[i][j];
+
+                Label label = new Label(String.valueOf(value));
+                label.setFont(new Font(9));
+                Color backgroundColor = Util.mapValueToColor(value);
+                label.setBackground(Background.fill(backgroundColor));
+                label.setPrefSize(100,100);
+
+                GridPane.setConstraints(label, i+1, j+1);
+                attractionGrid.getChildren().add(label);
+            }
+        }
     }
 }

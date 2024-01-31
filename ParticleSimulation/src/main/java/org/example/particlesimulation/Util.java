@@ -9,6 +9,13 @@ import java.util.Objects;
 
 public class Util {
 
+    public static Color mapValueToColor(double value) {
+        double minHue = 0;
+        double maxHue = 100;
+        double mappedHue = (value + 1) / 2 * (maxHue - minHue) + minHue;
+        return Color.hsb(Math.max(0, Math.min(120, mappedHue)), 1.0, 1.0);
+    }
+
     // based on a color like "white" returns Color.WHITE from the colors class
     public static Color nameToColor(String string, Map<Color, String> colorMap){
         for(Map.Entry<Color, String> entry :colorMap.entrySet()){
