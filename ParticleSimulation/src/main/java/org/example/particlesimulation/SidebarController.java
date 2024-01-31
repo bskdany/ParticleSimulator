@@ -47,13 +47,21 @@ public class SidebarController {
     }
 
     @FXML
-    protected void handleResetButton() {
+    private void handleResetButton() {
         simulation.reset();
     }
 
     @FXML
-    protected void handleResetAttractionMatrixButton(){
+    private void handleResetAttractionMatrixButton(){
         simulation.resetAttractionMatrix();
+    }
+
+    @FXML private void handleStopButton(){
+        simulation.stop();
+    }
+
+    @FXML private void handleStartButton(){
+        simulation.start();
     }
 
     private void setupGeneralSimulationTab(){

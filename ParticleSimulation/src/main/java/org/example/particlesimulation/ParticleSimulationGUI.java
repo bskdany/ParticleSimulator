@@ -18,7 +18,7 @@ import java.io.IOException;
 
 
 public class ParticleSimulationGUI extends Application {
-    private static final double SIDEBAR_WIDTH = 200;
+    private static final double SIDEBAR_WIDTH = 250;
     //    private static final double UPDATE_RATE_MS = 16.7; // for 60 fps
     private static final double UPDATE_RATE_MS = 33.3; // for 30 fps
 

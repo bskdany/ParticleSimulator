@@ -1,5 +1,6 @@
 package org.example.particlesimulation;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
@@ -171,33 +172,27 @@ public class ParticleSimulation{
     public List<Color> getParticleColors(){
         return new ArrayList<>(PARTICLE_DATA.keySet());
     }
-
     public int getParticleQuantity(Color color){
         return PARTICLE_DATA.get(color).getQuantity();
     }
-
     public void setFriction(double value){
         FRICTION = value;
     }
-
-    public double getFriction(){
-        return FRICTION;
-    }
-
     public void setForceMultiplier(int value){
         FORCE_MULTIPLIER = value;
     }
-
-    public int getForceMultiplier(){
-        return FORCE_MULTIPLIER;
-    }
-
     public void setMinAttractionDistance(double value){
         ATTRACTION_RELATIVE_DISTANCE_CUTOUT = value;
     }
-
-    public double getMinAttractionRelativeDistance(){
-        return ATTRACTION_RELATIVE_DISTANCE_CUTOUT;
+    public void stop(){
+        if(timeline.getStatus() == Animation.Status.RUNNING){
+            timeline.pause();
+        }
     }
 
+    public void start(){
+        if(timeline.getStatus() == Animation.Status.PAUSED){
+            timeline.play();
+        }
+    }
 }

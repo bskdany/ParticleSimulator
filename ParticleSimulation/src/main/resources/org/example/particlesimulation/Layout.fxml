@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
@@ -17,17 +18,17 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.particlesimulation.SidebarController">
+<HBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.particlesimulation.SidebarController">
     <children>
-        <VBox fx:id="leftPane" alignment="TOP_CENTER" prefWidth="200.0" spacing="15">
+        <VBox fx:id="leftPane" alignment="TOP_CENTER" prefHeight="600.0" prefWidth="250.0" spacing="15">
          <TabPane prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
            <tabs>
              <Tab text="Particle">
                <content>
-                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="200.0">
-                     <VBox alignment="TOP_CENTER" prefWidth="180.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="300.0">
+                     <VBox alignment="TOP_CENTER" prefWidth="194.0" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
                          <children>
-                             <GridPane gridLinesVisible="true" layoutX="9.0" layoutY="14.0" prefHeight="174.0" prefWidth="183.0">
+                             <GridPane gridLinesVisible="true" layoutX="9.0" layoutY="14.0" prefHeight="192.0" prefWidth="192.0">
                                  <columnConstraints>
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
@@ -66,18 +67,19 @@
                                  </children>
                              </GridPane>
                              <Button layoutX="29.0" layoutY="195.0" onAction="#handleResetAttractionMatrixButton" text="Recreate Attraction">Reset Attraction Matrix</Button>
-                              <Pane prefHeight="36.0" prefWidth="180.0">
+                              <Separator prefWidth="200.0" />
+                              <Pane nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0" prefWidth="180.0">
                                  <children>
-                                   <CheckBox layoutY="-2.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Select all" />
-                                   <ChoiceBox fx:id="speciesChoiceBox" layoutX="116.0" layoutY="7.0" />
+                                   <CheckBox layoutY="-12.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Select all" />
+                                   <ChoiceBox fx:id="speciesChoiceBox" layoutX="90.0" layoutY="-2.0" />
                                  </children>
                               </Pane>
-                             <VBox layoutX="1.0" layoutY="266.0" prefHeight="168.0" prefWidth="180.0" spacing="2.0">
+                             <VBox layoutX="1.0" layoutY="266.0" prefHeight="198.0" prefWidth="180.0" spacing="7.0">
                                  <children>
                                      <Pane prefHeight="20.0" prefWidth="180.0">
                                          <children>
-                                             <Label layoutX="128.0" text="Attract" />
-                                             <Label layoutX="8.0" text="Repulse" />
+                                             <Label layoutX="135.0" layoutY="1.0" text="Attract" />
+                                             <Label layoutY="1.0" text="Repulse" />
                                          </children>
                                      </Pane>
                                      <Slider blockIncrement="0.02" max="1.0" min="-1.0" style="-fx-background-color: red;" />
@@ -105,21 +107,41 @@
                <content>
                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="469.0" prefWidth="200.0">
                         <children>
-                                  <Slider fx:id="particleMaxAttractionDistanceSlider" layoutX="31.0" layoutY="22.0" max="200" min="10" showTickLabels="true" showTickMarks="true" value="100" />
-                                  <Label fx:id="particleMaxAttractionDistanceLabel" layoutX="6.0" layoutY="6.0" text="Max attraction distance: 100" />
-                                  <Label fx:id="particleMinAttractionLabel" layoutX="7.0" layoutY="69.0" text="Min attraction distance: 0.30" />
-                                  <Slider fx:id="particleMinAttractionSlider" layoutX="31.0" layoutY="85.0" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.30" />
-                                  <Label fx:id="particleFrictionLabel" layoutX="58.0" layoutY="115.0" text="Friction: 0.04" />
-                                  <Slider fx:id="particleFrictionSlider" layoutX="31.0" layoutY="131.0" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.04" />
-                                  <Label fx:id="particleForceMultiplierLabel" layoutX="42.0" layoutY="161.0" text="Force multiplier: 5" />
-                                  <Slider fx:id="particleForceMultiplierSlider" layoutX="32.0" layoutY="177.0" max="20" min="0" showTickLabels="true" showTickMarks="true" value="5" />
-                           <HBox alignment="CENTER" layoutY="507.0" prefHeight="56.0" prefWidth="200.0">
+                           <VBox prefHeight="600.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                               <children>
-                                    <Button mnemonicParsing="false" text="Stop" />
-                                    <Button mnemonicParsing="false" text="Start" />
-                                    <Button alignment="CENTER" onAction="#handleResetButton" text="Reset" />
+                                 <VBox alignment="CENTER">
+                                    <children>
+                                              <Label fx:id="particleMaxAttractionDistanceLabel" text="Max attraction distance: 100" />
+                                              <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10" showTickLabels="true" showTickMarks="true" value="100" />
+                                    </children>
+                                 </VBox>
+                                 <VBox>
+                                    <children>
+                                              <Label fx:id="particleMinAttractionLabel" text="Min attraction distance: 0.30" />
+                                              <Slider fx:id="particleMinAttractionSlider" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.30" />
+                                    </children>
+                                 </VBox>
+                                 <VBox>
+                                    <children>
+                                              <Label fx:id="particleForceMultiplierLabel" text="Force multiplier: 5" />
+                                              <Slider fx:id="particleForceMultiplierSlider" max="20" min="0" showTickLabels="true" showTickMarks="true" value="5" />
+                                    </children>
+                                 </VBox>
+                                 <VBox>
+                                    <children>
+                                              <Label fx:id="particleFrictionLabel" text="Friction: 0.04" />
+                                              <Slider fx:id="particleFrictionSlider" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.04" />
+                                    </children>
+                                 </VBox>
+                                 <HBox alignment="CENTER">
+                                    <children>
+                                          <Button mnemonicParsing="false" onAction="#handleStopButton" text="Stop" />
+                                          <Button mnemonicParsing="false" onAction="#handleStartButton" text="Start" />
+                                          <Button alignment="CENTER" onAction="#handleResetButton" text="Reset" />
+                                    </children>
+                                 </HBox>
                               </children>
-                           </HBox>
+                           </VBox>
                         </children>
                      </AnchorPane>
                </content>
@@ -127,12 +149,13 @@
            </tabs>
          </TabPane>
         </VBox>
+      <Separator orientation="VERTICAL" prefHeight="200.0" />
 
         <VBox fx:id="canvasContainer" layoutX="200" prefWidth="600" style="-fx-background-color: black" xmlns:fx="http://javafx.com/fxml">
             <children>
-                <Canvas fx:id="canvas" height="600.0" width="600" />
+                <Canvas fx:id="canvas" height="600.0" width="525.0" />
             </children>
         </VBox>
 
     </children>
-</Pane>
+</HBox>
