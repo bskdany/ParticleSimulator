@@ -16,6 +16,7 @@ import java.util.*;
 
 public class SidebarController {
     private Color selectedSpecies;
+    private Boolean areAllSpeciesSelected;
 
     // SIMULATION TAB
     @FXML private Label particleMaxAttractionDistanceLabel; // MAX ATTRACTION DISTANCE
@@ -32,8 +33,10 @@ public class SidebarController {
 
     // PARTICLE TAB
     @FXML private ChoiceBox<String> speciesChoiceBox;       // SPECIES CHOICE BOX
-    @FXML private Spinner<Integer> particleCounterSpinner;  // PARTICLE COUNTER
+//    @FXML private Spinner<Integer> particleCounterSpinner;  // PARTICLE COUNTER
     @FXML private GridPane attractionGrid;
+    @FXML private CheckBox selectAllCheck;                  // SELECT ALL CHECK BOX
+    @FXML private Label particleCountLabel;
 
     private ParticleSimulation simulation;
     private Map<Color, String> colorMap = Util.createColorMap();
@@ -66,6 +69,16 @@ public class SidebarController {
 
     @FXML private void handleStartButton(){
         simulation.start();
+    }
+
+    @FXML private void increaseParticlesButton(){
+        simulation.setParticleQuantity(10, selectedSpecies, areAllSpeciesSelected);
+        particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
+    }
+
+    @FXML private void decreaseParticlesButton(){
+        simulation.setParticleQuantity(-10, selectedSpecies, areAllSpeciesSelected);
+        particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
     }
 
     private void setupGeneralSimulationTab(){
@@ -106,21 +119,23 @@ public class SidebarController {
         speciesChoiceBox.setItems(FXCollections.observableArrayList(entries));
         // setting default value of the choice box to be the first color
         speciesChoiceBox.setValue(entries.getFirst());
-        // remembering the default species
-        selectedSpecies = colors.getFirst();
 
-        // set the default value of the particle counter as the actual particle count
-        particleCounterSpinner.getValueFactory().setValue(simulation.getParticleQuantity(selectedSpecies));
+        // INITIALIZING FIELDS
+        selectedSpecies = colors.getFirst();
+        areAllSpeciesSelected = false;
+        particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies,areAllSpeciesSelected));
 
         // listener for the choice box
         speciesChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             selectedSpecies = Util.nameToColor(newValue, colorMap);
-            particleCounterSpinner.getValueFactory().setValue(simulation.getParticleQuantity(selectedSpecies));
+            particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
         });
 
-        // PARTICLE COUNT
-        particleCounterSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            simulation.setParticleQuantity(newValue.intValue(), selectedSpecies);
+        // SELECT ALL CHECK
+        selectAllCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            areAllSpeciesSelected = newValue;
+            particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
+            speciesChoiceBox.setDisable(newValue); // disables the color selection when all are selected
         });
 
         generateAttractionGrid();

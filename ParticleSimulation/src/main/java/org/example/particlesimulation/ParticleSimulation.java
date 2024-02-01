@@ -109,23 +109,22 @@ public class ParticleSimulation{
         MAX_ATTRACTION_DISTANCE = distance;
     }
 
-    public void setParticleQuantity(int quantity, Color color){
-        timeline.stop();
+
+    private void handleParticleQuantityCreationHelper(Color color, int quantity){
         ParticleSpeciesData speciesData = PARTICLE_DATA.get(color);
         if(speciesData == null){
-            timeline.play();
             return;
         }
-        int particleDifference = Math.abs(quantity - speciesData.getQuantity());
 
-        if(quantity > speciesData.getQuantity()){
-            for (int i = 0; i < particleDifference; i++) {
+        if(quantity > 0){
+            for (int i = 0; i < quantity; i++) {
                 createParticle(color);
             }
+            PARTICLE_DATA.get(color).setQuantity(speciesData.getQuantity() + quantity);
         }
-        else if (quantity < speciesData.getQuantity()) {
-            if (speciesData.getQuantity() != 0){
-                for (int i = 0; i < particleDifference; i++) {
+        else if (quantity < 0) {
+            if (speciesData.getQuantity() > quantity){
+                for (int i = 0; i > quantity; i--) {
                     Particle particleToRemove = null;
                     for(Particle particle :particles){
                         if (particle.COLOR == color){
@@ -137,9 +136,22 @@ public class ParticleSimulation{
                         particles.remove(particleToRemove);
                     }
                 }
+                PARTICLE_DATA.get(color).setQuantity(speciesData.getQuantity() + quantity);
             }
         }
-        PARTICLE_DATA.get(color).setQuantity(quantity);
+    }
+
+    public void setParticleQuantity(int quantity, Color color, boolean areAllSelected){
+        timeline.stop();
+
+        if(areAllSelected) {
+            for (Color species : PARTICLE_DATA.keySet()) {
+               handleParticleQuantityCreationHelper(species, quantity);
+            }
+        }
+        else{           // if only one particle needs to be removed
+            handleParticleQuantityCreationHelper(color, quantity);
+        }
         timeline.play();
     }
 
@@ -172,8 +184,13 @@ public class ParticleSimulation{
     public List<Color> getParticleColors(){
         return new ArrayList<>(PARTICLE_DATA.keySet());
     }
-    public int getParticleQuantity(Color color){
-        return PARTICLE_DATA.get(color).getQuantity();
+    public int getParticleQuantity(Color color, boolean areAllSpeciesSelected){
+        if(areAllSpeciesSelected){
+            return particles.size();
+        }
+        else{
+            return PARTICLE_DATA.get(color).getQuantity();
+        }
     }
     public void setFriction(double value){
         FRICTION = value;

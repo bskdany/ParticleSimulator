@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -28,7 +27,7 @@
                  <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="300.0">
                      <VBox alignment="TOP_CENTER" prefWidth="194.0" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
                          <children>
-                             <GridPane fx:id="attractionGrid" gridLinesVisible="true" layoutX="9.0" layoutY="14.0" prefHeight="192.0" prefWidth="192.0">
+                             <GridPane fx:id="attractionGrid" gridLinesVisible="true" layoutX="9.0" layoutY="14.0" prefHeight="192.0" prefWidth="192.0" VBox.vgrow="ALWAYS">
                                  <columnConstraints>
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
@@ -68,12 +67,25 @@
                              </GridPane>
                              <Button layoutX="29.0" layoutY="195.0" onAction="#handleResetAttractionMatrixButton" text="Recreate Attraction">Reset Attraction Matrix</Button>
                               <Separator prefWidth="200.0" />
-                              <Pane nodeOrientation="LEFT_TO_RIGHT" prefHeight="20.0" prefWidth="180.0">
+                              <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="180.0" spacing="20.0">
                                  <children>
-                                   <CheckBox layoutY="-12.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Select all" />
+                                   <CheckBox fx:id="selectAllCheck" layoutY="-12.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Select all" />
                                    <ChoiceBox fx:id="speciesChoiceBox" layoutX="90.0" layoutY="-2.0" />
                                  </children>
-                              </Pane>
+                              </HBox>
+                              <VBox prefHeight="69.0" prefWidth="192.0">
+                                 <children>
+                                   <HBox alignment="CENTER">
+                                       <Label fx:id="particleCountLabel" text="Particle count: " />
+                                   </HBox>
+                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="200.0" spacing="20.0">
+                                       <children>
+                                          <Button onAction="#decreaseParticlesButton" mnemonicParsing="false" text="- 10" />
+                                          <Button onAction="#increaseParticlesButton" mnemonicParsing="false" text="+10" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
                              <VBox layoutX="1.0" layoutY="266.0" prefHeight="198.0" prefWidth="180.0" spacing="7.0">
                                  <children>
                                      <Pane prefHeight="20.0" prefWidth="180.0">
@@ -82,21 +94,10 @@
                                              <Label layoutY="1.0" text="Repulse" />
                                          </children>
                                      </Pane>
-                                     <Slider blockIncrement="0.02" max="1.0" min="-1.0" style="-fx-background-color: red;" />
-                                     <Slider blockIncrement="0.02" max="1.0" min="-1.0" style="-fx-background-color: pink;" />
-                                     <Slider blockIncrement="0.02" max="1.0" min="-1.0" style="-fx-background-color: orange;" />
-                                     <Slider blockIncrement="0.02" max="1.0" min="-1.0" style="-fx-background-color: yellow;" />
-                                     <Slider blockIncrement="0.02" max="1.0" min="-1.0" style="-fx-background-color: lime;" />
-                                     <Slider blockIncrement="0.02" max="1.0" min="-1.0" style="-fx-background-color: cyan;" />
-                                     <Slider blockIncrement="0.02" max="1.0" min="-1.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" style="-fx-background-color: white;" />
+                                     <Slider fx:id="particleAttractionValueSlider" blockIncrement="0.02" max="1.0" min="-1.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" />
                                  </children>
                              </VBox>
-                              <Pane prefHeight="51.0" prefWidth="180.0">
-                                 <children>
-                                   <Label layoutX="45.0" layoutY="6.0" text="Particle count" />
-                                   <Spinner fx:id="particleCounterSpinner" amountToStepBy="10" initialValue="100" layoutX="4.0" layoutY="25.0" max="1000" min="0" prefHeight="18.0" prefWidth="170.0" />
-                                 </children>
-                              </Pane>
+
                          </children>
                      </VBox>
 
