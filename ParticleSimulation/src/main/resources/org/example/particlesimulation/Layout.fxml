@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -25,9 +26,9 @@
              <Tab text="Particle">
                <content>
                  <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="300.0">
-                     <VBox alignment="TOP_CENTER" prefWidth="194.0" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                     <VBox alignment="CENTER" prefWidth="194.0" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
                          <children>
-                             <GridPane fx:id="attractionGrid" gridLinesVisible="true" layoutX="9.0" layoutY="14.0" prefHeight="192.0" prefWidth="192.0" VBox.vgrow="ALWAYS">
+                             <GridPane fx:id="attractionGrid" alignment="CENTER" layoutX="9.0" layoutY="14.0" style="-fx-border-color: gray;" VBox.vgrow="ALWAYS">
                                  <columnConstraints>
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
@@ -64,7 +65,21 @@
                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: cyan;" GridPane.rowIndex="6" />
                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.rowIndex="7" />
                                  </children>
+                                 <cursor>
+                                    <Cursor fx:constant="DEFAULT" />
+                                 </cursor>
                              </GridPane>
+                             <VBox layoutX="1.0" layoutY="266.0">
+                                 <children>
+                                     <Pane prefHeight="20.0" prefWidth="180.0">
+                                         <children>
+                                             <Label layoutX="135.0" layoutY="1.0" text="Attract" />
+                                             <Label layoutX="13.0" layoutY="1.0" text="Repulse" />
+                                         </children>
+                                     </Pane>
+                                     <Slider fx:id="particleAttractionValueSlider" blockIncrement="0.02" max="1.0" min="-1.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" />
+                                 </children>
+                             </VBox>
                              <Button layoutX="29.0" layoutY="195.0" onAction="#handleResetAttractionMatrixButton" text="Recreate Attraction">Reset Attraction Matrix</Button>
                               <Separator prefWidth="200.0" />
                               <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="180.0" spacing="20.0">
@@ -80,23 +95,12 @@
                                    </HBox>
                                     <HBox alignment="CENTER" prefHeight="43.0" prefWidth="200.0" spacing="20.0">
                                        <children>
-                                          <Button onAction="#decreaseParticlesButton" mnemonicParsing="false" text="- 10" />
-                                          <Button onAction="#increaseParticlesButton" mnemonicParsing="false" text="+10" />
+                                          <Button mnemonicParsing="false" onAction="#decreaseParticlesButton" text="- 10" />
+                                          <Button mnemonicParsing="false" onAction="#increaseParticlesButton" text="+10" />
                                        </children>
                                     </HBox>
                                  </children>
                               </VBox>
-                             <VBox layoutX="1.0" layoutY="266.0" prefHeight="198.0" prefWidth="180.0" spacing="7.0">
-                                 <children>
-                                     <Pane prefHeight="20.0" prefWidth="180.0">
-                                         <children>
-                                             <Label layoutX="135.0" layoutY="1.0" text="Attract" />
-                                             <Label layoutY="1.0" text="Repulse" />
-                                         </children>
-                                     </Pane>
-                                     <Slider fx:id="particleAttractionValueSlider" blockIncrement="0.02" max="1.0" min="-1.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" />
-                                 </children>
-                             </VBox>
 
                          </children>
                      </VBox>

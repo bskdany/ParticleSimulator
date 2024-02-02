@@ -24,7 +24,6 @@ public class Particle {
         this.DELTA_POSITION = new double[]{0, 0};
         this.FORCE = new double[]{0,0};
         this.VELOCITY = new double[]{0,0};
-
     }
 
     public void adjustPositionWrapping(){

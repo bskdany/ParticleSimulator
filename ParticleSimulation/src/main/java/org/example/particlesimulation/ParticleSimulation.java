@@ -13,7 +13,7 @@ import java.util.*;
 
 
 public class ParticleSimulation{
-    private Map<Color, ParticleSpeciesData> PARTICLE_DATA = new HashMap<Color, ParticleSpeciesData>(){{
+    private Map<Color, ParticleSpeciesData> PARTICLE_DATA = new LinkedHashMap<Color, ParticleSpeciesData>(){{
         put(Color.RED, new ParticleSpeciesData(200, 1));
         put(Color.PINK, new ParticleSpeciesData(200, 1));
         put(Color.ORANGE, new ParticleSpeciesData(200, 1));
@@ -181,9 +181,6 @@ public class ParticleSimulation{
         gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
     }
 
-    public List<Color> getParticleColors(){
-        return new ArrayList<>(PARTICLE_DATA.keySet());
-    }
     public int getParticleQuantity(Color color, boolean areAllSpeciesSelected){
         if(areAllSpeciesSelected){
             return particles.size();
@@ -192,6 +189,11 @@ public class ParticleSimulation{
             return PARTICLE_DATA.get(color).getQuantity();
         }
     }
+
+    public double getAttractionMatrixValueAt(int[] coordinates){
+        return ATTRACTION_MATRIX[coordinates[0]][coordinates[1]];
+    }
+
     public void setFriction(double value){
         FRICTION = value;
     }
@@ -201,6 +203,13 @@ public class ParticleSimulation{
     public void setMinAttractionDistance(double value){
         ATTRACTION_RELATIVE_DISTANCE_CUTOUT = value;
     }
+
+    public void setAttractionMatrixValue(int[] coordinates, double value){
+        stop();
+        ATTRACTION_MATRIX[coordinates[0]][coordinates[1]] = value;
+        start();
+    }
+
     public void stop(){
         if(timeline.getStatus() == Animation.Status.RUNNING){
             timeline.pause();
