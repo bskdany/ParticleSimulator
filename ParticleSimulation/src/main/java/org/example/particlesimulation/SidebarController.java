@@ -30,6 +30,8 @@ public class SidebarController {
     @FXML private Slider particleForceMultiplierSlider;     // FORCE MULTIPLIER
     @FXML private Label particleForceMultiplierLabel;
 
+    @FXML private Slider timelineSlider;
+
     // PARTICLE TAB
     @FXML private ChoiceBox<String> speciesChoiceBox;       // SPECIES CHOICE BOX
 //    @FXML private Spinner<Integer> particleCounterSpinner;  // PARTICLE COUNTER
@@ -42,6 +44,7 @@ public class SidebarController {
 
     private ParticleSimulation simulation;
     private Map<Color, String> colorMap;
+    private boolean disableTimelineValueListener = false;
     DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
     public void setMainApp(ParticleSimulation simulation){
@@ -118,6 +121,22 @@ public class SidebarController {
         particleForceMultiplierSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             simulation.setForceMultiplier(newValue.intValue());
             particleForceMultiplierLabel.setText("Force multiplier: " + newValue.intValue());
+        });
+
+        // TIMELINE SLIDER
+        timelineSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(!disableTimelineValueListener){
+                simulation.peekRewind(100 - newValue.intValue());
+            }
+            else{
+                disableTimelineValueListener = false;
+            }
+        });
+
+        timelineSlider.setOnMouseReleased(e -> {
+            simulation.finalizeRewind();
+            disableTimelineValueListener = true;
+            timelineSlider.setValue(100);
         });
     }
 

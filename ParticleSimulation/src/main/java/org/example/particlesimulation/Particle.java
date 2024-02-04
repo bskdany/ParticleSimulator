@@ -2,6 +2,7 @@ package org.example.particlesimulation;
 
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Particle {
@@ -26,6 +27,19 @@ public class Particle {
         this.VELOCITY = new double[]{0,0};
     }
 
+    Particle(Particle original){
+        this.POSITION = original.POSITION.clone();
+        this.RADIUS = original.RADIUS;
+        this.COLOR = original.COLOR;
+        this.MASS = original.MASS;
+        this.SPECIES = original.SPECIES;
+        this.DELTA_POSITION = original.DELTA_POSITION.clone();
+        this.FORCE = original.FORCE.clone();
+        this.VELOCITY = original.VELOCITY.clone();
+        this.directionVector = new double[]{0,0};
+    }
+
+
     public void adjustPositionWrapping(){
         if(POSITION[0] < 0){
             POSITION[0] += ParticleSimulation.CANVAS_WIDTH + 1;
@@ -33,7 +47,7 @@ public class Particle {
             POSITION[0] -= ParticleSimulation.CANVAS_WIDTH - 1;
         }
         if(POSITION[1] < 0){
-            POSITION[1] += ParticleSimulation.CANVAS_HEIGHT +1;
+            POSITION[1] += ParticleSimulation.CANVAS_HEIGHT + 1;
         } else if (POSITION[1] > ParticleSimulation.CANVAS_HEIGHT) {
             POSITION[1] -= ParticleSimulation.CANVAS_HEIGHT -1;
         }
@@ -129,6 +143,14 @@ public class Particle {
             directionVector[1] = directionVector[1] + ParticleSimulation.CANVAS_HEIGHT +1;
         }
         return directionVector;
+    }
+
+    public static List<Particle> deepCloneList(List<Particle> originalList){
+        List<Particle> newList = new ArrayList<>();
+        for(Particle particle : originalList){
+            newList.add(new Particle(particle));
+        }
+        return newList;
     }
 
 }

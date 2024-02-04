@@ -13,6 +13,7 @@ import java.util.*;
 
 
 public class ParticleSimulation{
+    private final SimulationTimeline simulationTimeline;
     private Map<Color, ParticleSpeciesData> PARTICLE_DATA = new LinkedHashMap<Color, ParticleSpeciesData>(){{
         put(Color.RED, new ParticleSpeciesData(200, 1));
         put(Color.PINK, new ParticleSpeciesData(200, 1));
@@ -22,7 +23,7 @@ public class ParticleSimulation{
         put(Color.CYAN,new ParticleSpeciesData(200, 1));
         put(Color.WHITE,new ParticleSpeciesData(200, 1));
     }};
-    private final List<Particle> particles = new ArrayList<>();
+    private List<Particle> particles = new ArrayList<>();
     public static double[][] ATTRACTION_MATRIX;
     public static double CANVAS_WIDTH;
     public static double CANVAS_HEIGHT;
@@ -43,11 +44,13 @@ public class ParticleSimulation{
         CANVAS_HEIGHT = canvas.getHeight();
         WRAP_DIRECTION_LIMIT_WIDTH = CANVAS_WIDTH - MAX_ATTRACTION_DISTANCE - 1;
         WRAP_DIRECTION_LIMIT_HEIGHT = CANVAS_HEIGHT - MAX_ATTRACTION_DISTANCE - 1;
+        simulationTimeline = new SimulationTimeline();
     }
 
     public void initContent() {
         generateAttractionMatrix();
         initParticles();
+        simulationTimeline.add(new ParticleSimulationData(this.PARTICLE_DATA, Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
     }
 
     public void initParticles(){
@@ -79,16 +82,21 @@ public class ParticleSimulation{
     }
 
     public void update(){
+
         timeline = new Timeline(
-                new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
-                    particles.parallelStream().forEach(particle -> particle.simulate(particles));
-                    clearCanvas();
-                    for(Particle particle : particles){
-                        particle.adjustPositionWrapping();
-                        drawParticle(particle);
-                    }
-                })
+            new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
+                particles.parallelStream().forEach(particle -> particle.simulate(particles));
+                clearCanvas();
+                for(Particle particle : particles){
+                    particle.adjustPositionWrapping();
+                    drawParticle(particle);
+                }
+                if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > simulationTimeline.timeToSaveMs){
+                    simulationTimeline.add(new ParticleSimulationData(this.PARTICLE_DATA, Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
+                }
+            })
         );
+
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
@@ -109,6 +117,29 @@ public class ParticleSimulation{
         MAX_ATTRACTION_DISTANCE = distance;
     }
 
+    public void peekRewind(int offset){
+        stop();
+        ParticleSimulationData data = simulationTimeline.getAt(offset);
+        particles = data.particles;
+        PARTICLE_DATA = data.PARTICLE_DATA;
+        ATTRACTION_MATRIX = data.ATTRACTION_MATRIX;
+        FRICTION = data.FRICTION;
+        MAX_ATTRACTION_DISTANCE = data.MAX_ATTRACTION_DISTANCE;
+        ATTRACTION_RELATIVE_DISTANCE_CUTOUT = data.ATTRACTION_RELATIVE_DISTANCE_CUTOUT;
+        FORCE_MULTIPLIER = data.FORCE_MULTIPLIER;
+        WRAP_DIRECTION_LIMIT_WIDTH = data.WRAP_DIRECTION_LIMIT_WIDTH;
+        WRAP_DIRECTION_LIMIT_HEIGHT = data.WRAP_DIRECTION_LIMIT_HEIGHT;
+
+        clearCanvas();
+        for(Particle p : particles){
+            drawParticle(p);
+        }
+    }
+
+    public void finalizeRewind(){
+        simulationTimeline.setNewAtCurrent();
+        start();
+    }
 
     private void handleParticleQuantityCreationHelper(Color color, int quantity){
         ParticleSpeciesData speciesData = PARTICLE_DATA.get(color);

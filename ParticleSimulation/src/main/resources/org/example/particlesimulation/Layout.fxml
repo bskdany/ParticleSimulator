@@ -23,6 +23,54 @@
         <VBox fx:id="leftPane" alignment="TOP_CENTER" prefHeight="600.0" prefWidth="250.0" spacing="15">
          <TabPane prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
            <tabs>
+             <Tab text="Simulation">
+               <content>
+                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="469.0" prefWidth="200.0">
+                        <children>
+                           <VBox prefHeight="600.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                              <children>
+                                 <VBox alignment="CENTER">
+                                    <children>
+                                              <Label fx:id="particleMaxAttractionDistanceLabel" text="Max attraction distance: 100" />
+                                              <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10" showTickLabels="true" showTickMarks="true" value="100" />
+                                    </children>
+                                 </VBox>
+                                 <VBox>
+                                    <children>
+                                              <Label fx:id="particleMinAttractionLabel" text="Min attraction distance: 0.30" />
+                                              <Slider fx:id="particleMinAttractionSlider" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.30" />
+                                    </children>
+                                 </VBox>
+                                 <VBox>
+                                    <children>
+                                              <Label fx:id="particleForceMultiplierLabel" text="Force multiplier: 5" />
+                                              <Slider fx:id="particleForceMultiplierSlider" max="20" min="0" showTickLabels="true" showTickMarks="true" value="5" />
+                                    </children>
+                                 </VBox>
+                                 <VBox>
+                                    <children>
+                                              <Label fx:id="particleFrictionLabel" text="Friction: 0.04" />
+                                              <Slider fx:id="particleFrictionSlider" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.04" />
+                                    </children>
+                                 </VBox>
+                                 <HBox alignment="CENTER">
+                                    <children>
+                                          <Button mnemonicParsing="false" onAction="#handleStopButton" text="Stop" />
+                                          <Button mnemonicParsing="false" onAction="#handleStartButton" text="Start" />
+                                          <Button alignment="CENTER" onAction="#handleResetButton" text="Reset" />
+                                    </children>
+                                 </HBox>
+                                 <HBox alignment="CENTER" prefHeight="23.0" prefWidth="202.0">
+                                    <children>
+                                       <Slider fx:id="timelineSlider" blockIncrement="1.0" value="100.0" />
+                                    </children>
+                                 </HBox>
+                              </children>
+                           </VBox>
+                        </children>
+                     </AnchorPane>
+               </content>
+             </Tab>
              <Tab text="Particle">
                <content>
                  <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="300.0">
@@ -105,49 +153,6 @@
                          </children>
                      </VBox>
 
-                     </AnchorPane>
-               </content>
-             </Tab>
-             <Tab text="Simulation">
-               <content>
-                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="469.0" prefWidth="200.0">
-                        <children>
-                           <VBox prefHeight="600.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-                              <children>
-                                 <VBox alignment="CENTER">
-                                    <children>
-                                              <Label fx:id="particleMaxAttractionDistanceLabel" text="Max attraction distance: 100" />
-                                              <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10" showTickLabels="true" showTickMarks="true" value="100" />
-                                    </children>
-                                 </VBox>
-                                 <VBox>
-                                    <children>
-                                              <Label fx:id="particleMinAttractionLabel" text="Min attraction distance: 0.30" />
-                                              <Slider fx:id="particleMinAttractionSlider" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.30" />
-                                    </children>
-                                 </VBox>
-                                 <VBox>
-                                    <children>
-                                              <Label fx:id="particleForceMultiplierLabel" text="Force multiplier: 5" />
-                                              <Slider fx:id="particleForceMultiplierSlider" max="20" min="0" showTickLabels="true" showTickMarks="true" value="5" />
-                                    </children>
-                                 </VBox>
-                                 <VBox>
-                                    <children>
-                                              <Label fx:id="particleFrictionLabel" text="Friction: 0.04" />
-                                              <Slider fx:id="particleFrictionSlider" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.04" />
-                                    </children>
-                                 </VBox>
-                                 <HBox alignment="CENTER">
-                                    <children>
-                                          <Button mnemonicParsing="false" onAction="#handleStopButton" text="Stop" />
-                                          <Button mnemonicParsing="false" onAction="#handleStartButton" text="Start" />
-                                          <Button alignment="CENTER" onAction="#handleResetButton" text="Reset" />
-                                    </children>
-                                 </HBox>
-                              </children>
-                           </VBox>
-                        </children>
                      </AnchorPane>
                </content>
              </Tab>

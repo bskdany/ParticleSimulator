@@ -10,6 +10,8 @@ import java.util.Objects;
 
 public class Util {
 
+
+    // maps a value from -1 to 1 to a Color Fade between Red and Green
     public static Color mapValueToColor(double value) {
         double minHue = 0;
         double maxHue = 100;
