@@ -94,15 +94,15 @@ public class ParticleSimulation{
     }
 
     public void reset(){
-        timeline.stop();
+        stop();
         initContent();
-        timeline.play();
+        start();
     }
 
     public void resetAttractionMatrix(){
-        timeline.stop();
+//        timeline.stop();
         generateAttractionMatrix();
-        timeline.play();
+//        timeline.play();
     }
 
     public void setMaxAttractionDistance(int distance){
@@ -115,7 +115,6 @@ public class ParticleSimulation{
         if(speciesData == null){
             return;
         }
-
         if(quantity > 0){
             for (int i = 0; i < quantity; i++) {
                 createParticle(color);
@@ -123,7 +122,7 @@ public class ParticleSimulation{
             PARTICLE_DATA.get(color).setQuantity(speciesData.getQuantity() + quantity);
         }
         else if (quantity < 0) {
-            if (speciesData.getQuantity() > quantity){
+            if (speciesData.getQuantity() >= -quantity){
                 for (int i = 0; i > quantity; i--) {
                     Particle particleToRemove = null;
                     for(Particle particle :particles){
@@ -142,7 +141,7 @@ public class ParticleSimulation{
     }
 
     public void setParticleQuantity(int quantity, Color color, boolean areAllSelected){
-        timeline.stop();
+        stop();
 
         if(areAllSelected) {
             for (Color species : PARTICLE_DATA.keySet()) {
@@ -152,7 +151,7 @@ public class ParticleSimulation{
         else{           // if only one particle needs to be removed
             handleParticleQuantityCreationHelper(color, quantity);
         }
-        timeline.play();
+        start();
     }
 
     private void createParticle(Color color){
