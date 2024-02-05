@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -20,51 +21,33 @@
 
 <HBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.particlesimulation.SidebarController">
     <children>
-        <VBox fx:id="leftPane" alignment="TOP_CENTER" prefHeight="600.0" prefWidth="250.0" spacing="15">
-         <TabPane prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+        <VBox fx:id="leftPane" alignment="TOP_CENTER" prefHeight="600.0" prefWidth="250.0">
+         <TabPane prefHeight="461.0" prefWidth="222.0" tabClosingPolicy="UNAVAILABLE">
            <tabs>
              <Tab text="Simulation">
                <content>
-                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="469.0" prefWidth="200.0">
+                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="200.0">
                         <children>
-                           <VBox prefHeight="600.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                           <VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                               <children>
-                                 <VBox alignment="CENTER">
+                                 <VBox>
                                     <children>
                                               <Label fx:id="particleMaxAttractionDistanceLabel" text="Max attraction distance: 100" />
-                                              <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10" showTickLabels="true" showTickMarks="true" value="100" />
+                                              <Slider fx:id="particleMaxAttractionDistanceSlider" max="200" min="10" showTickMarks="true" value="100" />
                                     </children>
                                  </VBox>
-                                 <VBox>
+                                 <VBox alignment="TOP_CENTER">
                                     <children>
                                               <Label fx:id="particleMinAttractionLabel" text="Min attraction distance: 0.30" />
-                                              <Slider fx:id="particleMinAttractionSlider" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.30" />
+                                              <Slider fx:id="particleMinAttractionSlider" max="1" min="0" prefHeight="5.0" prefWidth="202.0" showTickMarks="true" value="0.30" />
                                     </children>
                                  </VBox>
-                                 <VBox>
+                                 <VBox alignment="TOP_CENTER">
                                     <children>
                                               <Label fx:id="particleForceMultiplierLabel" text="Force multiplier: 5" />
-                                              <Slider fx:id="particleForceMultiplierSlider" max="20" min="0" showTickLabels="true" showTickMarks="true" value="5" />
+                                              <Slider fx:id="particleForceMultiplierSlider" max="20" min="0" prefHeight="14.0" prefWidth="202.0" showTickMarks="true" value="5" />
                                     </children>
                                  </VBox>
-                                 <VBox>
-                                    <children>
-                                              <Label fx:id="particleFrictionLabel" text="Friction: 0.04" />
-                                              <Slider fx:id="particleFrictionSlider" max="1" min="0" showTickLabels="true" showTickMarks="true" value="0.04" />
-                                    </children>
-                                 </VBox>
-                                 <HBox alignment="CENTER">
-                                    <children>
-                                          <Button mnemonicParsing="false" onAction="#handleStopButton" text="Stop" />
-                                          <Button mnemonicParsing="false" onAction="#handleStartButton" text="Start" />
-                                          <Button alignment="CENTER" onAction="#handleResetButton" text="Reset" />
-                                    </children>
-                                 </HBox>
-                                 <HBox alignment="CENTER" prefHeight="23.0" prefWidth="202.0">
-                                    <children>
-                                       <Slider fx:id="timelineSlider" blockIncrement="1.0" value="100.0" />
-                                    </children>
-                                 </HBox>
                               </children>
                            </VBox>
                         </children>
@@ -73,10 +56,10 @@
              </Tab>
              <Tab text="Particle">
                <content>
-                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="300.0">
-                     <VBox alignment="CENTER" prefWidth="194.0" spacing="15.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="420.0" prefWidth="222.0">
+                     <VBox alignment="TOP_CENTER" prefHeight="430.0" prefWidth="202.0" spacing="10.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                          <children>
-                             <GridPane fx:id="attractionGrid" alignment="CENTER" layoutX="9.0" layoutY="14.0" style="-fx-border-color: gray;" VBox.vgrow="ALWAYS">
+                             <GridPane fx:id="attractionGrid" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="186.0" prefWidth="203.0" style="-fx-border-color: gray;" VBox.vgrow="NEVER">
                                  <columnConstraints>
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="25.0" />
@@ -117,31 +100,35 @@
                                     <Cursor fx:constant="DEFAULT" />
                                  </cursor>
                              </GridPane>
-                             <VBox layoutX="1.0" layoutY="266.0">
+                             <VBox layoutX="1.0" layoutY="266.0" prefHeight="42.0" prefWidth="192.0">
                                  <children>
-                                     <Pane prefHeight="20.0" prefWidth="180.0">
-                                         <children>
-                                             <Label layoutX="135.0" layoutY="1.0" text="Attract" />
-                                             <Label layoutX="13.0" layoutY="1.0" text="Repulse" />
-                                         </children>
-                                     </Pane>
-                                     <Slider fx:id="particleAttractionValueSlider" blockIncrement="0.02" max="1.0" min="-1.0" prefWidth="180.0" showTickLabels="true" showTickMarks="true" />
+                                    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                             <Label prefHeight="16.0" prefWidth="107.0" text="Attract" />
+                                             <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="104.0" text="Repulse" />
+                                       </children>
+                                    </HBox>
+                                     <Slider fx:id="particleAttractionValueSlider" blockIncrement="0.02" max="1.0" min="-1.0" prefHeight="14.0" prefWidth="202.0" showTickMarks="true" />
                                  </children>
                              </VBox>
-                             <Button layoutX="29.0" layoutY="195.0" onAction="#handleResetAttractionMatrixButton" text="Recreate Attraction">Reset Attraction Matrix</Button>
-                              <Separator prefWidth="200.0" />
-                              <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="30.0" prefWidth="180.0" spacing="20.0">
+                              <HBox alignment="TOP_CENTER" prefHeight="23.0" prefWidth="192.0" spacing="15.0">
                                  <children>
-                                   <CheckBox fx:id="selectAllCheck" layoutY="-12.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Select all" />
-                                   <ChoiceBox fx:id="speciesChoiceBox" layoutX="90.0" layoutY="-2.0" />
+                                    <Button mnemonicParsing="false" text="Default" />
+                                    <Button mnemonicParsing="false" text="Random!" />
                                  </children>
                               </HBox>
-                              <VBox prefHeight="69.0" prefWidth="192.0">
+                              <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="21.0" prefWidth="192.0" spacing="20.0">
                                  <children>
-                                   <HBox alignment="CENTER">
+                                   <CheckBox fx:id="selectAllCheck" layoutY="-12.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="83.0" text="Select all" />
+                                   <ChoiceBox fx:id="speciesChoiceBox" layoutX="90.0" layoutY="-2.0" prefHeight="25.0" prefWidth="85.0" />
+                                 </children>
+                              </HBox>
+                              <VBox prefHeight="60.0" prefWidth="192.0">
+                                 <children>
+                                   <HBox alignment="CENTER" prefHeight="28.0" prefWidth="192.0">
                                        <Label fx:id="particleCountLabel" text="Particle count: " />
                                    </HBox>
-                                    <HBox alignment="CENTER" prefHeight="43.0" prefWidth="200.0" spacing="20.0">
+                                    <HBox alignment="CENTER" prefHeight="40.0" prefWidth="202.0" spacing="20.0">
                                        <children>
                                           <Button mnemonicParsing="false" onAction="#decreaseParticlesButton" text="- 10" />
                                           <Button mnemonicParsing="false" onAction="#increaseParticlesButton" text="+10" />
@@ -158,6 +145,36 @@
              </Tab>
            </tabs>
          </TabPane>
+         <Separator prefWidth="200.0" />
+         <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+            <children>
+               <HBox alignment="TOP_CENTER" prefHeight="24.0" prefWidth="202.0" spacing="15.0">
+                  <children>
+                     <VBox alignment="TOP_CENTER" prefHeight="36.0" prefWidth="202.0">
+                        <children>
+                           <Label text="Rewind: 0 sec" />
+                           <Slider fx:id="timelineSlider" blockIncrement="1.0" showTickMarks="true" value="100.0" />
+                        </children>
+                     </VBox>
+                  </children>
+               </HBox>
+               <HBox alignment="CENTER" prefHeight="25.0" prefWidth="209.0" spacing="15.0">
+                  <children>
+                        <Button mnemonicParsing="false" onAction="#handleStopButton" text="Pause" />
+                        <Button mnemonicParsing="false" onAction="#handleStartButton" text="Play" />
+                        <Button alignment="CENTER" onAction="#handleResetButton" text="Restart" />
+                  </children>
+               </HBox>
+               <HBox alignment="TOP_CENTER" prefHeight="23.0" prefWidth="222.0">
+                  <children>
+                     <Button mnemonicParsing="false" text="Reset default settings" />
+                  </children>
+               </HBox>
+            </children>
+            <padding>
+               <Insets bottom="10.0" />
+            </padding>
+         </VBox>
         </VBox>
       <Separator orientation="VERTICAL" prefHeight="200.0" />
 

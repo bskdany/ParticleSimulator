@@ -24,9 +24,6 @@ public class SidebarController {
     @FXML private Label particleMinAttractionLabel;         // MIN ATTRACTION DISTANCE
     @FXML private Slider particleMinAttractionSlider;
 
-    @FXML private Label particleFrictionLabel;              // FRICTION
-    @FXML private Slider particleFrictionSlider;
-
     @FXML private Slider particleForceMultiplierSlider;     // FORCE MULTIPLIER
     @FXML private Label particleForceMultiplierLabel;
 
@@ -108,13 +105,6 @@ public class SidebarController {
             double val = Double.parseDouble(decimalFormat.format(newValue));
             simulation.setMinAttractionDistance(val);
             particleMinAttractionLabel.setText("Min attraction distance: " + decimalFormat.format(newValue));
-        });
-
-        // FRICTION
-        particleFrictionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            double val = Double.parseDouble(decimalFormat.format(newValue));
-            simulation.setFriction(val);
-            particleFrictionLabel.setText("Friction: " + val);
         });
 
         // FORCE MULTIPLIER

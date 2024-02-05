@@ -72,12 +72,47 @@ public class ParticleSimulation{
                 ATTRACTION_MATRIX[i][j] =  Double.parseDouble(decimalFormat.format(random.nextGaussian() * 0.5));
             }
         }
+
+
 //        for (int i = 0; i < size; i++) {
-//            System.out.print("{");
 //            for (int j = 0; j < size; j++) {
-//                System.out.print(ATTRACTION_MATRIX[i][j] + ", ");
+//                if(i == j){
+//                    ATTRACTION_MATRIX[i][j] = 0.8;
+//                } else if (i == j+1 || i == j-1) {
+//                    ATTRACTION_MATRIX[i][j] = 0.4;
+//                } else if (i == j+2 || i == j-2) {
+//                    ATTRACTION_MATRIX[i][j] = 0;
+//                } else if (i == j+3 || i == j-3) {
+//                    ATTRACTION_MATRIX[i][j] = -0.2;
+//                } else if (i == j+4 || i == j-4) {
+//                    ATTRACTION_MATRIX[i][j] = -0.4;
+//                } else if (i == j+5 || i == j-5) {
+//                    ATTRACTION_MATRIX[i][j] = -0.6;
+//                } else if (i == j+6 || i == j-6) {
+//                    ATTRACTION_MATRIX[i][j] = -0.8;
+//                }
 //            }
-//            System.out.println("},");
+//        }
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                ATTRACTION_MATRIX[i][j] = -1;
+            }
+        }
+
+
+//        for (int i = 0; i < size; i++) {
+//            for (int j = 0; j < size; j++) {
+//                if (i == 3 || j == 3) {
+//                    ATTRACTION_MATRIX[i][j] = -0.8;
+//                } else if (i == 4 || j == 4 || i == 2 || j == 2) {
+//                    ATTRACTION_MATRIX[i][j] = -0.3;
+//                } else if (i == 5 || j == 5 || i == 1 || j == 1) {
+//                    ATTRACTION_MATRIX[i][j] = 0.3;
+//                } else if (i == 6 || j == 6 || i == 0 || j == 0) {
+//                    ATTRACTION_MATRIX[i][j] = 0.8;
+//                }
+//            }
 //        }
     }
 
@@ -224,9 +259,6 @@ public class ParticleSimulation{
         return ATTRACTION_MATRIX[coordinates[0]][coordinates[1]];
     }
 
-    public void setFriction(double value){
-        FRICTION = value;
-    }
     public void setForceMultiplier(int value){
         FORCE_MULTIPLIER = value;
     }
