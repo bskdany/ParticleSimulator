@@ -17,6 +17,8 @@ public class SidebarController {
     private Color selectedSpecies;
     private Boolean areAllSpeciesSelected;
 
+    @FXML private Button playPauseButton;
+
     // SIMULATION TAB
     @FXML private Label particleMaxAttractionDistanceLabel; // MAX ATTRACTION DISTANCE
     @FXML private Slider particleMaxAttractionDistanceSlider;
@@ -31,7 +33,6 @@ public class SidebarController {
 
     // PARTICLE TAB
     @FXML private ChoiceBox<String> speciesChoiceBox;       // SPECIES CHOICE BOX
-//    @FXML private Spinner<Integer> particleCounterSpinner;  // PARTICLE COUNTER
     @FXML private GridPane attractionGrid;
     @FXML private CheckBox selectAllCheck;                  // SELECT ALL CHECK BOX
     @FXML private Label particleCountLabel;
@@ -73,6 +74,16 @@ public class SidebarController {
         activeAttractionLabelCoordinates[1] = -1;
         particleAttractionValueSlider.setDisable(true);
 
+    }
+
+    @FXML void handlePlayPauseButton(){
+        if(Objects.equals(playPauseButton.getText(), "Play")){
+            simulation.start();
+            playPauseButton.setText("Pause");
+        } else{
+            simulation.stop();
+            playPauseButton.setText("Play");
+        }
     }
 
     @FXML private void handleStopButton(){

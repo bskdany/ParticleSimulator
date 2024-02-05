@@ -73,47 +73,25 @@ public class ParticleSimulation{
             }
         }
 
-
-//        for (int i = 0; i < size; i++) {
-//            for (int j = 0; j < size; j++) {
-//                if(i == j){
-//                    ATTRACTION_MATRIX[i][j] = 0.8;
-//                } else if (i == j+1 || i == j-1) {
-//                    ATTRACTION_MATRIX[i][j] = 0.4;
-//                } else if (i == j+2 || i == j-2) {
-//                    ATTRACTION_MATRIX[i][j] = 0;
-//                } else if (i == j+3 || i == j-3) {
-//                    ATTRACTION_MATRIX[i][j] = -0.2;
-//                } else if (i == j+4 || i == j-4) {
-//                    ATTRACTION_MATRIX[i][j] = -0.4;
-//                } else if (i == j+5 || i == j-5) {
-//                    ATTRACTION_MATRIX[i][j] = -0.6;
-//                } else if (i == j+6 || i == j-6) {
-//                    ATTRACTION_MATRIX[i][j] = -0.8;
-//                }
-//            }
-//        }
-
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                ATTRACTION_MATRIX[i][j] = -1;
+                if(i == j){
+                    ATTRACTION_MATRIX[i][j] = 0.8;
+                } else if (i == j+1 || i == j-1) {
+                    ATTRACTION_MATRIX[i][j] = 0.4;
+                } else if (i == j+2 || i == j-2) {
+                    ATTRACTION_MATRIX[i][j] = 0;
+                } else if (i == j+3 || i == j-3) {
+                    ATTRACTION_MATRIX[i][j] = -0.2;
+                } else if (i == j+4 || i == j-4) {
+                    ATTRACTION_MATRIX[i][j] = -0.4;
+                } else if (i == j+5 || i == j-5) {
+                    ATTRACTION_MATRIX[i][j] = -0.6;
+                } else if (i == j+6 || i == j-6) {
+                    ATTRACTION_MATRIX[i][j] = -0.8;
+                }
             }
         }
-
-
-//        for (int i = 0; i < size; i++) {
-//            for (int j = 0; j < size; j++) {
-//                if (i == 3 || j == 3) {
-//                    ATTRACTION_MATRIX[i][j] = -0.8;
-//                } else if (i == 4 || j == 4 || i == 2 || j == 2) {
-//                    ATTRACTION_MATRIX[i][j] = -0.3;
-//                } else if (i == 5 || j == 5 || i == 1 || j == 1) {
-//                    ATTRACTION_MATRIX[i][j] = 0.3;
-//                } else if (i == 6 || j == 6 || i == 0 || j == 0) {
-//                    ATTRACTION_MATRIX[i][j] = 0.8;
-//                }
-//            }
-//        }
     }
 
     public void update(){
