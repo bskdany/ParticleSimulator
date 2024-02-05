@@ -42,12 +42,12 @@ public class Particle {
 
     public void adjustPositionWrapping(){
         if(POSITION[0] < 0){
-            POSITION[0] += ParticleSimulation.CANVAS_WIDTH + 1;
+            POSITION[0] += ParticleSimulation.CANVAS_WIDTH;
         } else if (POSITION[0] > ParticleSimulation.CANVAS_WIDTH) {
             POSITION[0] -= ParticleSimulation.CANVAS_WIDTH - 1;
         }
         if(POSITION[1] < 0){
-            POSITION[1] += ParticleSimulation.CANVAS_HEIGHT + 1;
+            POSITION[1] += ParticleSimulation.CANVAS_HEIGHT;
         } else if (POSITION[1] > ParticleSimulation.CANVAS_HEIGHT) {
             POSITION[1] -= ParticleSimulation.CANVAS_HEIGHT -1;
         }
