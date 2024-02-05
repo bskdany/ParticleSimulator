@@ -127,19 +127,28 @@
                                    <ChoiceBox fx:id="speciesChoiceBox" layoutX="90.0" layoutY="-2.0" prefHeight="25.0" prefWidth="85.0" />
                                  </children>
                               </HBox>
-                              <VBox prefHeight="60.0" prefWidth="192.0">
+                              <HBox prefHeight="100.0" prefWidth="200.0">
                                  <children>
-                                   <HBox alignment="CENTER" prefHeight="28.0" prefWidth="192.0">
-                                       <Label fx:id="particleCountLabel" text="Particle count: " />
-                                   </HBox>
-                                    <HBox alignment="CENTER" prefHeight="40.0" prefWidth="202.0" spacing="20.0">
+                                    <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
                                        <children>
-                                          <Button mnemonicParsing="false" onAction="#decreaseParticlesButton" text="- 10" />
-                                          <Button mnemonicParsing="false" onAction="#increaseParticlesButton" text="+10" />
+                                          <Button mnemonicParsing="false" fx:id="killAllParticlesButton" onAction="#handleKillAllParticlesButton" text="Kill all" />
                                        </children>
-                                    </HBox>
+                                    </VBox>
+                                    <VBox prefHeight="74.0" prefWidth="133.0">
+                                       <children>
+                                         <HBox alignment="CENTER" prefHeight="28.0" prefWidth="192.0">
+                                             <Label fx:id="particleCountLabel" text="Particle count: " />
+                                         </HBox>
+                                          <HBox alignment="CENTER" prefHeight="40.0" prefWidth="202.0" spacing="20.0">
+                                             <children>
+                                                <Button mnemonicParsing="false" onAction="#decreaseParticlesButton" text="- 10" />
+                                                <Button mnemonicParsing="false" onAction="#increaseParticlesButton" text="+10" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
                                  </children>
-                              </VBox>
+                              </HBox>
 
                          </children>
                      </VBox>

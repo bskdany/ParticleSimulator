@@ -196,7 +196,7 @@ public class ParticleSimulation{
         }
     }
 
-    public void setParticleQuantity(int quantity, Color color, boolean areAllSelected){
+    public void addParticleQuantity(int quantity, Color color, boolean areAllSelected){
         stop();
 
         if(areAllSelected) {

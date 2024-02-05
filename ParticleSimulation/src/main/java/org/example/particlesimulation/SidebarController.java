@@ -1,15 +1,11 @@
 package org.example.particlesimulation;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
-import java.lang.reflect.Field;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -22,13 +18,10 @@ public class SidebarController {
     // SIMULATION TAB
     @FXML private Label particleMaxAttractionDistanceLabel; // MAX ATTRACTION DISTANCE
     @FXML private Slider particleMaxAttractionDistanceSlider;
-
     @FXML private Label particleMinAttractionLabel;         // MIN ATTRACTION DISTANCE
     @FXML private Slider particleMinAttractionSlider;
-
     @FXML private Slider particleForceMultiplierSlider;     // FORCE MULTIPLIER
     @FXML private Label particleForceMultiplierLabel;
-
     @FXML private Slider timelineSlider;
 
     // PARTICLE TAB
@@ -37,6 +30,7 @@ public class SidebarController {
     @FXML private CheckBox selectAllCheck;                  // SELECT ALL CHECK BOX
     @FXML private Label particleCountLabel;
     @FXML private Slider particleAttractionValueSlider;
+    @FXML private Button killAllParticlesButton;
     private Label activeAttractionGridLabel;
     private int[] activeAttractionLabelCoordinates = {0,0};
 
@@ -63,6 +57,11 @@ public class SidebarController {
         updateAttractionMatrix();
         simulation.initParticles();
         particleCountLabel.setText("Particle count: 200");
+    }
+    @FXML void handleKillAllParticlesButton(){
+        simulation.addParticleQuantity(-simulation.getParticleQuantity(selectedSpecies, false), selectedSpecies, false);
+        particleCountLabel.setText("Particle count: 0");
+//        simulation.setAttractionMatrixValue();
     }
 
     @FXML
@@ -100,11 +99,11 @@ public class SidebarController {
         }
     }
     @FXML private void increaseParticlesButton(){
-        simulation.setParticleQuantity(10, selectedSpecies, areAllSpeciesSelected);
+        simulation.addParticleQuantity(10, selectedSpecies, areAllSpeciesSelected);
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
     }
     @FXML private void decreaseParticlesButton(){
-        simulation.setParticleQuantity(-10, selectedSpecies, areAllSpeciesSelected);
+        simulation.addParticleQuantity(-10, selectedSpecies, areAllSpeciesSelected);
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
     }
     private void setupGeneralSimulationTab(){
