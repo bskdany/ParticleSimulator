@@ -51,7 +51,7 @@ public class ParticleSimulation{
     public void initContent() {
         generateDefaultAttractionMatrix();
         initParticles();
-        simulationTimeline.add(new ParticleSimulationData(this.PARTICLE_DATA, Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
+        simulationTimeline.add(new ParticleSimulationData(ParticleSpeciesData.deepCopy(PARTICLE_DATA), Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
     }
 
     public void initParticles(){
@@ -111,7 +111,7 @@ public class ParticleSimulation{
                     drawParticle(particle);
                 }
                 if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > simulationTimeline.timeToSaveMs){
-                    simulationTimeline.add(new ParticleSimulationData(this.PARTICLE_DATA, Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
+                    simulationTimeline.add(new ParticleSimulationData(ParticleSpeciesData.deepCopy(PARTICLE_DATA), Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
                 }
             })
         );
@@ -260,6 +260,18 @@ public class ParticleSimulation{
         stop();
         ATTRACTION_MATRIX[coordinates[0]][coordinates[1]] = value;
         start();
+    }
+
+    public static double getMaxAttractionDistance() {
+        return MAX_ATTRACTION_DISTANCE;
+    }
+
+    public static int getForceMultiplier() {
+        return FORCE_MULTIPLIER;
+    }
+
+    public static double getAttractionRelativeDistanceCutout() {
+        return ATTRACTION_RELATIVE_DISTANCE_CUTOUT;
     }
 
     public void stop(){

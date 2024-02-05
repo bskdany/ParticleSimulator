@@ -33,7 +33,6 @@ public class SidebarController {
     @FXML private Button killAllParticlesButton;
     private Label activeAttractionGridLabel;
     private int[] activeAttractionLabelCoordinates = {0,0};
-
     private ParticleSimulation simulation;
     private Map<Color, String> colorMap;
     private boolean disableTimelineValueListener = false;
@@ -47,25 +46,33 @@ public class SidebarController {
         setupParticleSimulationTab();
         setupGeneralSimulationTab();
     }
+
+    @FXML void updateAllElements(){
+        particleMaxAttractionDistanceSlider.setValue(ParticleSimulation.getMaxAttractionDistance());
+        particleMinAttractionSlider.setValue(ParticleSimulation.getAttractionRelativeDistanceCutout());
+        particleForceMultiplierSlider.setValue(ParticleSimulation.getForceMultiplier());
+        particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies,false));
+        updateAttractionMatrix();
+    }
     @FXML void resetDefaultSettingsButton(){
         // Simulation
-        particleMaxAttractionDistanceSlider.setValue(100);
-        particleMinAttractionSlider.setValue(0.3);
-        particleForceMultiplierSlider.setValue(5);
+        simulation.setMaxAttractionDistance(100);
+        simulation.setMinAttractionDistance(0.3);
+        simulation.setForceMultiplier(5);
+
         // Particle
         simulation.generateDefaultAttractionMatrix();
         updateAttractionMatrix();
         simulation.initParticles();
         particleCountLabel.setText("Particle count: 200");
+
+        updateAllElements();
     }
     @FXML void handleKillAllParticlesButton(){
         simulation.addParticleQuantity(-simulation.getParticleQuantity(selectedSpecies, false), selectedSpecies, false);
         particleCountLabel.setText("Particle count: 0");
-//        simulation.setAttractionMatrixValue();
     }
-
-    @FXML
-    private void handleResetButton() {
+    @FXML private void handleResetButton() {
         simulation.reset();
     }
     private void updateAttractionMatrix(){
@@ -130,6 +137,7 @@ public class SidebarController {
         timelineSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(!disableTimelineValueListener){
                 simulation.peekRewind(100 - newValue.intValue());
+                updateAllElements();
             }
             else{
                 disableTimelineValueListener = false;

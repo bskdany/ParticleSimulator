@@ -77,6 +77,7 @@ public class Particle {
                 }
                 double attractionFactor = ParticleSimulation.ATTRACTION_MATRIX[SPECIES][particle.SPECIES];
                 double magnitude =  calculateAttractionForce(distance, attractionFactor);
+//                double magnitude = calculateAttractionForceNewton(distance, this, particle);
                 double[] normalisedDirectionVector = normalizeVector(directionVector);
 
                 FORCE[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.MAX_ATTRACTION_DISTANCE;
@@ -126,6 +127,11 @@ public class Particle {
         }
         return 0;
     }
+
+//    private static double calculateAttractionForceNewton(double distance, Particle particle1, Particle particle2){
+//        double G = 6.674 * Math.pow(10, -11);
+//        return G * (particle1.MASS * particle2.MASS) / (distance * distance);
+//    }
 
     private double[] calculateVectorWrap(){
         // vector from source to target
