@@ -14,14 +14,15 @@ import java.util.*;
 
 public class ParticleSimulation{
     private final SimulationTimeline simulationTimeline;
+    private final int DEFAULT_PARTICLE_COUNT = 200;
     private Map<Color, ParticleSpeciesData> PARTICLE_DATA = new LinkedHashMap<Color, ParticleSpeciesData>(){{
-        put(Color.RED, new ParticleSpeciesData(200, 1));
-        put(Color.PINK, new ParticleSpeciesData(200, 1));
-        put(Color.ORANGE, new ParticleSpeciesData(200, 1));
-        put(Color.YELLOW, new ParticleSpeciesData(200, 1));
-        put(Color.LIME, new ParticleSpeciesData(200, 1));
-        put(Color.CYAN,new ParticleSpeciesData(200, 1));
-        put(Color.WHITE,new ParticleSpeciesData(200, 1));
+        put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
+        put(Color.PINK, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
+        put(Color.ORANGE, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
+        put(Color.YELLOW, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
+        put(Color.LIME, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
+        put(Color.CYAN,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
+        put(Color.WHITE,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
     }};
     private List<Particle> particles = new ArrayList<>();
     public static double[][] ATTRACTION_MATRIX;
@@ -48,7 +49,7 @@ public class ParticleSimulation{
     }
 
     public void initContent() {
-        generateAttractionMatrix();
+        generateDefaultAttractionMatrix();
         initParticles();
         simulationTimeline.add(new ParticleSimulationData(this.PARTICLE_DATA, Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
     }
@@ -56,13 +57,13 @@ public class ParticleSimulation{
     public void initParticles(){
         particles.clear();
         for(Map.Entry<Color, ParticleSpeciesData> speciesData : PARTICLE_DATA.entrySet()){
-            for (int i = 0; i < speciesData.getValue().getQuantity(); i++) {
+            for (int i = 0; i < DEFAULT_PARTICLE_COUNT; i++) {
                 createParticle(speciesData.getKey());
             }
         }
     }
 
-    public void generateAttractionMatrix(){
+    public void generateRandomAttractionMatrix(){
         int size = PARTICLE_DATA.size();
         ATTRACTION_MATRIX = new double[size][size];
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
@@ -72,6 +73,11 @@ public class ParticleSimulation{
                 ATTRACTION_MATRIX[i][j] =  Double.parseDouble(decimalFormat.format(random.nextGaussian() * 0.5));
             }
         }
+    }
+
+    public void generateDefaultAttractionMatrix(){
+        int size = PARTICLE_DATA.size();
+        ATTRACTION_MATRIX = new double[size][size];
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -120,10 +126,16 @@ public class ParticleSimulation{
         start();
     }
 
-    public void resetAttractionMatrix(){
-//        timeline.stop();
-        generateAttractionMatrix();
-//        timeline.play();
+    public void resetDefaultAttractionMatrix(){
+        timeline.stop();
+        generateDefaultAttractionMatrix();
+        timeline.play();
+    }
+
+    public void resetRandomAttractionMatrix(){
+        timeline.stop();
+        generateRandomAttractionMatrix();
+        timeline.play();
     }
 
     public void setMaxAttractionDistance(int distance){

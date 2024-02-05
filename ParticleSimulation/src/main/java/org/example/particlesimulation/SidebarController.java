@@ -53,15 +53,23 @@ public class SidebarController {
         setupParticleSimulationTab();
         setupGeneralSimulationTab();
     }
+    @FXML void resetDefaultSettingsButton(){
+        // Simulation
+        particleMaxAttractionDistanceSlider.setValue(100);
+        particleMinAttractionSlider.setValue(0.3);
+        particleForceMultiplierSlider.setValue(5);
+        // Particle
+        simulation.generateDefaultAttractionMatrix();
+        updateAttractionMatrix();
+        simulation.initParticles();
+        particleCountLabel.setText("Particle count: 200");
+    }
 
     @FXML
     private void handleResetButton() {
         simulation.reset();
     }
-
-    @FXML
-    private void handleResetAttractionMatrixButton(){
-        simulation.resetAttractionMatrix();
+    private void updateAttractionMatrix(){
         for (int i = 0; i < ParticleSimulation.ATTRACTION_MATRIX.length; i++) {
             for (int j = 0; j < ParticleSimulation.ATTRACTION_MATRIX.length; j++) {
                 updateGrid(ParticleSimulation.ATTRACTION_MATRIX[i][j], new int[]{i,j});
@@ -73,9 +81,15 @@ public class SidebarController {
         activeAttractionLabelCoordinates[0] = -1;
         activeAttractionLabelCoordinates[1] = -1;
         particleAttractionValueSlider.setDisable(true);
-
     }
-
+    @FXML private void handleDefaultAttractionMatrixButton(){
+        simulation.resetDefaultAttractionMatrix();
+       updateAttractionMatrix();
+    }
+    @FXML private void handleRandomAttractionMatrixButton(){
+        simulation.resetRandomAttractionMatrix();
+        updateAttractionMatrix();
+    }
     @FXML void handlePlayPauseButton(){
         if(Objects.equals(playPauseButton.getText(), "Play")){
             simulation.start();
@@ -85,25 +99,14 @@ public class SidebarController {
             playPauseButton.setText("Play");
         }
     }
-
-    @FXML private void handleStopButton(){
-        simulation.stop();
-    }
-
-    @FXML private void handleStartButton(){
-        simulation.start();
-    }
-
     @FXML private void increaseParticlesButton(){
         simulation.setParticleQuantity(10, selectedSpecies, areAllSpeciesSelected);
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
     }
-
     @FXML private void decreaseParticlesButton(){
         simulation.setParticleQuantity(-10, selectedSpecies, areAllSpeciesSelected);
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
     }
-
     private void setupGeneralSimulationTab(){
         // MAX ATTRACTION DISTANCE
         particleMaxAttractionDistanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -140,7 +143,6 @@ public class SidebarController {
             timelineSlider.setValue(100);
         });
     }
-
     private void setupParticleSimulationTab(){
         colorMap = Util.createColorMap();
 
@@ -188,7 +190,6 @@ public class SidebarController {
 
         generateAttractionGrid();
     }
-
     private void updateGrid(double value, int[] coordinates){
         int matrixWidth = ParticleSimulation.ATTRACTION_MATRIX.length;
         int position = (matrixWidth * 2) + coordinates[0] * matrixWidth + coordinates[1] ;
@@ -197,7 +198,6 @@ public class SidebarController {
         Color backgroundColor = Util.mapValueToColor(value);
         labelToUpdate.setBackground(Background.fill(backgroundColor));
     }
-
     private void generateAttractionGrid(){
         // ATTRACTION GRID
         for (int i = 0 ; i < ParticleSimulation.ATTRACTION_MATRIX.length; i++) {
