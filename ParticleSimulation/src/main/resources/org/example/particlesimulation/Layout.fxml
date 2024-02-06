@@ -165,7 +165,7 @@
                   <children>
                      <VBox alignment="TOP_CENTER" prefHeight="36.0" prefWidth="202.0">
                         <children>
-                           <Label text="Rewind: 0 sec" />
+                           <Label fx:id="timelineLabel" text="Go back 0.0 sec" />
                            <Slider fx:id="timelineSlider" blockIncrement="1.0" showTickMarks="true" value="100.0" />
                         </children>
                      </VBox>

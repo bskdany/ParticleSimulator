@@ -7,8 +7,7 @@ import java.util.List;
 
 public class SimulationTimeline {
     private static final int simulationDataToSave = 100;
-    public final int timeToSaveMs = 200; // 200 * 100 = 20 seconds saved each time
-
+    public static final int timeToSaveMs = 200; // 200 * 100 = 20 seconds saved each time
     public long lastSaveMs = 0;
     private long lastRestoreTime = 0;
     private int newOffset = 0;

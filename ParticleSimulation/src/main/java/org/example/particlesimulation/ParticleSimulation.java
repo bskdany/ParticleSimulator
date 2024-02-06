@@ -110,8 +110,8 @@ public class ParticleSimulation{
                     particle.adjustPositionWrapping();
                     drawParticle(particle);
                 }
-                if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > simulationTimeline.timeToSaveMs){
-                    simulationTimeline.add(new ParticleSimulationData(ParticleSpeciesData.deepCopy(PARTICLE_DATA), Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
+                if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
+                    simulationTimeline.add(new ParticleSimulationData(ParticleSpeciesData.deepCopy(PARTICLE_DATA), Particle.deepCloneList(particles), ATTRACTION_MATRIX.clone(), FRICTION, MAX_ATTRACTION_DISTANCE, ATTRACTION_RELATIVE_DISTANCE_CUTOUT, FORCE_MULTIPLIER));
                 }
             })
         );

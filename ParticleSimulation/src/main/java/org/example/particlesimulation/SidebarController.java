@@ -23,6 +23,7 @@ public class SidebarController {
     @FXML private Slider particleForceMultiplierSlider;     // FORCE MULTIPLIER
     @FXML private Label particleForceMultiplierLabel;
     @FXML private Slider timelineSlider;
+    @FXML private Label timelineLabel;
 
     // PARTICLE TAB
     @FXML private ChoiceBox<String> speciesChoiceBox;       // SPECIES CHOICE BOX
@@ -69,8 +70,10 @@ public class SidebarController {
         updateAllElements();
     }
     @FXML void handleKillAllParticlesButton(){
-        simulation.addParticleQuantity(-simulation.getParticleQuantity(selectedSpecies, false), selectedSpecies, false);
-        particleCountLabel.setText("Particle count: 0");
+        if(!areAllSpeciesSelected){
+            simulation.addParticleQuantity(-simulation.getParticleQuantity(selectedSpecies, false), selectedSpecies, false);
+            particleCountLabel.setText("Particle count: 0");
+        }
     }
     @FXML private void handleResetButton() {
         simulation.reset();
@@ -133,14 +136,19 @@ public class SidebarController {
             particleForceMultiplierLabel.setText("Force multiplier: " + newValue.intValue());
         });
 
+        DecimalFormat timeFormatter = new DecimalFormat("0.0");
+
         // TIMELINE SLIDER
         timelineSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(!disableTimelineValueListener){
                 simulation.peekRewind(100 - newValue.intValue());
                 updateAllElements();
+
+                timelineLabel.setText("Go back " + timeFormatter.format(((double) SimulationTimeline.timeToSaveMs * (100 - newValue.intValue()))/ 1000 ) + " sec");
             }
             else{
                 disableTimelineValueListener = false;
+                timelineLabel.setText("Go back 0 seconds");
             }
         });
 
