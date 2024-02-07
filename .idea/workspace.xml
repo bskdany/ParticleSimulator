@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/jdeploy.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/jdeploy.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules/.bin/mkdirp" beforeDir="false" />
@@ -512,7 +513,7 @@
       <workItem from="1707172014425" duration="91000" />
       <workItem from="1707323226629" duration="867000" />
       <workItem from="1707324119468" duration="5752000" />
-      <workItem from="1707330368617" duration="1655000" />
+      <workItem from="1707330368617" duration="1851000" />
     </task>
     <servers />
   </component>
