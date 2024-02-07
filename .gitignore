@@ -25,3 +25,7 @@ replay_pid*
 ./target/
 ./node_modules/
 /node_modules/
+/target/maven-status/
+/target/maven-archiver/
+/target/classes/
+/target/archive-tmp/
