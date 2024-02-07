@@ -5,8 +5,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/Particle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/SidebarController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/SidebarController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.github/workflows/jdeploy.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ParticleSimulation/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.github/workflows/jdeploy.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/jdeploy-bundle/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/jdeploy-bundle/jdeploy.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/jdeploy/publish/jdeploy-bundle/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/jdeploy/publish/jdeploy-bundle/jdeploy.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/jdeploy/publish/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/module-info.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/MatrixEncoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/Particle.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/ParticleSimulation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/ParticleSimulationData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/ParticleSimulationGUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/ParticleSpeciesData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/SidebarController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/SimulationTimeline.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/Util.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/java/org/example/particlesimulation/Wall.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ParticleSimulation/src/main/resources/org/example/particlesimulation/Layout.fxml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,29 +60,32 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2bJnN3YPR6CJ2BGDn5FrZfnQVaL" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/dany/Documents/Code/repos/ParticleSimulation",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "SDKs",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/dany/Documents/Code/repos/ParticleSimulation&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -70,6 +107,7 @@
       <workItem from="1707154695220" duration="602000" />
       <workItem from="1707171904290" duration="96000" />
       <workItem from="1707172014425" duration="91000" />
+      <workItem from="1707323226629" duration="97000" />
     </task>
     <servers />
   </component>

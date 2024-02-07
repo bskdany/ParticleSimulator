@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="ParticleSimulation:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="949b6b23-d225-4bf0-b738-ebf4a46bcbf1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/jdeploy.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdeploy-bundle/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdeploy-bundle/jdeploy.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdeploy/publish/jdeploy-bundle/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdeploy/publish/jdeploy-bundle/jdeploy.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdeploy/publish/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/MatrixEncoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Particle.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulationData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulationGUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSpeciesData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/SidebarController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/SimulationTimeline.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Util.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Wall.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/particlesimulation/Layout.fxml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="FxmlFile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Use Maven wrapper" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2bHUz60wH4Zv3I4CeTtpr5GvTOU" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.HelloApplication.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.ParticleSimulation.executor": "Run",
+    "Application.ParticleSimulationGUI.executor": "Debug",
+    "Application.test.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar (1).executor": "Run",
+    "JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar.executor": "Run",
+    "JAR Application.ParticleSimulation-1.0-SNAPSHOT-runnable.jar.executor": "Run",
+    "JAR Application.ParticleSimulation-1.0-SNAPSHOT.jar.executor": "Run",
+    "Maven.ParticleSimulation [clean].executor": "Run",
+    "Maven.ParticleSimulation [install].executor": "Run",
+    "Maven.ParticleSimulation [io.github.fvarrui:javapackager:1.7.5:package].executor": "Run",
+    "Maven.ParticleSimulation [org.apache.maven.plugins:maven-assembly-plugin:2.2-beta-5:assembly].executor": "Run",
+    "Maven.ParticleSimulation [org.openjfx:javafx-maven-plugin:0.0.8:jlink].executor": "Run",
+    "Maven.ParticleSimulation [package].executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "true",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/dany/Documents/Code/repos/ParticleSimulation",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.35977012",
+    "settings.editor.selected.configurable": "MavenSettings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="ReadonlyStatusHandler">
+    <option name="SHOW_DIALOG" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/build" />
+      <recent name="$PROJECT_DIR$/src/main/resources/org/example/particlesimulation" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.example.particlesimulation.Main" />
+      <module name="ParticleSimulation" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.particlesimulation.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ParticleSimulationGUI" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="org.example.particlesimulation.ParticleSimulationGUI" />
+      <module name="ParticleSimulation" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar (1)" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/build/ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/target/ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ParticleSimulation-1.0-SNAPSHOT-runnable.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/target/ParticleSimulation-1.0-SNAPSHOT-runnable.jar" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ParticleSimulation-1.0-SNAPSHOT.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/target/ParticleSimulation-1.0-SNAPSHOT.jar" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" />
+        <item itemvalue="JAR Application.ParticleSimulation-1.0-SNAPSHOT.jar" />
+        <item itemvalue="JAR Application.ParticleSimulation-1.0-SNAPSHOT-runnable.jar" />
+        <item itemvalue="JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar (1)" />
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.1-openjdk-21.0.1-f644763e9732-76dd8dae" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="949b6b23-d225-4bf0-b738-ebf4a46bcbf1" name="Changes" comment="" />
+      <created>1705871759537</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1705871759537</updated>
+      <workItem from="1705871760817" duration="9198000" />
+      <workItem from="1705893231996" duration="9643000" />
+      <workItem from="1705940975741" duration="45000" />
+      <workItem from="1705942038959" duration="2570000" />
+      <workItem from="1705945166092" duration="4746000" />
+      <workItem from="1705950391573" duration="1339000" />
+      <workItem from="1706033015683" duration="6486000" />
+      <workItem from="1706040849769" duration="15712000" />
+      <workItem from="1706109751473" duration="27224000" />
+      <workItem from="1706141759062" duration="109000" />
+      <workItem from="1706143162634" duration="1583000" />
+      <workItem from="1706191638733" duration="12318000" />
+      <workItem from="1706209646504" duration="9153000" />
+      <workItem from="1706220366668" duration="3027000" />
+      <workItem from="1706241475385" duration="9550000" />
+      <workItem from="1706283556989" duration="2450000" />
+      <workItem from="1706292805084" duration="102000" />
+      <workItem from="1706358779106" duration="24026000" />
+      <workItem from="1706412421918" duration="7119000" />
+      <workItem from="1706545788140" duration="2180000" />
+      <workItem from="1706549412032" duration="877000" />
+      <workItem from="1706551158086" duration="4768000" />
+      <workItem from="1706621639988" duration="18942000" />
+      <workItem from="1706648355678" duration="57000" />
+      <workItem from="1706652835405" duration="44000" />
+      <workItem from="1706664757951" duration="510000" />
+      <workItem from="1706665986576" duration="3361000" />
+      <workItem from="1706670163757" duration="5077000" />
+      <workItem from="1706739812603" duration="1341000" />
+      <workItem from="1706750522387" duration="10457000" />
+      <workItem from="1706816054671" duration="2506000" />
+      <workItem from="1706818736830" duration="8251000" />
+      <workItem from="1706882703801" duration="332000" />
+      <workItem from="1707012997720" duration="18532000" />
+      <workItem from="1707063803058" duration="7012000" />
+      <workItem from="1707103999929" duration="11959000" />
+      <workItem from="1707172104650" duration="23942000" />
+      <workItem from="1707255668694" duration="5031000" />
+      <workItem from="1707265623800" duration="10099000" />
+      <workItem from="1707310960794" duration="6940000" />
+      <workItem from="1707317915609" duration="4604000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.IndexOutOfBoundsException" package="java.lang" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
