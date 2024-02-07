@@ -6,25 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.github/workflows/jdeploy.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/MatrixEncoder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Particle.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulation.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulationData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulationGUI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSpeciesData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/SidebarController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/SimulationTimeline.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Util.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Wall.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/particlesimulation/Layout.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,6 +76,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/build" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -138,7 +124,7 @@
       <workItem from="1707172014425" duration="91000" />
       <workItem from="1707323226629" duration="867000" />
       <workItem from="1707324119468" duration="5752000" />
-      <workItem from="1707330368617" duration="874000" />
+      <workItem from="1707330368617" duration="1605000" />
     </task>
     <servers />
   </component>
