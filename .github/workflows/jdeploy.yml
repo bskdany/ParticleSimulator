@@ -28,4 +28,4 @@ jobs:
         uses: shannah/jdeploy@master
         with:
           target_repository: 'bskdany/ParticleSimulation'
-          github_token: ${{ secret.GIT_TOKEN }}
+          github_token: ${{ secrets.GIT_TOKEN }}
