@@ -15,7 +15,6 @@ public class SidebarController {
 
     @FXML private Button playPauseButton;
 
-    // SIMULATION TAB
     @FXML private Label particleMaxAttractionDistanceLabel; // MAX ATTRACTION DISTANCE
     @FXML private Slider particleMaxAttractionDistanceSlider;
     @FXML private Label particleMinAttractionLabel;         // MIN ATTRACTION DISTANCE
@@ -25,13 +24,14 @@ public class SidebarController {
     @FXML private Slider timelineSlider;
     @FXML private Label timelineLabel;
 
-    // PARTICLE TAB
     @FXML private ChoiceBox<String> speciesChoiceBox;       // SPECIES CHOICE BOX
     @FXML private GridPane attractionGrid;
     @FXML private CheckBox selectAllCheck;                  // SELECT ALL CHECK BOX
     @FXML private Label particleCountLabel;
     @FXML private Slider particleAttractionValueSlider;
     @FXML private Button killAllParticlesButton;
+    @FXML private TextField seedInput;
+
     private Label activeAttractionGridLabel;
     private int[] activeAttractionLabelCoordinates = {0,0};
     private ParticleSimulation simulation;
@@ -93,11 +93,13 @@ public class SidebarController {
     }
     @FXML private void handleDefaultAttractionMatrixButton(){
         simulation.resetDefaultAttractionMatrix();
-       updateAttractionMatrix();
+        updateAttractionMatrix();
+        seedInput.setText(simulation.seed);
     }
     @FXML private void handleRandomAttractionMatrixButton(){
         simulation.resetRandomAttractionMatrix();
         updateAttractionMatrix();
+        seedInput.setText(simulation.seed);
     }
     @FXML void handlePlayPauseButton(){
         if(Objects.equals(playPauseButton.getText(), "Play")){
@@ -157,6 +159,7 @@ public class SidebarController {
             disableTimelineValueListener = true;
             timelineSlider.setValue(100);
         });
+
     }
     private void setupParticleSimulationTab(){
         colorMap = Util.createColorMap();
@@ -204,6 +207,18 @@ public class SidebarController {
         });
 
         generateAttractionGrid();
+
+        // SEED INPUT
+        seedInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!simulation.setAttractionMatrixFromSeed(newValue)){
+                seedInput.setStyle("-fx-border-color: red;");
+            }
+            else {
+                seedInput.setStyle("-fx-border-color: transparent;");
+                updateAttractionMatrix();
+            }
+        });
+        seedInput.setText(simulation.seed);
     }
     private void updateGrid(double value, int[] coordinates){
         int matrixWidth = ParticleSimulation.ATTRACTION_MATRIX.length;

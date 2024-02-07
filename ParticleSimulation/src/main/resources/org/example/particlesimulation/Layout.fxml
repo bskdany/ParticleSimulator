@@ -81,12 +81,11 @@
               </VBox>
                <HBox alignment="CENTER" prefHeight="27.0" prefWidth="202.0" spacing="10.0">
                   <children>
-                     <TextField prefHeight="25.0" prefWidth="109.0" promptText="Enter seed">
+                     <TextField fx:id="seedInput" prefHeight="21.0" prefWidth="186.0" promptText="Enter seed">
                         <font>
                            <Font size="11.0" />
                         </font>
                      </TextField>
-                     <Button mnemonicParsing="false" text="Set Seed" />
                   </children>
                </HBox>
                <HBox alignment="TOP_CENTER" prefHeight="23.0" prefWidth="192.0" spacing="15.0">

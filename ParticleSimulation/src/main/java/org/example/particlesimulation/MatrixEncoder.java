@@ -2,6 +2,7 @@ package org.example.particlesimulation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.lang.module.ModuleDescriptor;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
@@ -18,11 +19,17 @@ public class MatrixEncoder {
         return Base64.getEncoder().encodeToString(compressed);
     }
     public static double[][] decode(String encoded){
-        byte[] bytes = Base64.getDecoder().decode(encoded);
-        byte[] decompressed = decompressData(bytes);
-        int[] array = stringToArray(new String(decompressed));
-        double[] denormalized = deNormalizeIntArray(array);
-        return deFlattenArray(denormalized);
+        try{
+            byte[] bytes = Base64.getDecoder().decode(encoded);
+            byte[] decompressed = decompressData(bytes);
+            int[] array = stringToArray(new String(decompressed));
+            double[] denormalized = deNormalizeIntArray(array);
+            return deFlattenArray(denormalized);
+        }
+        catch (Exception e){
+            System.out.println("Invalid input");
+            return null;
+        }
     }
     private static byte[] compressData(byte[] data) {
         try {
@@ -32,7 +39,7 @@ public class MatrixEncoder {
             }
             return baos.toByteArray();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
     }
@@ -50,7 +57,7 @@ public class MatrixEncoder {
             }
             return baos.toByteArray();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return null;
         }
     }

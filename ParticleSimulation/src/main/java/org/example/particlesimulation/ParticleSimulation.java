@@ -38,6 +38,8 @@ public class ParticleSimulation{
     public static double WRAP_DIRECTION_LIMIT_HEIGHT;
     public static double WRAP_DIRECTION_LIMIT_WIDTH;
 
+    public String seed;
+
     ParticleSimulation(Canvas canvas, double updateTimeMs){
         this.gc = canvas.getGraphicsContext2D();
         UPDATE_RATE_MS = updateTimeMs;
@@ -70,9 +72,10 @@ public class ParticleSimulation{
         Random random = new Random();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                ATTRACTION_MATRIX[i][j] =  Double.parseDouble(decimalFormat.format(random.nextGaussian() * 0.5));
+                ATTRACTION_MATRIX[i][j] =  Double.parseDouble(decimalFormat.format(random.nextDouble(-1,1)));
             }
         }
+        seed = MatrixEncoder.encode(ATTRACTION_MATRIX);
     }
 
     public void generateDefaultAttractionMatrix(){
@@ -98,6 +101,7 @@ public class ParticleSimulation{
                 }
             }
         }
+        seed = MatrixEncoder.encode(ATTRACTION_MATRIX);
     }
 
     public void update(){
@@ -248,7 +252,19 @@ public class ParticleSimulation{
     public double getAttractionMatrixValueAt(int[] coordinates){
         return ATTRACTION_MATRIX[coordinates[0]][coordinates[1]];
     }
+    public boolean setAttractionMatrixFromSeed(String seed){
+        if(Objects.equals(seed, "")){
+            return true;
+        }
 
+        double[][] newMatrix = MatrixEncoder.decode(seed);
+        if (newMatrix != null){
+            ATTRACTION_MATRIX = newMatrix;
+            return true;
+        } else{
+            return false;
+        }
+    }
     public void setForceMultiplier(int value){
         FORCE_MULTIPLIER = value;
     }
