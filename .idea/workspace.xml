@@ -5,16 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ParticleSimulation.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/jdeploy.yml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParticleSimulation/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/icon.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/MatrixEncoder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Particle.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulation.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulationData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulationGUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSpeciesData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/SidebarController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/SimulationTimeline.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Util.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Wall.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/particlesimulation/Layout.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,26 +54,67 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar.executor": "Run",
+    "JAR Application.ParticleSimulation-1.0-SNAPSHOT.jar.executor": "Run",
+    "JAR Application.particlesimulator-1.0-SNAPSHOT.jar.executor": "Run",
     "Maven.ParticleSimulation [clean].executor": "Run",
+    "Maven.ParticleSimulation [install].executor": "Run",
+    "Maven.ParticleSimulation [org.apache.maven.plugins:maven-assembly-plugin:3.6.0:single].executor": "Run",
+    "Maven.ParticleSimulation [org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar].executor": "Run",
+    "Maven.ParticleSimulation [org.openjfx:javafx-maven-plugin:0.0.8:jlink].executor": "Run",
+    "Maven.ParticleSimulation [package].executor": "Run",
+    "Maven.particlesimulator [clean].executor": "Run",
     "Maven.particlesimulator [install].executor": "Run",
+    "Maven.particlesimulator [org.openjfx:javafx-maven-plugin:0.0.8:jlink].executor": "Run",
+    "Maven.particlesimulator [package].executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
+    "jdk.selected.JAVA_MODULE": "openjdk-21",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/dany/Documents/Code/repos/ParticleSimulation",
+    "last_opened_file_path": "/home/dany/Documents/Code/jdeploy-javafx-starter",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.35287356",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "project.structure.side.proportion": "0.41954023",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.importing",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar">
+    <configuration name="ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/target/ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" />
+      <method v="2" />
+    </configuration>
+    <configuration name="ParticleSimulation-1.0-SNAPSHOT.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/target/ParticleSimulation-1.0-SNAPSHOT.jar" />
+      <method v="2" />
+    </configuration>
+    <configuration name="particlesimulator-1.0-SNAPSHOT.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/target/particlesimulator-1.0-SNAPSHOT.jar" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" />
+        <item itemvalue="JAR Application.ParticleSimulation-1.0-SNAPSHOT.jar" />
+        <item itemvalue="JAR Application.particlesimulator-1.0-SNAPSHOT.jar" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -86,7 +137,8 @@
       <workItem from="1707171904290" duration="96000" />
       <workItem from="1707172014425" duration="91000" />
       <workItem from="1707323226629" duration="867000" />
-      <workItem from="1707324119468" duration="1137000" />
+      <workItem from="1707324119468" duration="5752000" />
+      <workItem from="1707330368617" duration="874000" />
     </task>
     <servers />
   </component>
