@@ -54,6 +54,7 @@ public class SidebarController {
         particleForceMultiplierSlider.setValue(ParticleSimulation.getForceMultiplier());
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies,false));
         updateAttractionMatrix();
+        seedInput.setText(simulation.seed);
     }
     @FXML void resetDefaultSettingsButton(){
         // Simulation
@@ -64,6 +65,7 @@ public class SidebarController {
         // Particle
         simulation.generateDefaultAttractionMatrix();
         updateAttractionMatrix();
+        seedInput.setText(simulation.seed);
         simulation.initParticles();
         particleCountLabel.setText("Particle count: 200");
 
