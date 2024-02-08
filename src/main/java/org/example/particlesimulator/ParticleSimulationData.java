@@ -21,7 +21,9 @@ public class ParticleSimulationData {
     public final double WRAP_DIRECTION_LIMIT_HEIGHT;
     public final double WRAP_DIRECTION_LIMIT_WIDTH;
 
-    ParticleSimulationData(Map<Color, ParticleSpeciesData> particleData, List<Particle> particles, double[][] attractionMatrix, double friction, double maxAttDistance,double relDistanceCutout, int forceMultiplier){
+    public final String seed;
+
+    ParticleSimulationData(String seed, Map<Color, ParticleSpeciesData> particleData, List<Particle> particles, double[][] attractionMatrix, double friction, double maxAttDistance,double relDistanceCutout, int forceMultiplier){
         this.PARTICLE_DATA = new LinkedHashMap<Color, ParticleSpeciesData>(particleData);
         this.particles = new ArrayList<Particle>(particles);
         this.ATTRACTION_MATRIX = attractionMatrix;
@@ -31,5 +33,6 @@ public class ParticleSimulationData {
         this.FORCE_MULTIPLIER = forceMultiplier;
         this.WRAP_DIRECTION_LIMIT_WIDTH = CANVAS_WIDTH - MAX_ATTRACTION_DISTANCE - 1;
         this.WRAP_DIRECTION_LIMIT_HEIGHT = CANVAS_HEIGHT - MAX_ATTRACTION_DISTANCE - 1;
+        this.seed = seed;
     }
 }
