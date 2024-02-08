@@ -25,7 +25,6 @@ public class ParticleSimulation{
         put(Color.WHITE,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
     }};
     private List<Particle> particles = new ArrayList<>();
-    public static double[][] ATTRACTION_MATRIX;
     public static double CANVAS_WIDTH;
     public static double CANVAS_HEIGHT;
     public static double UPDATE_RATE_MS;
@@ -37,9 +36,7 @@ public class ParticleSimulation{
     public static int FORCE_MULTIPLIER = 5;
     public static double WRAP_DIRECTION_LIMIT_HEIGHT;
     public static double WRAP_DIRECTION_LIMIT_WIDTH;
-
-    public String seed;
-
+    private final AttractionMatrix attractionMatrix;
     ParticleSimulation(Canvas canvas, double updateTimeMs){
         this.gc = canvas.getGraphicsContext2D();
         UPDATE_RATE_MS = updateTimeMs;
@@ -48,14 +45,23 @@ public class ParticleSimulation{
         WRAP_DIRECTION_LIMIT_WIDTH = CANVAS_WIDTH - MAX_ATTRACTION_DISTANCE - 1;
         WRAP_DIRECTION_LIMIT_HEIGHT = CANVAS_HEIGHT - MAX_ATTRACTION_DISTANCE - 1;
         simulationTimeline = new SimulationTimeline();
+        attractionMatrix = new AttractionMatrix(PARTICLE_DATA.size());
     }
-
     public void initContent() {
-        generateDefaultAttractionMatrix();
+        attractionMatrix.generateRandomAttractionMatrix();
         initParticles();
-        simulationTimeline.add(new ParticleSimulationData(seed, ParticleSpeciesData.deepCopy(PARTICLE_DATA), Particle.deepCloneList(particles), this.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
+        simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(PARTICLE_DATA), Particle.deepCloneList(particles), AttractionMatrix.ATTRACTION_MATRIX, this.FRICTION, this.MAX_ATTRACTION_DISTANCE, this.ATTRACTION_RELATIVE_DISTANCE_CUTOUT, this.FORCE_MULTIPLIER));
     }
-
+    public void stop(){
+        if(timeline.getStatus() == Animation.Status.RUNNING){
+            timeline.pause();
+        }
+    }
+    public void start(){
+        if(timeline.getStatus() == Animation.Status.PAUSED){
+            timeline.play();
+        }
+    }
     public void initParticles(){
         particles.clear();
         for(Map.Entry<Color, ParticleSpeciesData> speciesData : PARTICLE_DATA.entrySet()){
@@ -64,48 +70,7 @@ public class ParticleSimulation{
             }
         }
     }
-
-    public void generateRandomAttractionMatrix(){
-        int size = PARTICLE_DATA.size();
-        ATTRACTION_MATRIX = new double[size][size];
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        Random random = new Random();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                ATTRACTION_MATRIX[i][j] =  Double.parseDouble(decimalFormat.format(random.nextDouble(-1,1)));
-            }
-        }
-        seed = MatrixEncoder.encode(ATTRACTION_MATRIX);
-    }
-
-    public void generateDefaultAttractionMatrix(){
-        int size = PARTICLE_DATA.size();
-        ATTRACTION_MATRIX = new double[size][size];
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if(i == j){
-                    ATTRACTION_MATRIX[i][j] = 0.8;
-                } else if (i == j+1 || i == j-1) {
-                    ATTRACTION_MATRIX[i][j] = 0.4;
-                } else if (i == j+2 || i == j-2) {
-                    ATTRACTION_MATRIX[i][j] = 0;
-                } else if (i == j+3 || i == j-3) {
-                    ATTRACTION_MATRIX[i][j] = -0.2;
-                } else if (i == j+4 || i == j-4) {
-                    ATTRACTION_MATRIX[i][j] = -0.4;
-                } else if (i == j+5 || i == j-5) {
-                    ATTRACTION_MATRIX[i][j] = -0.6;
-                } else if (i == j+6 || i == j-6) {
-                    ATTRACTION_MATRIX[i][j] = -0.8;
-                }
-            }
-        }
-        seed = MatrixEncoder.encode(ATTRACTION_MATRIX);
-    }
-
     public void update(){
-
         timeline = new Timeline(
             new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
                 particles.parallelStream().forEach(particle -> particle.simulate(particles));
@@ -115,7 +80,7 @@ public class ParticleSimulation{
                     drawParticle(particle);
                 }
                 if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
-                    simulationTimeline.add(new ParticleSimulationData(seed, ParticleSpeciesData.deepCopy(PARTICLE_DATA), Particle.deepCloneList(particles), ATTRACTION_MATRIX.clone(), FRICTION, MAX_ATTRACTION_DISTANCE, ATTRACTION_RELATIVE_DISTANCE_CUTOUT, FORCE_MULTIPLIER));
+                    simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(PARTICLE_DATA), Particle.deepCloneList(particles), AttractionMatrix.ATTRACTION_MATRIX, FRICTION, MAX_ATTRACTION_DISTANCE, ATTRACTION_RELATIVE_DISTANCE_CUTOUT, FORCE_MULTIPLIER));
                 }
             })
         );
@@ -123,54 +88,34 @@ public class ParticleSimulation{
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
-
     public void reset(){
         stop();
         initContent();
         start();
     }
-
-    public void resetDefaultAttractionMatrix(){
-        timeline.stop();
-        generateDefaultAttractionMatrix();
-        timeline.play();
-    }
-
-    public void resetRandomAttractionMatrix(){
-        timeline.stop();
-        generateRandomAttractionMatrix();
-        timeline.play();
-    }
-
-    public void setMaxAttractionDistance(int distance){
-        MAX_ATTRACTION_DISTANCE = distance;
-    }
-
     public void peekRewind(int offset){
         stop();
         ParticleSimulationData data = simulationTimeline.getAt(offset);
         particles = data.particles;
         PARTICLE_DATA = data.PARTICLE_DATA;
-        ATTRACTION_MATRIX = data.ATTRACTION_MATRIX;
+        AttractionMatrix.ATTRACTION_MATRIX =  data.ATTRACTION_MATRIX;
+        attractionMatrix.setSeed(data.seed);
         FRICTION = data.FRICTION;
         MAX_ATTRACTION_DISTANCE = data.MAX_ATTRACTION_DISTANCE;
         ATTRACTION_RELATIVE_DISTANCE_CUTOUT = data.ATTRACTION_RELATIVE_DISTANCE_CUTOUT;
         FORCE_MULTIPLIER = data.FORCE_MULTIPLIER;
         WRAP_DIRECTION_LIMIT_WIDTH = data.WRAP_DIRECTION_LIMIT_WIDTH;
         WRAP_DIRECTION_LIMIT_HEIGHT = data.WRAP_DIRECTION_LIMIT_HEIGHT;
-        seed = data.seed;
 
         clearCanvas();
         for(Particle p : particles){
             drawParticle(p);
         }
     }
-
     public void finalizeRewind(){
         simulationTimeline.setNewAtCurrent();
         start();
     }
-
     private void handleParticleQuantityCreationHelper(Color color, int quantity){
         ParticleSpeciesData speciesData = PARTICLE_DATA.get(color);
         if(speciesData == null){
@@ -200,10 +145,8 @@ public class ParticleSimulation{
             }
         }
     }
-
     public void addParticleQuantity(int quantity, Color color, boolean areAllSelected){
         stop();
-
         if(areAllSelected) {
             for (Color species : PARTICLE_DATA.keySet()) {
                handleParticleQuantityCreationHelper(species, quantity);
@@ -214,7 +157,6 @@ public class ParticleSimulation{
         }
         start();
     }
-
     private void createParticle(Color color){
         int particleX = (int) (Math.random() * CANVAS_WIDTH);
         int particleY = (int) (Math.random() * CANVAS_HEIGHT);
@@ -228,19 +170,16 @@ public class ParticleSimulation{
         }
         particles.add(new Particle(particleX, particleY, particleRadius, color, 1, species));
     }
-
     public void drawParticle(Particle particle) {
         gc.setFill(particle.COLOR);
         double radius = particle.RADIUS;
         gc.fillOval(particle.POSITION[0] - radius, particle.POSITION[1] - radius, 2 * radius, 2 * radius);
     }
-
     public void clearCanvas(){
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
         gc.setFill(javafx.scene.paint.Color.BLACK);
         gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
     }
-
     public int getParticleQuantity(Color color, boolean areAllSpeciesSelected){
         if(areAllSpeciesSelected){
             return particles.size();
@@ -249,57 +188,10 @@ public class ParticleSimulation{
             return PARTICLE_DATA.get(color).getQuantity();
         }
     }
-
-    public double getAttractionMatrixValueAt(int[] coordinates){
-        return ATTRACTION_MATRIX[coordinates[0]][coordinates[1]];
-    }
-    public boolean setAttractionMatrixFromSeed(String seed){
-        if(Objects.equals(seed, "")){
-            return true;
-        }
-
-        double[][] newMatrix = MatrixEncoder.decode(seed);
-        if (newMatrix != null){
-            ATTRACTION_MATRIX = newMatrix;
-            return true;
-        } else{
-            return false;
-        }
-    }
-    public void setForceMultiplier(int value){
-        FORCE_MULTIPLIER = value;
-    }
-    public void setMinAttractionDistance(double value){
-        ATTRACTION_RELATIVE_DISTANCE_CUTOUT = value;
-    }
-
-    public void setAttractionMatrixValue(int[] coordinates, double value){
-        stop();
-        ATTRACTION_MATRIX[coordinates[0]][coordinates[1]] = value;
-        start();
-    }
-
-    public static double getMaxAttractionDistance() {
-        return MAX_ATTRACTION_DISTANCE;
-    }
-
-    public static int getForceMultiplier() {
-        return FORCE_MULTIPLIER;
-    }
-
     public static double getAttractionRelativeDistanceCutout() {
         return ATTRACTION_RELATIVE_DISTANCE_CUTOUT;
     }
-
-    public void stop(){
-        if(timeline.getStatus() == Animation.Status.RUNNING){
-            timeline.pause();
-        }
-    }
-
-    public void start(){
-        if(timeline.getStatus() == Animation.Status.PAUSED){
-            timeline.play();
-        }
+    public AttractionMatrix getAttractionMatrix(){
+        return attractionMatrix;
     }
 }

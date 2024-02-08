@@ -14,7 +14,6 @@ public class SidebarController {
     private Boolean areAllSpeciesSelected;
 
     @FXML private Button playPauseButton;
-
     @FXML private Label particleMaxAttractionDistanceLabel; // MAX ATTRACTION DISTANCE
     @FXML private Slider particleMaxAttractionDistanceSlider;
     @FXML private Label particleMinAttractionLabel;         // MIN ATTRACTION DISTANCE
@@ -48,42 +47,13 @@ public class SidebarController {
         setupGeneralSimulationTab();
     }
 
-    @FXML void updateAllElements(){
-        particleMaxAttractionDistanceSlider.setValue(ParticleSimulation.getMaxAttractionDistance());
-        particleMinAttractionSlider.setValue(ParticleSimulation.getAttractionRelativeDistanceCutout());
-        particleForceMultiplierSlider.setValue(ParticleSimulation.getForceMultiplier());
-        particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies,false));
-        updateAttractionMatrix();
-        seedInput.setText(simulation.seed);
-    }
-    @FXML void resetDefaultSettingsButton(){
-        // Simulation
-        simulation.setMaxAttractionDistance(100);
-        simulation.setMinAttractionDistance(0.3);
-        simulation.setForceMultiplier(5);
-
-        // Particle
-        simulation.generateDefaultAttractionMatrix();
-        updateAttractionMatrix();
-        seedInput.setText(simulation.seed);
-        simulation.initParticles();
-        particleCountLabel.setText("Particle count: 200");
-
-        updateAllElements();
-    }
-    @FXML void handleKillAllParticlesButton(){
-        if(!areAllSpeciesSelected){
-            simulation.addParticleQuantity(-simulation.getParticleQuantity(selectedSpecies, false), selectedSpecies, false);
-            particleCountLabel.setText("Particle count: 0");
-        }
-    }
-    @FXML private void handleResetButton() {
-        simulation.reset();
+    private void updateSeedInput(){
+        seedInput.setText(simulation.getAttractionMatrix().getSeed());
     }
     private void updateAttractionMatrix(){
-        for (int i = 0; i < ParticleSimulation.ATTRACTION_MATRIX.length; i++) {
-            for (int j = 0; j < ParticleSimulation.ATTRACTION_MATRIX.length; j++) {
-                updateGrid(ParticleSimulation.ATTRACTION_MATRIX[i][j], new int[]{i,j});
+        for (int i = 0; i < AttractionMatrix.ATTRACTION_MATRIX.length; i++) {
+            for (int j = 0; j < AttractionMatrix.ATTRACTION_MATRIX.length; j++) {
+                updateGridAtCoordinate(AttractionMatrix.ATTRACTION_MATRIX[i][j], new int[]{i,j});
             }
         }
         if(activeAttractionGridLabel != null){
@@ -93,15 +63,55 @@ public class SidebarController {
         activeAttractionLabelCoordinates[1] = -1;
         particleAttractionValueSlider.setDisable(true);
     }
-    @FXML private void handleDefaultAttractionMatrixButton(){
-        simulation.resetDefaultAttractionMatrix();
+    private void updateMaxAttractionDistance(){
+        particleMaxAttractionDistanceSlider.setValue(ParticleSimulation.MAX_ATTRACTION_DISTANCE);
+    }
+    private void updateMinAttractionDistance(){
+        particleMinAttractionSlider.setValue(ParticleSimulation.getAttractionRelativeDistanceCutout());
+    }
+    private void updateForceMultiplier(){
+        particleForceMultiplierSlider.setValue(ParticleSimulation.FORCE_MULTIPLIER);
+    }
+    private void updateParticleCount(){
+        particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies,areAllSpeciesSelected));
+    }
+    void updateAllElements(){
+        updateMaxAttractionDistance();
+        updateMinAttractionDistance();
+        updateForceMultiplier();
         updateAttractionMatrix();
-        seedInput.setText(simulation.seed);
+        updateSeedInput();
+        updateParticleCount();
+    }
+    @FXML void resetDefaultSettingsButton(){
+        // Simulation
+        ParticleSimulation.MAX_ATTRACTION_DISTANCE = (100);
+        ParticleSimulation.ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
+        ParticleSimulation.FORCE_MULTIPLIER = 5;
+
+        // Particle
+        simulation.getAttractionMatrix().generateDefaultAttractionMatrix();
+        simulation.initParticles();
+        updateAllElements();
+    }
+    @FXML void handleKillAllParticlesButton(){
+        if(!areAllSpeciesSelected){
+            simulation.addParticleQuantity(-simulation.getParticleQuantity(selectedSpecies, false), selectedSpecies, false);
+            updateParticleCount();
+        }
+    }
+    @FXML private void handleResetButton() {
+        simulation.reset();
+    }
+    @FXML private void handleDefaultAttractionMatrixButton(){
+        simulation.getAttractionMatrix().generateRandomAttractionMatrix();
+        updateAttractionMatrix();
+        seedInput.setText(simulation.getAttractionMatrix().getSeed());
     }
     @FXML private void handleRandomAttractionMatrixButton(){
-        simulation.resetRandomAttractionMatrix();
+        simulation.getAttractionMatrix().generateRandomAttractionMatrix();
         updateAttractionMatrix();
-        seedInput.setText(simulation.seed);
+        updateSeedInput();
     }
     @FXML void handlePlayPauseButton(){
         if(Objects.equals(playPauseButton.getText(), "Play")){
@@ -123,20 +133,20 @@ public class SidebarController {
     private void setupGeneralSimulationTab(){
         // MAX ATTRACTION DISTANCE
         particleMaxAttractionDistanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            simulation.setMaxAttractionDistance(newValue.intValue());
+            ParticleSimulation.MAX_ATTRACTION_DISTANCE = newValue.intValue();
             particleMaxAttractionDistanceLabel.setText("Max attraction distance: " + newValue.intValue());
         });
 
         // MIN ATTRACTION DISTANCE
         particleMinAttractionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             double val = Double.parseDouble(decimalFormat.format(newValue));
-            simulation.setMinAttractionDistance(val);
+            ParticleSimulation.ATTRACTION_RELATIVE_DISTANCE_CUTOUT = val;
             particleMinAttractionLabel.setText("Min attraction distance: " + decimalFormat.format(newValue));
         });
 
         // FORCE MULTIPLIER
         particleForceMultiplierSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            simulation.setForceMultiplier(newValue.intValue());
+            ParticleSimulation.FORCE_MULTIPLIER = newValue.intValue();
             particleForceMultiplierLabel.setText("Force multiplier: " + newValue.intValue());
         });
 
@@ -171,8 +181,6 @@ public class SidebarController {
         List<String> entries = new ArrayList<>();
         for(Color color :colors){
             entries.add(colorMap.get(color));
-//            System.out.println(colorMap.get(color));
-//            System.out.println(color.getRed() + " " + color.getGreen() + " " + color.getBlue());
         }
         speciesChoiceBox.setItems(FXCollections.observableArrayList(entries));
         // setting default value of the choice box to be the first color
@@ -194,7 +202,7 @@ public class SidebarController {
         // SELECT ALL CHECK
         selectAllCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
             areAllSpeciesSelected = newValue;
-            particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
+            updateParticleCount();
             speciesChoiceBox.setDisable(newValue); // disables the color selection when all are selected
         });
 
@@ -203,16 +211,17 @@ public class SidebarController {
 //            if(Math.abs(oldValue.doubleValue() - newValue.doubleValue()) < 0.05){
 //                return;
 //            }
-            simulation.setAttractionMatrixValue(activeAttractionLabelCoordinates, Double.parseDouble(decimalFormat.format(newValue)));
+            simulation.getAttractionMatrix().setAttractionMatrixValue(activeAttractionLabelCoordinates, Double.parseDouble(decimalFormat.format(newValue)));
 
-            updateGrid(Double.parseDouble(decimalFormat.format(newValue)), activeAttractionLabelCoordinates);
+            updateGridAtCoordinate(Double.parseDouble(decimalFormat.format(newValue)), activeAttractionLabelCoordinates);
+            updateSeedInput();
         });
 
         generateAttractionGrid();
 
         // SEED INPUT
         seedInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!simulation.setAttractionMatrixFromSeed(newValue)){
+            if(!simulation.getAttractionMatrix().setAttractionMatrixFromSeed(newValue)){
                 seedInput.setStyle("-fx-border-color: red;");
             }
             else {
@@ -220,10 +229,10 @@ public class SidebarController {
                 updateAttractionMatrix();
             }
         });
-        seedInput.setText(simulation.seed);
+        updateSeedInput();
     }
-    private void updateGrid(double value, int[] coordinates){
-        int matrixWidth = ParticleSimulation.ATTRACTION_MATRIX.length;
+    private void updateGridAtCoordinate(double value, int[] coordinates){
+        int matrixWidth = AttractionMatrix.ATTRACTION_MATRIX.length;
         int position = (matrixWidth * 2) + coordinates[0] * matrixWidth + coordinates[1] ;
         Label labelToUpdate = (Label) attractionGrid.getChildren().get(position);
         labelToUpdate.setText(String.valueOf(value));
@@ -232,9 +241,9 @@ public class SidebarController {
     }
     private void generateAttractionGrid(){
         // ATTRACTION GRID
-        for (int i = 0 ; i < ParticleSimulation.ATTRACTION_MATRIX.length; i++) {
-            for (int j = 0; j < ParticleSimulation.ATTRACTION_MATRIX.length; j++) {
-                double value = ParticleSimulation.ATTRACTION_MATRIX[i][j];
+        for (int i = 0 ; i < AttractionMatrix.ATTRACTION_MATRIX.length; i++) {
+            for (int j = 0; j < AttractionMatrix.ATTRACTION_MATRIX.length; j++) {
+                double value = AttractionMatrix.ATTRACTION_MATRIX[i][j];
 
                 Label label = new Label(String.valueOf(value));
                 label.setFont(new Font(9));
@@ -262,7 +271,7 @@ public class SidebarController {
                         activeAttractionLabelCoordinates[0] = finalI;
                         activeAttractionLabelCoordinates[1] = finalJ;
                         particleAttractionValueSlider.setDisable(false);
-                        particleAttractionValueSlider.setValue(simulation.getAttractionMatrixValueAt(activeAttractionLabelCoordinates));
+                        particleAttractionValueSlider.setValue(simulation.getAttractionMatrix().getAttractionMatrixValueAt(activeAttractionLabelCoordinates));
 
                     }
                     // if it has border remove it

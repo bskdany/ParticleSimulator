@@ -4,12 +4,93 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Objects;
+import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class MatrixEncoder {
+public class AttractionMatrix {
+    public static double[][] ATTRACTION_MATRIX; // this is static for faster access from each Particle
+    private String seed;
+    private final int size;
+
+    AttractionMatrix(int size){
+        this.size = size;
+    }
+
+    public String getSeed(){
+        return seed;
+    }
+    public void setSeed(String s){
+        seed = s;
+    }
+
+    public void generateDefaultAttractionMatrix(){
+        ATTRACTION_MATRIX = new double[size][size];
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if(i == j){
+                    ATTRACTION_MATRIX[i][j] = 0.8;
+                } else if (i == j+1 || i == j-1) {
+                    ATTRACTION_MATRIX[i][j] = 0.4;
+                } else if (i == j+2 || i == j-2) {
+                    ATTRACTION_MATRIX[i][j] = 0;
+                } else if (i == j+3 || i == j-3) {
+                    ATTRACTION_MATRIX[i][j] = -0.2;
+                } else if (i == j+4 || i == j-4) {
+                    ATTRACTION_MATRIX[i][j] = -0.4;
+                } else if (i == j+5 || i == j-5) {
+                    ATTRACTION_MATRIX[i][j] = -0.6;
+                } else if (i == j+6 || i == j-6) {
+                    ATTRACTION_MATRIX[i][j] = -0.8;
+                }
+            }
+        }
+        seed = AttractionMatrix.encode(ATTRACTION_MATRIX);
+    }
+
+    public void generateRandomAttractionMatrix(){
+        ATTRACTION_MATRIX = new double[size][size];
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        Random random = new Random();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                ATTRACTION_MATRIX[i][j] =  Double.parseDouble(decimalFormat.format(random.nextDouble(-1,1)));
+            }
+        }
+        seed = AttractionMatrix.encode(ATTRACTION_MATRIX);
+    }
+
+    public void setAttractionMatrixValue(int[] coordinates, double value){
+        ATTRACTION_MATRIX[coordinates[0]][coordinates[1]] = value;
+//        String newSeed = MatrixEncoder.encode(ATTRACTION_MATRIX);
+//        if(newSeed != null){
+//            seed = newSeed;
+//        }
+    }
+
+    public double getAttractionMatrixValueAt(int[] coordinates){
+        return ATTRACTION_MATRIX[coordinates[0]][coordinates[1]];
+    }
+
+    public boolean setAttractionMatrixFromSeed(String seed){
+        if(Objects.equals(seed, "")){
+            return true;
+        }
+
+        double[][] newMatrix = AttractionMatrix.decode(seed);
+        if (newMatrix != null){
+            ATTRACTION_MATRIX = newMatrix;
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     public static String encode(double[][] matrix){
         double[] flat = flattenArray(matrix);
         int[] normalized = normalizeDoubleArray(flat);

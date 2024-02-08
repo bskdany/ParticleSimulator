@@ -75,7 +75,7 @@ public class Particle {
                 if(distance > 1) {
                     continue;
                 }
-                double attractionFactor = ParticleSimulation.ATTRACTION_MATRIX[SPECIES][particle.SPECIES];
+                double attractionFactor = AttractionMatrix.ATTRACTION_MATRIX[SPECIES][particle.SPECIES];
                 double magnitude =  calculateAttractionForce(distance, attractionFactor);
 //                double magnitude = calculateAttractionForceNewton(distance, this, particle);
                 double[] normalisedDirectionVector = normalizeVector(directionVector);
