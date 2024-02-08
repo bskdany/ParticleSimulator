@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>ParticleSimulation</artifactId>
+    <artifactId>ParticleSimulator</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>ParticleSimulation</name>
+    <name>ParticleSimulator</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,7 +56,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>org.example.particlesimulation.Main</mainClass>
+                            <mainClass>org.example.particlesimulator.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -82,7 +82,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.example.particlesimulation.Main</mainClass>
+                            <mainClass>org.example.particlesimulator.Main</mainClass>
                         </configuration>
                     </execution>
                 </executions>

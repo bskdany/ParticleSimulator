@@ -27,5 +27,5 @@ jobs:
       - name: Build App Installer Bundles
         uses: shannah/jdeploy@master
         with:
-          target_repository: 'bskdany/ParticleSimulation'
+          target_repository: 'bskdany/ParticleSimulator'
           github_token: ${{ secrets.GIT_TOKEN }}

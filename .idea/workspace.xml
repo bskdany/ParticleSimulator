@@ -5,9 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/ParticleSimulator.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/attractionForceFunction.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/jdeploy.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/jdeploy.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/MatrixEncoder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/MatrixEncoder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulationData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulationData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSimulationGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulationGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/ParticleSpeciesData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSpeciesData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/SidebarController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/SidebarController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/SimulationTimeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/SimulationTimeline.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Util.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Util.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulation/Wall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Wall.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/particlesimulation/Layout.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/particlesimulator/Layout.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +95,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar">
+  <component name="RunManager" selected="JAR Application.ParticleSimulator.jar">
     <configuration name="ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" type="JarApplication" temporary="true">
       <option name="JAR_PATH" value="$PROJECT_DIR$/target/ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" />
       <method v="2" />
@@ -90,12 +104,17 @@
       <option name="JAR_PATH" value="$PROJECT_DIR$/target/ParticleSimulation-1.0-SNAPSHOT.jar" />
       <method v="2" />
     </configuration>
+    <configuration name="ParticleSimulator.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/build/ParticleSimulator.jar" />
+      <method v="2" />
+    </configuration>
     <configuration name="particlesimulator-1.0-SNAPSHOT.jar" type="JarApplication" temporary="true">
       <option name="JAR_PATH" value="$PROJECT_DIR$/target/particlesimulator-1.0-SNAPSHOT.jar" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JAR Application.ParticleSimulator.jar" />
         <item itemvalue="JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar" />
         <item itemvalue="JAR Application.ParticleSimulation-1.0-SNAPSHOT.jar" />
         <item itemvalue="JAR Application.particlesimulator-1.0-SNAPSHOT.jar" />
@@ -126,7 +145,7 @@
       <workItem from="1707323226629" duration="867000" />
       <workItem from="1707324119468" duration="5752000" />
       <workItem from="1707330368617" duration="5512000" />
-      <workItem from="1707354605688" duration="654000" />
+      <workItem from="1707354605688" duration="1630000" />
     </task>
     <servers />
   </component>
