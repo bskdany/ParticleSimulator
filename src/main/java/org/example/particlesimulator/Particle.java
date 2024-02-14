@@ -6,108 +6,111 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Particle {
-    public double[] POSITION;
+    public double[] position;
     public final double RADIUS;
-    public Color COLOR;
-    public double MASS;
-    public int SPECIES;
-    private final double[] DELTA_POSITION;
-    private final double[] FORCE;
-    public double[] VELOCITY;
+    public Color color;
+    public final double MASS;
+    public final int SPECIES;
+    private final double[] deltaPosition;
+    private final double[] force;
+    public double[] velocity;
 
     double[] directionVector = new double[2];
     Particle(int x, int y, double radius, Color color, double mass, int species){
-        this.POSITION = new double[]{x,y};
         this.RADIUS = radius;
-        this.COLOR = color;
         this.MASS = mass;
         this.SPECIES = species;
-        this.DELTA_POSITION = new double[]{0, 0};
-        this.FORCE = new double[]{0,0};
-        this.VELOCITY = new double[]{0,0};
+        this.color = color;
+        this.position = new double[]{x,y};
+        this.deltaPosition = new double[]{0, 0};
+        this.force = new double[]{0,0};
+        this.velocity = new double[]{0,0};
     }
 
+    /**
+     * Copy constructor for the particle
+     * @param original the original particle
+     */
     Particle(Particle original){
-        this.POSITION = original.POSITION.clone();
+        this.position = original.position.clone();
         this.RADIUS = original.RADIUS;
-        this.COLOR = original.COLOR;
+        this.color = original.color;
         this.MASS = original.MASS;
         this.SPECIES = original.SPECIES;
-        this.DELTA_POSITION = original.DELTA_POSITION.clone();
-        this.FORCE = original.FORCE.clone();
-        this.VELOCITY = original.VELOCITY.clone();
+        this.deltaPosition = original.deltaPosition.clone();
+        this.force = original.force.clone();
+        this.velocity = original.velocity.clone();
         this.directionVector = new double[]{0,0};
     }
 
-
     public void adjustPositionWrapping(){
-        if(POSITION[0] < 0){
-            POSITION[0] += ParticleSimulation.CANVAS_WIDTH;
-        } else if (POSITION[0] > ParticleSimulation.CANVAS_WIDTH) {
-            POSITION[0] -= ParticleSimulation.CANVAS_WIDTH - 1;
+        if(position[0] < 0){
+            position[0] += ParticleSimulation.CANVAS_WIDTH;
+        } else if (position[0] > ParticleSimulation.CANVAS_WIDTH) {
+            position[0] -= ParticleSimulation.CANVAS_WIDTH - 1;
         }
-        if(POSITION[1] < 0){
-            POSITION[1] += ParticleSimulation.CANVAS_HEIGHT;
-        } else if (POSITION[1] > ParticleSimulation.CANVAS_HEIGHT) {
-            POSITION[1] -= ParticleSimulation.CANVAS_HEIGHT -1;
+        if(position[1] < 0){
+            position[1] += ParticleSimulation.CANVAS_HEIGHT;
+        } else if (position[1] > ParticleSimulation.CANVAS_HEIGHT) {
+            position[1] -= ParticleSimulation.CANVAS_HEIGHT -1;
         }
     }
     public void simulate(List<Particle> particles){
-        FORCE[0] = 0;
-        FORCE[1] = 0;
+        force[0] = 0;
+        force[1] = 0;
         for(Particle particle : particles){
             if(particle != this){
-                directionVector[0] = particle.POSITION[0] - POSITION[0];
-                directionVector[1] = particle.POSITION[1] - POSITION[1];
+                directionVector[0] = particle.position[0] - position[0];
+                directionVector[1] = particle.position[1] - position[1];
 
-                if(Math.abs(directionVector[0]) > ParticleSimulation.MAX_ATTRACTION_DISTANCE && Math.abs(directionVector[0]) < ParticleSimulation.WRAP_DIRECTION_LIMIT_WIDTH){
+                if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
                     continue;
                 }
-                if(Math.abs(directionVector[1]) > ParticleSimulation.MAX_ATTRACTION_DISTANCE && Math.abs(directionVector[1]) < ParticleSimulation.WRAP_DIRECTION_LIMIT_HEIGHT){
+                if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
                     continue;
                 }
 
                 double[] directionVector = calculateVectorWrap();
 
                 // length of the relative distance
-                double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.MAX_ATTRACTION_DISTANCE;
+                double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
 
                 if(distance > 1) {
                     continue;
                 }
-                double attractionFactor = AttractionMatrix.ATTRACTION_MATRIX[SPECIES][particle.SPECIES];
+                double attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][particle.SPECIES];
                 double magnitude =  calculateAttractionForce(distance, attractionFactor);
 //                double magnitude = calculateAttractionForceNewton(distance, this, particle);
                 double[] normalisedDirectionVector = normalizeVector(directionVector);
 
-                FORCE[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.MAX_ATTRACTION_DISTANCE;
-                FORCE[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.MAX_ATTRACTION_DISTANCE;
+                force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
+                force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
             }
         }
         // all particles move towards the center slowly
-        double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - POSITION[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - POSITION[1]});
-        FORCE[0] += vectorTowardsCenter[0];
-        FORCE[1] += vectorTowardsCenter[1];
+        double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
+        force[0] += vectorTowardsCenter[0];
+        force[1] += vectorTowardsCenter[1];
 
         // F = m / a
-        double accelerationX = FORCE[0] * ParticleSimulation.FORCE_MULTIPLIER / MASS;
-        double accelerationY = FORCE[1] * ParticleSimulation.FORCE_MULTIPLIER / MASS;
+        double accelerationX = force[0] * ParticleSimulation.forceMultiplier / MASS;
+        double accelerationY = force[1] * ParticleSimulation.forceMultiplier / MASS;
 
-        VELOCITY[0] *= ParticleSimulation.FRICTION;
-        VELOCITY[1] *= ParticleSimulation.FRICTION;
+        velocity[0] *= ParticleSimulation.friction;
+        velocity[1] *= ParticleSimulation.friction;
 
-        VELOCITY[0] += accelerationX * ParticleSimulation.UPDATE_RATE_MS / 1000;
-        VELOCITY[1] += accelerationY * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        velocity[0] += accelerationX * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        velocity[1] += accelerationY * ParticleSimulation.UPDATE_RATE_MS / 1000;
 
-        DELTA_POSITION[0] = VELOCITY[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
-        DELTA_POSITION[1] = VELOCITY[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        deltaPosition[0] = velocity[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        deltaPosition[1] = velocity[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
 
-        if(DELTA_POSITION[0] > RADIUS * 10){
+        if(deltaPosition[0] > RADIUS * 10){
             // explode
         }
 
-        POSITION[0] += VELOCITY[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
-        POSITION[1] += VELOCITY[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        position[0] += velocity[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        position[1] += velocity[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
 
     }
 
@@ -120,10 +123,10 @@ public class Particle {
     }
 
     private double calculateAttractionForce(double relativeDistance, double attractionFactor){
-        if(relativeDistance < ParticleSimulation.ATTRACTION_RELATIVE_DISTANCE_CUTOUT){
-            return relativeDistance / ParticleSimulation.ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 1;
+        if(relativeDistance < ParticleSimulation.attractionRelativeDistanceCutout){
+            return relativeDistance / ParticleSimulation.attractionRelativeDistanceCutout - 1;
         } else if (relativeDistance < 1.0) {
-            return (-Math.abs(relativeDistance - ParticleSimulation.ATTRACTION_RELATIVE_DISTANCE_CUTOUT - 0.5) + 0.5 ) * 2 * attractionFactor;
+            return (-Math.abs(relativeDistance - ParticleSimulation.attractionRelativeDistanceCutout - 0.5) + 0.5 ) * 2 * attractionFactor;
         }
         return 0;
     }
@@ -135,17 +138,17 @@ public class Particle {
 
     private double[] calculateVectorWrap(){
         // vector from source to target
-        if(directionVector[0] > ParticleSimulation.WRAP_DIRECTION_LIMIT_WIDTH){  // warp left
+        if(directionVector[0] > ParticleSimulation.wrapDirectionLimitWidth){  // warp left
             directionVector[0] = directionVector[0] - ParticleSimulation.CANVAS_WIDTH -1;
         }
-        else if(directionVector[0] < -ParticleSimulation.WRAP_DIRECTION_LIMIT_WIDTH){ // warp right
+        else if(directionVector[0] < -ParticleSimulation.wrapDirectionLimitWidth){ // warp right
             directionVector[0] = directionVector[0] + ParticleSimulation.CANVAS_WIDTH +1;
         }
 
-        if(directionVector[1] > ParticleSimulation.WRAP_DIRECTION_LIMIT_HEIGHT){ // warp top
+        if(directionVector[1] > ParticleSimulation.wrapDirectionLimitHeight){ // warp top
             directionVector[1] = directionVector[1] - ParticleSimulation.CANVAS_HEIGHT -1;
         }
-        else if(directionVector[1] < -ParticleSimulation.WRAP_DIRECTION_LIMIT_HEIGHT){ // warp bottom
+        else if(directionVector[1] < -ParticleSimulation.wrapDirectionLimitHeight){ // warp bottom
             directionVector[1] = directionVector[1] + ParticleSimulation.CANVAS_HEIGHT +1;
         }
         return directionVector;
