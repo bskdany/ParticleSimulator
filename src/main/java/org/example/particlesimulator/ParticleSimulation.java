@@ -1,6 +1,7 @@
 package org.example.particlesimulator;
 
 import javafx.animation.Animation;
+import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
@@ -26,9 +27,11 @@ public class ParticleSimulation{
     private List<Particle> particles = new ArrayList<>();
     public static double CANVAS_WIDTH;
     public static double CANVAS_HEIGHT;
+    private final int SIMULATION_FPS = 60;
     public static double UPDATE_RATE_MS;
+    private final long UPDATE_RATE_NANOSEC;
     private final GraphicsContext gc;
-    private Timeline timeline;
+    private AnimationTimer timer;
     public static double friction = 0.04;
     public static double maxAttractionDistance = 100;
     public static double attractionRelativeDistanceCutout = 0.3; // 30%
@@ -36,9 +39,11 @@ public class ParticleSimulation{
     public static double wrapDirectionLimitHeight;
     public static double wrapDirectionLimitWidth;
     private final AttractionMatrix attractionMatrix;
-    ParticleSimulation(Canvas canvas, double updateTimeMs){
+    private long lastUpdateTime = 0;
+    ParticleSimulation(Canvas canvas){
         gc = canvas.getGraphicsContext2D();
-        UPDATE_RATE_MS = updateTimeMs;
+        UPDATE_RATE_MS = (double) 1000 / SIMULATION_FPS;
+        UPDATE_RATE_NANOSEC = (long) 1_000_000_000 / SIMULATION_FPS;
         CANVAS_WIDTH = canvas.getWidth();
         CANVAS_HEIGHT = canvas.getHeight();
         wrapDirectionLimitWidth = CANVAS_WIDTH - maxAttractionDistance - 1;
@@ -53,14 +58,10 @@ public class ParticleSimulation{
         simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, this.friction, this.maxAttractionDistance, this.attractionRelativeDistanceCutout, this.forceMultiplier));
     }
     public void stop(){
-        if(timeline.getStatus() == Animation.Status.RUNNING){
-            timeline.pause();
-        }
+        timer.stop();
     }
     public void start(){
-        if(timeline.getStatus() == Animation.Status.PAUSED){
-            timeline.play();
-        }
+        timer.start();
     }
     public void initParticles(){
         particles.clear();
@@ -71,22 +72,27 @@ public class ParticleSimulation{
         }
     }
     public void update(){
-        timeline = new Timeline(
-            new KeyFrame(Duration.millis(UPDATE_RATE_MS), actionEvent -> {
-                particles.parallelStream().forEach(particle -> particle.simulate(particles));
-                clearCanvas();
-                for(Particle particle : particles){
-                    particle.adjustPositionWrapping();
-                    drawParticle(particle);
-                }
-                if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
-                    simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
-                }
-            })
-        );
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                // limit the animation to only work at 30fps
+                long elapsedTime = now - lastUpdateTime;
 
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+                if(elapsedTime >= UPDATE_RATE_NANOSEC){
+                    particles.parallelStream().forEach(particle -> particle.simulate(particles));
+                    clearCanvas();
+                    for(Particle particle : particles){
+                        particle.adjustPositionWrapping();
+                        drawParticle(particle);
+                    }
+                    if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
+                        simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
+                    }
+                    lastUpdateTime = now;
+                }
+            }
+        };
+        timer.start();
     }
     public void reset(){
         stop();

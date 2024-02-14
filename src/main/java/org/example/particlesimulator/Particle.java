@@ -117,7 +117,8 @@ public class Particle {
     private static double[] normalizeVector(double[] vector) {
         double magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
         if(magnitude != 0){
-            return new double[]{vector[0] / magnitude, vector[1] / magnitude};
+            vector[0] /= magnitude;
+            vector[1] /= magnitude;
         }
         return vector;
     }
