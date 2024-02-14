@@ -2,6 +2,8 @@
 
 <img src="https://github.com/bskdany/ParticleSimulator/blob/main/assets/ParticleSimulator.png" alt="particleSimulatorInItsFullForm">
 
+[YouTube Video of the creation progress!](https://youtu.be/HubBLKdhpIE?si=-jT4HhaGMrCznJ3H)
+
 ## Description
 ParticleSimulator is a multi threaded JavaFX application, it's compiled into native binaries thanks to [jDeploy](https://github.com/shannah/jdeploy). 
 
