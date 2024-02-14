@@ -37,23 +37,123 @@ public class SidebarController {
     private Map<Color, String> colorMap;
     private boolean disableTimelineValueListener = false;
     DecimalFormat decimalFormat = new DecimalFormat("0.00");
-
     public void setMainApp(ParticleSimulation simulation){
         this.simulation = simulation;
         // this is the initialisation part that happens after the ParticleSimulation object is created
         // most of the stuff happening here is getting the default values from the simulation and putting them
         // in the fields
-        setupParticleSimulationTab();
-        setupGeneralSimulationTab();
+        colorMap = Util.createColorMap();
+
+        // get the colors existing and transform them in color strings
+        List<Color> colors = new ArrayList<>(colorMap.keySet());
+        List<String> entries = new ArrayList<>();
+        for(Color color :colors){
+            entries.add(colorMap.get(color));
+        }
+        speciesChoiceBox.setItems(FXCollections.observableArrayList(entries));
+        // setting default value of the choice box to be the first color
+        speciesChoiceBox.setValue(entries.getFirst());
+
+        selectedSpecies = colors.getFirst();
+        areAllSpeciesSelected = false;
+        particleAttractionValueSlider.setDisable(true);
+
+        setupSpeciesSelector();
+        setupAllParticlesCheck();
+        setupAttractionSlider();
+        setupSeedInput();
+        setupMaxAttractionDistance();
+        setupMinAttractionDistance();
+        setupForceMultiplier();
+        setupTimelineSlider();
+        generateAttractionGrid();
+        updateSeedInput();
     }
+    private void setupSpeciesSelector(){
+        speciesChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            selectedSpecies = Util.nameToColor(newValue, colorMap);
+            particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
+        });
+    }
+    private void setupAllParticlesCheck(){
+        // SELECT ALL CHECK
+        selectAllCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            areAllSpeciesSelected = newValue;
+            updateParticleCount();
+            speciesChoiceBox.setDisable(newValue); // disables the color selection when all are selected
+        });
+    }
+    private void setupAttractionSlider(){
+        particleAttractionValueSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            simulation.getAttractionMatrix().setAttractionMatrixValue(activeAttractionLabelCoordinates, Double.parseDouble(decimalFormat.format(newValue)));
+            updateGridAtCoordinate(Double.parseDouble(decimalFormat.format(newValue)), activeAttractionLabelCoordinates);
+        });
+
+        particleAttractionValueSlider.setOnMouseReleased((e) -> {
+            simulation.getAttractionMatrix().calculateSeed();
+            updateSeedInput();
+        });
+    }
+    private void setupTimelineSlider(){
+        DecimalFormat timeFormatter = new DecimalFormat("0.0");
+        timelineSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(!disableTimelineValueListener){
+                simulation.peekRewind(100 - newValue.intValue());
+                updateAllElements();
+
+                timelineLabel.setText("Go back " + timeFormatter.format(((double) SimulationTimeline.timeToSaveMs * (100 - newValue.intValue()))/ 1000 ) + " sec");
+            }
+            else{
+                disableTimelineValueListener = false;
+                timelineLabel.setText("Go back 0 seconds");
+            }
+        });
+
+        timelineSlider.setOnMouseReleased(e -> {
+            simulation.finalizeRewind();
+            disableTimelineValueListener = true;
+            timelineSlider.setValue(100);
+        });
+    }
+    private void setupForceMultiplier(){
+        particleForceMultiplierSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            ParticleSimulation.forceMultiplier = newValue.intValue();
+            particleForceMultiplierLabel.setText("Force multiplier: " + newValue.intValue());
+        });
+    }
+    private void setupMinAttractionDistance(){
+        particleMinAttractionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            double val = Double.parseDouble(decimalFormat.format(newValue));
+            ParticleSimulation.attractionRelativeDistanceCutout = val;
+            particleMinAttractionLabel.setText("Min attraction distance: " + decimalFormat.format(newValue));
+        });
+    }
+    private void setupMaxAttractionDistance(){
+        particleMaxAttractionDistanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            ParticleSimulation.maxAttractionDistance = newValue.intValue();
+            particleMaxAttractionDistanceLabel.setText("Max attraction distance: " + newValue.intValue());
+        });
+    }
+    private void setupSeedInput(){
+        seedInput.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!simulation.getAttractionMatrix().setAttractionMatrixFromSeed(newValue)){
+                seedInput.setStyle("-fx-border-color: red;");
+            }
+            else {
+                seedInput.setStyle("-fx-border-color: transparent;");
+                updateAttractionMatrix();
+            }
+        });
+    }
+
 
     private void updateSeedInput(){
         seedInput.setText(simulation.getAttractionMatrix().getSeed());
     }
     private void updateAttractionMatrix(){
-        for (int i = 0; i < AttractionMatrix.ATTRACTION_MATRIX.length; i++) {
-            for (int j = 0; j < AttractionMatrix.ATTRACTION_MATRIX.length; j++) {
-                updateGridAtCoordinate(AttractionMatrix.ATTRACTION_MATRIX[i][j], new int[]{i,j});
+        for (int i = 0; i < AttractionMatrix.attractionMatrix.length; i++) {
+            for (int j = 0; j < AttractionMatrix.attractionMatrix.length; j++) {
+                updateGridAtCoordinate(AttractionMatrix.attractionMatrix[i][j], new int[]{i,j});
             }
         }
         if(activeAttractionGridLabel != null){
@@ -64,13 +164,13 @@ public class SidebarController {
         particleAttractionValueSlider.setDisable(true);
     }
     private void updateMaxAttractionDistance(){
-        particleMaxAttractionDistanceSlider.setValue(ParticleSimulation.MAX_ATTRACTION_DISTANCE);
+        particleMaxAttractionDistanceSlider.setValue(ParticleSimulation.maxAttractionDistance);
     }
     private void updateMinAttractionDistance(){
         particleMinAttractionSlider.setValue(ParticleSimulation.getAttractionRelativeDistanceCutout());
     }
     private void updateForceMultiplier(){
-        particleForceMultiplierSlider.setValue(ParticleSimulation.FORCE_MULTIPLIER);
+        particleForceMultiplierSlider.setValue(ParticleSimulation.forceMultiplier);
     }
     private void updateParticleCount(){
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies,areAllSpeciesSelected));
@@ -85,9 +185,9 @@ public class SidebarController {
     }
     @FXML void resetDefaultSettingsButton(){
         // Simulation
-        ParticleSimulation.MAX_ATTRACTION_DISTANCE = (100);
-        ParticleSimulation.ATTRACTION_RELATIVE_DISTANCE_CUTOUT = 0.3;
-        ParticleSimulation.FORCE_MULTIPLIER = 5;
+        ParticleSimulation.maxAttractionDistance = (100);
+        ParticleSimulation.attractionRelativeDistanceCutout = 0.3;
+        ParticleSimulation.forceMultiplier = 5;
 
         // Particle
         simulation.getAttractionMatrix().generateDefaultAttractionMatrix();
@@ -104,7 +204,7 @@ public class SidebarController {
         simulation.reset();
     }
     @FXML private void handleDefaultAttractionMatrixButton(){
-        simulation.getAttractionMatrix().generateRandomAttractionMatrix();
+        simulation.getAttractionMatrix().generateDefaultAttractionMatrix();
         updateAttractionMatrix();
         seedInput.setText(simulation.getAttractionMatrix().getSeed());
     }
@@ -130,109 +230,8 @@ public class SidebarController {
         simulation.addParticleQuantity(-10, selectedSpecies, areAllSpeciesSelected);
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
     }
-    private void setupGeneralSimulationTab(){
-        // MAX ATTRACTION DISTANCE
-        particleMaxAttractionDistanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            ParticleSimulation.MAX_ATTRACTION_DISTANCE = newValue.intValue();
-            particleMaxAttractionDistanceLabel.setText("Max attraction distance: " + newValue.intValue());
-        });
-
-        // MIN ATTRACTION DISTANCE
-        particleMinAttractionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            double val = Double.parseDouble(decimalFormat.format(newValue));
-            ParticleSimulation.ATTRACTION_RELATIVE_DISTANCE_CUTOUT = val;
-            particleMinAttractionLabel.setText("Min attraction distance: " + decimalFormat.format(newValue));
-        });
-
-        // FORCE MULTIPLIER
-        particleForceMultiplierSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            ParticleSimulation.FORCE_MULTIPLIER = newValue.intValue();
-            particleForceMultiplierLabel.setText("Force multiplier: " + newValue.intValue());
-        });
-
-        DecimalFormat timeFormatter = new DecimalFormat("0.0");
-
-        // TIMELINE SLIDER
-        timelineSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(!disableTimelineValueListener){
-                simulation.peekRewind(100 - newValue.intValue());
-                updateAllElements();
-
-                timelineLabel.setText("Go back " + timeFormatter.format(((double) SimulationTimeline.timeToSaveMs * (100 - newValue.intValue()))/ 1000 ) + " sec");
-            }
-            else{
-                disableTimelineValueListener = false;
-                timelineLabel.setText("Go back 0 seconds");
-            }
-        });
-
-        timelineSlider.setOnMouseReleased(e -> {
-            simulation.finalizeRewind();
-            disableTimelineValueListener = true;
-            timelineSlider.setValue(100);
-        });
-
-    }
-    private void setupParticleSimulationTab(){
-        colorMap = Util.createColorMap();
-
-        // get the colors existing and transform them in color strings
-        List<Color> colors = new ArrayList<>(colorMap.keySet());
-        List<String> entries = new ArrayList<>();
-        for(Color color :colors){
-            entries.add(colorMap.get(color));
-        }
-        speciesChoiceBox.setItems(FXCollections.observableArrayList(entries));
-        // setting default value of the choice box to be the first color
-        speciesChoiceBox.setValue(entries.getFirst());
-
-        // INITIALIZING FIELDS
-        selectedSpecies = colors.getFirst();
-        areAllSpeciesSelected = false;
-        particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies,areAllSpeciesSelected));
-        particleAttractionValueSlider.setDisable(true);
-
-
-        // listener for the choice box
-        speciesChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            selectedSpecies = Util.nameToColor(newValue, colorMap);
-            particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
-        });
-
-        // SELECT ALL CHECK
-        selectAllCheck.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            areAllSpeciesSelected = newValue;
-            updateParticleCount();
-            speciesChoiceBox.setDisable(newValue); // disables the color selection when all are selected
-        });
-
-        // ATTRACTION MATRIX SLIDER
-        particleAttractionValueSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-//            if(Math.abs(oldValue.doubleValue() - newValue.doubleValue()) < 0.05){
-//                return;
-//            }
-            simulation.getAttractionMatrix().setAttractionMatrixValue(activeAttractionLabelCoordinates, Double.parseDouble(decimalFormat.format(newValue)));
-
-            updateGridAtCoordinate(Double.parseDouble(decimalFormat.format(newValue)), activeAttractionLabelCoordinates);
-            updateSeedInput();
-        });
-
-        generateAttractionGrid();
-
-        // SEED INPUT
-        seedInput.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!simulation.getAttractionMatrix().setAttractionMatrixFromSeed(newValue)){
-                seedInput.setStyle("-fx-border-color: red;");
-            }
-            else {
-                seedInput.setStyle("-fx-border-color: transparent;");
-                updateAttractionMatrix();
-            }
-        });
-        updateSeedInput();
-    }
     private void updateGridAtCoordinate(double value, int[] coordinates){
-        int matrixWidth = AttractionMatrix.ATTRACTION_MATRIX.length;
+        int matrixWidth = AttractionMatrix.attractionMatrix.length;
         int position = (matrixWidth * 2) + coordinates[0] * matrixWidth + coordinates[1] ;
         Label labelToUpdate = (Label) attractionGrid.getChildren().get(position);
         labelToUpdate.setText(String.valueOf(value));
@@ -241,9 +240,9 @@ public class SidebarController {
     }
     private void generateAttractionGrid(){
         // ATTRACTION GRID
-        for (int i = 0 ; i < AttractionMatrix.ATTRACTION_MATRIX.length; i++) {
-            for (int j = 0; j < AttractionMatrix.ATTRACTION_MATRIX.length; j++) {
-                double value = AttractionMatrix.ATTRACTION_MATRIX[i][j];
+        for (int i = 0; i < AttractionMatrix.attractionMatrix.length; i++) {
+            for (int j = 0; j < AttractionMatrix.attractionMatrix.length; j++) {
+                double value = AttractionMatrix.attractionMatrix[i][j];
 
                 Label label = new Label(String.valueOf(value));
                 label.setFont(new Font(9));
