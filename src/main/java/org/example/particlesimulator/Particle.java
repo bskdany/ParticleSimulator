@@ -12,9 +12,8 @@ public class Particle {
     public final double MASS;
     public final int SPECIES;
     private final double[] deltaPosition;
-    private final double[] force;
+    private double[] force;
     public double[] velocity;
-
     double[] directionVector = new double[2];
     Particle(int x, int y, double radius, Color color, double mass, int species){
         this.RADIUS = radius;
@@ -55,38 +54,41 @@ public class Particle {
             position[1] -= ParticleSimulation.CANVAS_HEIGHT -1;
         }
     }
-    public void simulate(List<Particle> particles){
-        force[0] = 0;
-        force[1] = 0;
-        for(Particle particle : particles){
-            if(particle != this){
-                directionVector[0] = particle.position[0] - position[0];
-                directionVector[1] = particle.position[1] - position[1];
+    public void simulate(){
+//        force[0] = 0;
+//        force[1] = 0;
+//        for(Particle particle : particles){
+//            if(particle != this){
+//                directionVector[0] = particle.position[0] - position[0];
+//                directionVector[1] = particle.position[1] - position[1];
+//
+//                if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
+//                    continue;
+//                }
+//                if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
+//                    continue;
+//                }
+//
+//                double[] directionVector = calculateVectorWrap();
+//
+//                // length of the relative distance
+//                double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
+//
+//                if(distance > 1) {
+//                    continue;
+//                }
+//                double attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][particle.SPECIES];
+//                double magnitude =  calculateAttractionForce(distance, attractionFactor);
+////                double magnitude = calculateAttractionForceNewton(distance, this, particle);
+//                double[] normalisedDirectionVector = normalizeVector(directionVector);
+//
+//                force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
+//                force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
+//            }
+//        }
+        force = ParticleSimulation.particleGridMap.getForcesAroundParticle(this);
 
-                if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
-                    continue;
-                }
-                if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
-                    continue;
-                }
 
-                double[] directionVector = calculateVectorWrap();
-
-                // length of the relative distance
-                double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
-
-                if(distance > 1) {
-                    continue;
-                }
-                double attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][particle.SPECIES];
-                double magnitude =  calculateAttractionForce(distance, attractionFactor);
-//                double magnitude = calculateAttractionForceNewton(distance, this, particle);
-                double[] normalisedDirectionVector = normalizeVector(directionVector);
-
-                force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
-                force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
-            }
-        }
         // all particles move towards the center slowly
         double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
         force[0] += vectorTowardsCenter[0];
@@ -114,16 +116,15 @@ public class Particle {
 
     }
 
-    private static double[] normalizeVector(double[] vector) {
+    public static double[] normalizeVector(double[] vector) {
         double magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
-        if(magnitude != 0){
-            vector[0] /= magnitude;
-            vector[1] /= magnitude;
+        if(magnitude < 1e-10){ // where 1e-10 is the tollerance, this is more efficient than the comparison to 0 because of floating point
+            return vector;
         }
-        return vector;
+        return new double[]{vector[0]/magnitude, vector[1]/magnitude};
     }
 
-    private double calculateAttractionForce(double relativeDistance, double attractionFactor){
+    public static double calculateAttractionForce(double relativeDistance, double attractionFactor){
         if(relativeDistance < ParticleSimulation.attractionRelativeDistanceCutout){
             return relativeDistance / ParticleSimulation.attractionRelativeDistanceCutout - 1;
         } else if (relativeDistance < 1.0) {
