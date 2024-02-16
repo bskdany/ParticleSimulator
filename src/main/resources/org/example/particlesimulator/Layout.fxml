@@ -108,9 +108,9 @@
                            <Button fx:id="killAllParticlesButton" mnemonicParsing="false" onAction="#handleKillAllParticlesButton" text="Kill" />
                         </children>
                      </VBox>
-                     <VBox prefHeight="60.0" prefWidth="133.0" spacing="5.0">
+                     <VBox prefHeight="46.0" prefWidth="163.0" spacing="5.0">
                         <children>
-                          <HBox alignment="CENTER" prefHeight="28.0" prefWidth="192.0">
+                          <HBox prefHeight="28.0" prefWidth="192.0">
                               <Label fx:id="particleCountLabel" text="Particle count: " />
                           </HBox>
                            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="202.0" spacing="20.0">

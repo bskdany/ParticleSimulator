@@ -20,7 +20,6 @@ public class ParticleSimulationData {
     public final int FORCE_MULTIPLIER;
     public final double WRAP_DIRECTION_LIMIT_HEIGHT;
     public final double WRAP_DIRECTION_LIMIT_WIDTH;
-
     public final String seed;
 
     ParticleSimulationData(String seed, Map<Color, ParticleSpeciesData> particleData, List<Particle> particles, double[][] attractionMatrix, double friction, double maxAttDistance,double relDistanceCutout, int forceMultiplier){
