@@ -14,7 +14,7 @@ import java.util.*;
 
 public class ParticleSimulation{
     private final SimulationTimeline simulationTimeline;
-    private final int DEFAULT_PARTICLE_COUNT = 200;
+    private final int DEFAULT_PARTICLE_COUNT = 1500;
     private Map<Color, ParticleSpeciesData> particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
         put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
         put(Color.PINK, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
@@ -33,7 +33,7 @@ public class ParticleSimulation{
     private final GraphicsContext gc;
     private AnimationTimer timer;
     public static double friction = 0.04;
-    public static double maxAttractionDistance = 100;
+    public static double maxAttractionDistance = 50;
     public static double attractionRelativeDistanceCutout = 0.3; // 30%
     public static int forceMultiplier = 5;
     public static double wrapDirectionLimitHeight;

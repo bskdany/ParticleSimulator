@@ -1,13 +1,15 @@
 package org.example.particlesimulator;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ParticleGridMap {
 
     private final HashMap<Integer, LinkedList<Particle>> particleHashMap;
     private final LinkedList<Particle>[] particleGrid;                                // a 2d array of list of particles
     private final HashMap<Integer, List<Particle>> cellsCoordinatesToParticles;         // mapping coordinates to cell
-    private final HashMap<Integer, int[]> neighbourLookupHashMap = new HashMap<>();
+    private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMap = new HashMap<>();
 
     private final HashMap<Integer, Integer> mathFloorModCacheWidth = new HashMap<>();   // I can't believe I have to cache Math.floorMod
     private final HashMap<Integer, Integer> mathFloorModCacheHeight = new HashMap<>();
@@ -43,25 +45,30 @@ public class ParticleGridMap {
         placeParticlesInGrid(particles);
     }
 
-    public LinkedList<LinkedList<Particle>> getParticleAround(Particle particle){
+    public Stream<Particle> getParticleAround(Particle particle){
         int indexRow = (int) particle.position[0] / CELL_SIZE;
         int indexColumn = (int) particle.position[1] / CELL_SIZE;
         int key = indexRow * height + indexColumn;
 
-        LinkedList<LinkedList<Particle>> result = new LinkedList<LinkedList<Particle>>();
+//        LinkedList<LinkedList<Particle>> result = new LinkedList<LinkedList<Particle>>();
 
-        for(int targetCellKey : neighbourLookupHashMap.get(key)){
-            LinkedList<Particle> particlesInCell = particleHashMap.get(targetCellKey);
-            if(particlesInCell!=null){
-                result.add(particlesInCell);
-            }
-        }
+        return neighbourLookupHashMap.get(key).stream()
+                .map(particleHashMap::get)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream);
+
+//        for(int targetCellKey : neighbourLookupHashMap.get(key)){
+//            LinkedList<Particle> particlesInCell = particleHashMap.get(targetCellKey);
+//            if(particlesInCell!=null){
+//                result.add(particlesInCell);
+//            }
+//        }
 
 
 
         // I return a list of lists of particles, why not just a single list? because
         // addAll is very slow, I can't make streams work and haven't found any better method yet
-        return result;
+//        return result;
     }
 
     private void placeParticlesInGrid(List<Particle> particles){
@@ -100,20 +107,22 @@ public class ParticleGridMap {
     private void preComputeCellLookupIndices(){
         for (int row = 0; row < width; row++) {
             for (int column = 0; column < height; column++) {
-                int[] targetCellKeys = new int[(int) Math.pow(CELL_LOOKUP_RADIUS*2+1,2)]; // 2x the radius from the center + 1 to account for the center, squared
+//                int[] targetCellKeys = new int[(int) Math.pow(CELL_LOOKUP_RADIUS*2+1,2)]; // 2x the radius from the center + 1 to account for the center, squared
+                LinkedList<Integer> targetCellKeys = new LinkedList<>();
                 int squareIndexStartRow = (row - CELL_LOOKUP_RADIUS);
                 int squareIndexEndRow = (row + CELL_LOOKUP_RADIUS);
                 int squareIndexStartColumn = (column - CELL_LOOKUP_RADIUS);
                 int squareIndexEndColumn = (column + CELL_LOOKUP_RADIUS);
 
-                int targetCellKeysCounter = 0;
+//                int targetCellKeysCounter = 0;
                 for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
                     int mathFloorWidth = mathFloorModCacheWidth.getOrDefault(i, i);
                     for (int j = squareIndexStartColumn; j < squareIndexEndColumn; j++) {
                         int mathFloorHeight = mathFloorModCacheHeight.getOrDefault(j,j);
                         int keyToCell = mathFloorWidth * height + mathFloorHeight;
-                        targetCellKeys[targetCellKeysCounter] = keyToCell;
-                        targetCellKeysCounter++;
+//                        targetCellKeys[targetCellKeysCounter] = keyToCell;
+                        targetCellKeys.add(keyToCell);
+//                        targetCellKeysCounter++;
                     }
                 }
                 int sourceKey = row * height + column;
