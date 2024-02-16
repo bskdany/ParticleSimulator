@@ -7,9 +7,9 @@ import java.util.Map;
 
 public class ParticleSpeciesData {
     private int quantity;
-    private int radius;
+    private double radius;
 
-    ParticleSpeciesData(int quantity, int radius) {
+    ParticleSpeciesData(int quantity, double radius) {
         this.quantity = quantity;
         this.radius = radius;
     }
@@ -37,7 +37,7 @@ public class ParticleSpeciesData {
         this.quantity = quantity;
     }
 
-    public int getRadius() {
+    public double getRadius() {
         return radius;
     }
 

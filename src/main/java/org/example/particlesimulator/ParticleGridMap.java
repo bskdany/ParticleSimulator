@@ -18,9 +18,8 @@ public class ParticleGridMap {
     private final int width;
     private final int height;
     ParticleGridMap(double canvasWidth, double canvasHeight){
-        CELL_SIZE = 25;
+        CELL_SIZE = 5;
         CELL_LOOKUP_RADIUS = (int) ParticleSimulation.maxAttractionDistance / CELL_SIZE;
-//        CELL_LOOKUP_RADIUS = 3;
 
         // if canvas is 400 * 400, the particle grid will be 200 * 200
         width = (int) canvasWidth / CELL_SIZE + 1;
@@ -50,25 +49,10 @@ public class ParticleGridMap {
         int indexColumn = (int) particle.position[1] / CELL_SIZE;
         int key = indexRow * height + indexColumn;
 
-//        LinkedList<LinkedList<Particle>> result = new LinkedList<LinkedList<Particle>>();
-
         return neighbourLookupHashMap.get(key).stream()
                 .map(particleHashMap::get)
                 .filter(Objects::nonNull)
                 .flatMap(List::stream);
-
-//        for(int targetCellKey : neighbourLookupHashMap.get(key)){
-//            LinkedList<Particle> particlesInCell = particleHashMap.get(targetCellKey);
-//            if(particlesInCell!=null){
-//                result.add(particlesInCell);
-//            }
-//        }
-
-
-
-        // I return a list of lists of particles, why not just a single list? because
-        // addAll is very slow, I can't make streams work and haven't found any better method yet
-//        return result;
     }
 
     private void placeParticlesInGrid(List<Particle> particles){

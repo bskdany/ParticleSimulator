@@ -15,14 +15,15 @@ import java.util.*;
 public class ParticleSimulation{
     private final SimulationTimeline simulationTimeline;
     private final int DEFAULT_PARTICLE_COUNT = 1500;
+    private final double RADIUS = 0.5;
     private Map<Color, ParticleSpeciesData> particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
-        put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
-        put(Color.PINK, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
-        put(Color.ORANGE, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
-        put(Color.YELLOW, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
-        put(Color.LIME, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
-        put(Color.CYAN,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
-        put(Color.WHITE,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, 1));
+        put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+        put(Color.PINK, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+        put(Color.ORANGE, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+        put(Color.YELLOW, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+        put(Color.LIME, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+        put(Color.CYAN,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+        put(Color.WHITE,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
     }};
     private List<Particle> particles = new ArrayList<>();
     public static double CANVAS_WIDTH;
@@ -33,7 +34,7 @@ public class ParticleSimulation{
     private final GraphicsContext gc;
     private AnimationTimer timer;
     public static double friction = 0.04;
-    public static double maxAttractionDistance = 50;
+    public static double maxAttractionDistance = 30;
     public static double attractionRelativeDistanceCutout = 0.3; // 30%
     public static int forceMultiplier = 5;
     public static double wrapDirectionLimitHeight;
@@ -172,7 +173,7 @@ public class ParticleSimulation{
     private void createParticle(Color color){
         int particleX = (int) (Math.random() * CANVAS_WIDTH);
         int particleY = (int) (Math.random() * CANVAS_HEIGHT);
-        int particleRadius = particleData.get(color).getRadius();
+        double particleRadius = particleData.get(color).getRadius();
         int species = 0;
         for(Color key : particleData.keySet()){
             if(key == color){
