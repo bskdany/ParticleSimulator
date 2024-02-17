@@ -14,39 +14,54 @@ import java.util.*;
 
 public class ParticleSimulation{
     private final SimulationTimeline simulationTimeline;
-    private final int DEFAULT_PARTICLE_COUNT = 1500;
-    private final double RADIUS = 0.5;
-    private Map<Color, ParticleSpeciesData> particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
-        put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
-        put(Color.PINK, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
-        put(Color.ORANGE, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
-        put(Color.YELLOW, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
-        put(Color.LIME, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
-        put(Color.CYAN,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
-        put(Color.WHITE,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
-    }};
+    private final int DEFAULT_PARTICLE_COUNT;
+    private final double RADIUS;
+    private Map<Color, ParticleSpeciesData> particleData;
     private List<Particle> particles = new ArrayList<>();
     public static double CANVAS_WIDTH;
     public static double CANVAS_HEIGHT;
-    private final int SIMULATION_FPS = 60;
+    private final int SIMULATION_FPS;
     public static double UPDATE_RATE_MS;
     private final long UPDATE_RATE_NANOSEC;
     private final GraphicsContext gc;
     private AnimationTimer timer;
-    public static double friction = 0.04;
-    public static double maxAttractionDistance = 30;
-    public static double attractionRelativeDistanceCutout = 0.3; // 30%
-    public static int forceMultiplier = 5;
+    public static double friction;
+    public static int CENTRAL_ATTRACTION_MULTIPLIER;
+    public static double maxAttractionDistance;
+    private final boolean CAP_FPS;
+    public static double attractionRelativeDistanceCutout;
+    public static int forceMultiplier;
     public static double wrapDirectionLimitHeight;
     public static double wrapDirectionLimitWidth;
     private final AttractionMatrix attractionMatrix;
-    private long lastUpdateTime = 0;
+    private long lastUpdateTime;
     public static ParticleGridMap particleGridMap;
 
     ParticleSimulation(Canvas canvas){
-        gc = canvas.getGraphicsContext2D();
+        DEFAULT_PARTICLE_COUNT = 1500;
+        CENTRAL_ATTRACTION_MULTIPLIER = 1;
+        RADIUS = 0.5;
+        friction = 0.4;
+        maxAttractionDistance = 40;
+        attractionRelativeDistanceCutout = 0.3;
+
+        forceMultiplier = 5;
+        SIMULATION_FPS = 30;
+        CAP_FPS = false;
         UPDATE_RATE_MS = (double) 1000 / SIMULATION_FPS;
         UPDATE_RATE_NANOSEC = (long) 1_000_000_000 / SIMULATION_FPS;
+        lastUpdateTime = 0;
+
+        particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
+            put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+            put(Color.PINK, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+            put(Color.ORANGE, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+            put(Color.YELLOW, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+            put(Color.LIME, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+            put(Color.CYAN,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+            put(Color.WHITE,new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
+        }};
+        gc = canvas.getGraphicsContext2D();
         CANVAS_WIDTH = canvas.getWidth();
         CANVAS_HEIGHT = canvas.getHeight();
         wrapDirectionLimitWidth = CANVAS_WIDTH - maxAttractionDistance - 1;
@@ -54,6 +69,7 @@ public class ParticleSimulation{
         simulationTimeline = new SimulationTimeline();
         attractionMatrix = new AttractionMatrix(particleData.size());
         particleGridMap = new ParticleGridMap(CANVAS_WIDTH, CANVAS_HEIGHT);
+
     }
 
     public void initContent() {
@@ -79,13 +95,32 @@ public class ParticleSimulation{
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                // limit the animation to only work at 30fps
                 long elapsedTime = now - lastUpdateTime;
 
-                particleGridMap.update(particles);
 
-                if(elapsedTime >= UPDATE_RATE_NANOSEC){
-                    particles.parallelStream().forEach(particle -> particle.simulate());
+                if(CAP_FPS){
+                    // limit the animation to only work at 30fps
+                    if(elapsedTime >= UPDATE_RATE_NANOSEC){
+
+                        clearCanvas();
+                        particles.forEach(particle -> {
+                            particle.adjustPositionWrapping();
+                            drawParticle(particle);
+                        });
+
+                        if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
+                            simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
+                        }
+
+                        particleGridMap.update(particles);
+
+                        particles.parallelStream().forEach(Particle::simulate);
+
+                        lastUpdateTime = now;
+
+                    }
+                }
+                else{
                     clearCanvas();
                     particles.forEach(particle -> {
                         particle.adjustPositionWrapping();
@@ -95,8 +130,14 @@ public class ParticleSimulation{
                     if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
                         simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
                     }
+
+                    particleGridMap.update(particles);
+
+                    particles.parallelStream().forEach(Particle::simulate);
+
                     lastUpdateTime = now;
                 }
+
             }
         };
         timer.start();

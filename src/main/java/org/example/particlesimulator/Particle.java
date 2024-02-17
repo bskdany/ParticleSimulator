@@ -59,6 +59,11 @@ public class Particle {
         force[0] = 0;
         force[1] = 0;
         ParticleSimulation.particleGridMap.getParticleAround(this).forEach(particle -> {
+            // the data I need from the particle is:
+            // 1. direction vector, which I believe can be approximated with the grid distance
+            // 2. attraction matrix, which can be combined for multiple particles in difference cells into one
+            // 3. if the particle for which the force is being calculated is not the particle in the list, which can be sorted off by removing all particles
+            // whose distance is lower than a threshold
             if(particle != this){
                 directionVector[0] = particle.position[0] - position[0];
                 directionVector[1] = particle.position[1] - position[1];
@@ -90,8 +95,8 @@ public class Particle {
 
         // all particles move towards the center slowly
         double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
-        force[0] += vectorTowardsCenter[0];
-        force[1] += vectorTowardsCenter[1];
+        force[0] += vectorTowardsCenter[0] * ParticleSimulation.CENTRAL_ATTRACTION_MULTIPLIER;
+        force[1] += vectorTowardsCenter[1] * ParticleSimulation.CENTRAL_ATTRACTION_MULTIPLIER;
 
         // F = m / a
         double accelerationX = force[0] * ParticleSimulation.forceMultiplier / MASS;
