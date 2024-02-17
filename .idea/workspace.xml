@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulationData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulationData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSpeciesData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSpeciesData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org/example/particlesimulator/Layout.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/example/particlesimulator/Layout.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +45,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Main.executor": "Profiler#1",
+    "Application.Main.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
     "JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar.executor": "Run",
     "JAR Application.ParticleSimulation-1.0-SNAPSHOT.jar.executor": "Run",
@@ -174,7 +172,8 @@
       <workItem from="1707665462938" duration="838000" />
       <workItem from="1707923163600" duration="5460000" />
       <workItem from="1708008083875" duration="28332000" />
-      <workItem from="1708092624639" duration="15380000" />
+      <workItem from="1708092624639" duration="20484000" />
+      <workItem from="1708183527671" duration="2269000" />
     </task>
     <servers />
   </component>

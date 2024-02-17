@@ -8,17 +8,14 @@ public class ParticleGridMap {
 
     private final HashMap<Integer, LinkedList<Particle>> particleHashMap;
     private final LinkedList<Particle>[] particleGrid;                                // a 2d array of list of particles
-    private final HashMap<Integer, List<Particle>> cellsCoordinatesToParticles;         // mapping coordinates to cell
     private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMap = new HashMap<>();
 
-    private final HashMap<Integer, Integer> mathFloorModCacheWidth = new HashMap<>();   // I can't believe I have to cache Math.floorMod
-    private final HashMap<Integer, Integer> mathFloorModCacheHeight = new HashMap<>();
     private final int CELL_SIZE;
     private final int CELL_LOOKUP_RADIUS;
     private final int width;
     private final int height;
     ParticleGridMap(double canvasWidth, double canvasHeight){
-        CELL_SIZE = 5;
+        CELL_SIZE = 10;
         CELL_LOOKUP_RADIUS = (int) ParticleSimulation.maxAttractionDistance / CELL_SIZE;
 
         // if canvas is 400 * 400, the particle grid will be 200 * 200
@@ -28,14 +25,12 @@ public class ParticleGridMap {
         particleHashMap = new HashMap<>();
 
         particleGrid = new LinkedList[width*height];
-        cellsCoordinatesToParticles = new HashMap<>(width*height);
 
         // initialize the array lists in each grid cell
         for (int i = 0; i < particleGrid.length; i++) {
             particleGrid[i] = new LinkedList<>();
         }
 
-        seedMathFloorModCache();        // seed the math.floorMod cache for later use
         preComputeCellLookupIndices();
     }
 
@@ -72,22 +67,7 @@ public class ParticleGridMap {
             list.clear();
         }
     }
-    private void seedMathFloorModCache(){
-        int offset = CELL_LOOKUP_RADIUS;
 
-        for (int i = -offset; i < 0; i++) {
-            mathFloorModCacheWidth.put(i, Math.floorMod(i, width));
-            mathFloorModCacheHeight.put(i, Math.floorMod(i, height));
-        }
-
-        for (int i = width; i < width+offset; i++) {
-            mathFloorModCacheWidth.put(i, Math.floorMod(i, width));
-        }
-
-        for (int i = height; i < height+offset; i++) {
-            mathFloorModCacheHeight.put(i, Math.floorMod(i, height));
-        }
-    }
     private void preComputeCellLookupIndices(){
         for (int row = 0; row < width; row++) {
             for (int column = 0; column < height; column++) {
@@ -100,9 +80,9 @@ public class ParticleGridMap {
 
 //                int targetCellKeysCounter = 0;
                 for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
-                    int mathFloorWidth = mathFloorModCacheWidth.getOrDefault(i, i);
+                    int mathFloorWidth = Math.floorMod(i, width);
                     for (int j = squareIndexStartColumn; j < squareIndexEndColumn; j++) {
-                        int mathFloorHeight = mathFloorModCacheHeight.getOrDefault(j,j);
+                        int mathFloorHeight = Math.floorMod(j, height);
                         int keyToCell = mathFloorWidth * height + mathFloorHeight;
 //                        targetCellKeys[targetCellKeysCounter] = keyToCell;
                         targetCellKeys.add(keyToCell);
