@@ -47,7 +47,7 @@ public class ParticleSimulation{
 
         forceMultiplier = 5;
         SIMULATION_FPS = 60;
-        CAP_FPS = false;
+        CAP_FPS = true;
         UPDATE_RATE_MS = (double) 1000 / SIMULATION_FPS;
         UPDATE_RATE_NANOSEC = (long) 1_000_000_000 / SIMULATION_FPS;
 
@@ -106,6 +106,8 @@ public class ParticleSimulation{
                 particleGridMap.update(particles);
 
                 particles.parallelStream().forEach(Particle::simulate);
+
+                System.out.println(Particle.particleMissRate / Particle.particleChecks);
             }
 
 

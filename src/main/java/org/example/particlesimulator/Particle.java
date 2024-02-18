@@ -3,8 +3,8 @@ package org.example.particlesimulator;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Particle {
     public double[] position;
@@ -16,6 +16,8 @@ public class Particle {
     private double[] force;
     public double[] velocity;
     public boolean mixedSpecies;
+    public static int particleMissRate = 0;
+    public static int particleChecks = 0;
     public int[] containingSpecies;
     double[] directionVector = new double[2];
     public double[] attractionFactor;
@@ -97,15 +99,21 @@ public class Particle {
         // 2. attraction matrix, which can be combined for multiple particles in difference cells into one
         // 3. if the particle for which the force is being calculated is not the particle in the list, which can be sorted off by removing all particles
         // whose distance is lower than a threshold
+        AtomicInteger discarded = new AtomicInteger();
+        AtomicInteger total = new AtomicInteger();
 
         ParticleSimulation.particleGridMap.getParticleAround(this).forEach(particle -> {
+            total.addAndGet(1);
+
             directionVector[0] = particle.position[0] - position[0];
             directionVector[1] = particle.position[1] - position[1];
 
             if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
+                discarded.addAndGet(1);
                 return;
             }
             if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
+                discarded.addAndGet(1);
                 return;
             }
 
@@ -114,6 +122,7 @@ public class Particle {
             double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
 
             if(distance > 1) {
+                discarded.addAndGet(1);
                 return;
             }
 
@@ -132,6 +141,9 @@ public class Particle {
             force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
             force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
         });
+
+        particleMissRate += (int) ((double )discarded.intValue() / total.intValue() * 100);
+        particleChecks ++;
 
         // all particles move towards the center slowly
         double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
