@@ -39,7 +39,7 @@ public class ParticleSimulation{
     private long lastFpsShowTime;
     private int updateCount = 0;
     ParticleSimulation(Canvas canvas){
-        DEFAULT_PARTICLE_COUNT = 1500;
+        DEFAULT_PARTICLE_COUNT = 1000;
         CENTRAL_ATTRACTION_MULTIPLIER = 5;
         RADIUS = 0.5;
         friction = 0.4;
@@ -108,6 +108,7 @@ public class ParticleSimulation{
                 particleGridMap.update(particles);
 
                 particles.parallelStream().forEach(Particle::simulate);
+
 
 //                System.out.println(Particle.particleMissRate / Particle.particleChecks);
             }

@@ -7,6 +7,9 @@ public class ParticleGridMap {
     // encoding the positions of the particles for categorization and quick access via spartial hashing
     private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMap;
 
+    private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMapFineGrained;
+
+
     // helper hashmap that based on a particle position hash returns all the keys to the particle position hashmap
     // in which it should check for neighbours
     private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMap = new HashMap<>();
@@ -61,22 +64,29 @@ public class ParticleGridMap {
     private final int width;
     private final int height;
 
+    private final int fineWidth;
+    private final int fineHeight;
+
     ParticleGridMap(double canvasWidth, double canvasHeight){
         CELL_SIZE = 5;
         CELL_LOOKUP_RADIUS = (int) ParticleSimulation.maxAttractionDistance / CELL_SIZE;
         FINE_GRAINED_CELL_SIZE = 1;         //  double the particle radius
         CIRCLE_APPROXIMATION_OFFSET = 1;
-        USE_LOD = true;
+        USE_LOD = false;
         // this is necessary because there are methods that use the lod threshold for calculations
-        int LOD_VALUE = 5;
+        int LOD_VALUE = 4;
         LOD_THRESHOLD = USE_LOD ? LOD_VALUE : 0;
 
-        CLUSTER_CLOSE_PARTICLES = true;
+        CLUSTER_CLOSE_PARTICLES = false;
 
         width = (int) canvasWidth / CELL_SIZE + 1;
         height = (int) canvasHeight / CELL_SIZE + 1;
 
+        fineWidth = (int) canvasWidth / FINE_GRAINED_CELL_SIZE + 1;
+        fineHeight = (int) canvasHeight / FINE_GRAINED_CELL_SIZE + 1;
+
         particlesPositionHashMap = new HashMap<>();
+        particlesPositionHashMapFineGrained = new HashMap<>();
 
         preComputeNeighbourLookupHashmap();
         preComputeCellToPositionHashMap();
@@ -85,7 +95,6 @@ public class ParticleGridMap {
     public void update(List<Particle> particles){
         hashParticlePositions(particles);
         if(USE_LOD){
-            cellAveragedParticleHashMap.clear();
             averageParticles();
         }
     }
@@ -115,13 +124,61 @@ public class ParticleGridMap {
     }
     private void hashParticlePositions(List<Particle> particles){
         particlesPositionHashMap.clear();
+
+        if(CLUSTER_CLOSE_PARTICLES){
+            particlesPositionHashMapFineGrained.clear();
+
+            particles.forEach(particle -> {
+                int fineKey = hashParticlePositionFine(particle);
+                particlesPositionHashMapFineGrained.putIfAbsent(fineKey, new LinkedList<>());  // add new linked list if space not initialized
+                particlesPositionHashMapFineGrained.get(fineKey).add(particle);
+            });
+
+            List<Particle> mergedParticleList = new LinkedList<>();
+            for(LinkedList<Particle> list : particlesPositionHashMapFineGrained.values()){
+                if(list.size() == 1){
+                    mergedParticleList.add(list.getFirst());
+                }
+                else{
+                    double averageX = 0;
+                    double averageY = 0;
+
+                    for (Particle particle : list){
+                        averageX += particle.position[0];
+                        averageY += particle.position[1];
+                    }
+
+                    averageX /= list.size();
+                    averageY /= list.size();
+
+                    int[] speciesPresent = new int[7];
+                    Arrays.fill(speciesPresent, 0);
+
+                    for (Particle particle : list){
+                        speciesPresent[particle.SPECIES] ++;
+                    }
+                    mergedParticleList.add(new Particle(new double[]{averageX, averageY}, speciesPresent));
+                }
+
+            }
+
+            mergedParticleList.forEach(particle -> {
+                int key = hashParticlePosition(particle);
+                particlesPositionHashMap.putIfAbsent(key, new LinkedList<>());  // add new linked list if space not initialized
+                particlesPositionHashMap.get(key).add(particle);
+
+            });
+        }
+
         particles.forEach(particle -> {
             int key = hashParticlePosition(particle);
             particlesPositionHashMap.putIfAbsent(key, new LinkedList<>());  // add new linked list if space not initialized
             particlesPositionHashMap.get(key).add(particle);
+
         });
     }
     private void averageParticles() {
+        cellAveragedParticleHashMap.clear();
 
         // going over each (non-empty) cell and getting the entry
         for (Map.Entry<Integer, LinkedList<Particle>> particleHashMapEntry : particlesPositionHashMap.entrySet()) {
@@ -209,5 +266,11 @@ public class ParticleGridMap {
         int indexRow = (int) particle.position[0] / CELL_SIZE;
         int indexColumn = (int) particle.position[1] / CELL_SIZE;
         return indexRow * height + indexColumn;
+    }
+
+    private int hashParticlePositionFine(Particle particle){
+        int indexRow = (int) particle.position[0] / FINE_GRAINED_CELL_SIZE;
+        int indexColumn = (int) particle.position[1] / FINE_GRAINED_CELL_SIZE;
+        return indexRow * fineHeight + indexColumn;
     }
 }
