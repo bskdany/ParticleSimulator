@@ -21,6 +21,7 @@ public class Particle {
     public int[] containingSpecies;
     double[] directionVector = new double[2];
     public double[] attractionFactor;
+    public int containingSpeciesCount;
     Particle(int x, int y, double radius, Color color, double mass, int species){
         this.RADIUS = radius;
         this.MASS = mass;
@@ -32,6 +33,7 @@ public class Particle {
         this.velocity = new double[]{0,0};
         this.mixedSpecies = false;
         attractionFactor = new double[7];
+        containingSpeciesCount = 1;
     }
     Particle(double[] position, int[] containingSpecies){
         this.position = position;
@@ -56,6 +58,7 @@ public class Particle {
             for (int j = 0; j < 7; j++) {
                 attractionFactor[i] += AttractionMatrix.attractionMatrix[i][j] * containingSpecies[j];
             }
+            containingSpeciesCount += containingSpecies[i];
         }
     }
     /**
@@ -108,14 +111,15 @@ public class Particle {
             directionVector[0] = particle.position[0] - position[0];
             directionVector[1] = particle.position[1] - position[1];
 
-            if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
-                discarded.addAndGet(1);
-                return;
-            }
-            if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
-                discarded.addAndGet(1);
-                return;
-            }
+
+//            if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
+//                discarded.addAndGet(1);
+//                return;
+//            }
+//            if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
+//                discarded.addAndGet(1);
+//                return;
+//            }
 
             double[] directionVector = calculateVectorWrap();
             // length of the relative distance
@@ -138,8 +142,8 @@ public class Particle {
             double magnitude =  calculateAttractionForce(distance, attractionFactor);
             double[] normalisedDirectionVector = normalizeVector(directionVector);
 
-            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
-            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
+            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance * particle.containingSpeciesCount;
+            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance * particle.containingSpeciesCount;
         });
 
         particleMissRate += (int) ((double )discarded.intValue() / total.intValue() * 100);
