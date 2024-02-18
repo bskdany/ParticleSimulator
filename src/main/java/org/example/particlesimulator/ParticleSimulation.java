@@ -36,7 +36,8 @@ public class ParticleSimulation{
     private final AttractionMatrix attractionMatrix;
     private long lastUpdateTime;
     public static ParticleGridMap particleGridMap;
-
+    private long lastFpsShowTime;
+    private int updateCount = 0;
     ParticleSimulation(Canvas canvas){
         DEFAULT_PARTICLE_COUNT = 1500;
         CENTRAL_ATTRACTION_MULTIPLIER = 5;
@@ -47,7 +48,7 @@ public class ParticleSimulation{
 
         forceMultiplier = 5;
         SIMULATION_FPS = 60;
-        CAP_FPS = true;
+        CAP_FPS = false;
         UPDATE_RATE_MS = (double) 1000 / SIMULATION_FPS;
         UPDATE_RATE_NANOSEC = (long) 1_000_000_000 / SIMULATION_FPS;
 
@@ -98,6 +99,7 @@ public class ParticleSimulation{
                     particle.adjustPositionWrapping();
                     drawParticle(particle);
                 });
+                updateCount ++;
 
                 if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
                     simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
@@ -107,18 +109,18 @@ public class ParticleSimulation{
 
                 particles.parallelStream().forEach(Particle::simulate);
 
-                System.out.println(Particle.particleMissRate / Particle.particleChecks);
+//                System.out.println(Particle.particleMissRate / Particle.particleChecks);
             }
 
 
             @Override
             public void handle(long now) {
-                long elapsedTime = now - lastUpdateTime;
-
+                long elapsedTimeFromLastUpdate = now - lastUpdateTime;      // all this stuff is in nanoseconds
+                long elapsedTimeFromLastSecond = now - lastFpsShowTime;
 
                 if(CAP_FPS){
-                    // limit the animation to only work at 30fps
-                    if(elapsedTime >= UPDATE_RATE_NANOSEC){
+                    // limit the animation to only work at the TARGET_FPS
+                    if(elapsedTimeFromLastUpdate >= UPDATE_RATE_NANOSEC){
                         simulate();
                         lastUpdateTime = now;
                     }
@@ -126,6 +128,12 @@ public class ParticleSimulation{
                 else{
                     simulate();
                     lastUpdateTime = now;
+                }
+
+                if(elapsedTimeFromLastSecond > 1_000_000_000){
+                    System.out.println("FPS: "  + updateCount);
+                    lastFpsShowTime = now;
+                    updateCount = 0;
                 }
 
             }
