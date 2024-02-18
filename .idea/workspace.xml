@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/AttractionMatrix.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/AttractionMatrix.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleApproximation.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" afterDir="false" />
     </list>
@@ -84,7 +82,7 @@
     "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.41954023",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.importing",
+    "settings.editor.selected.configurable": "inlay.hints",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -176,7 +174,7 @@
       <workItem from="1708008083875" duration="28332000" />
       <workItem from="1708092624639" duration="20484000" />
       <workItem from="1708183527671" duration="11370000" />
-      <workItem from="1708263138442" duration="6190000" />
+      <workItem from="1708263138442" duration="16623000" />
     </task>
     <servers />
   </component>
@@ -190,6 +188,26 @@
           <properties class="java.lang.ArrayIndexOutOfBoundsException" package="java.lang" />
           <option name="timeStamp" value="7" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
+          <line>115</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
+          <line>112</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
+          <line>125</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java</url>
+          <line>117</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
