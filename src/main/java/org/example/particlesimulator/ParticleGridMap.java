@@ -6,14 +6,19 @@ import java.util.stream.Stream;
 public class ParticleGridMap {
     // encoding the positions of the particles for categorization and quick access via spartial hashing
     private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMap;
+
     // helper hashmap that based on a particle position hash returns all the keys to the particle position hashmap
     // in which it should check for neighbours
     private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMap = new HashMap<>();
+
     // returns the keys in the grid to cell within LOD_THRESHOLD layers outside CELL_LOOKUP_RADIUS
     // It's used to retrieve averaged particles around the central particle, like it's a level of detail
     private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMapLOD = new HashMap<>();
+
     private final HashMap<Integer, Particle> cellAveragedParticleHashMap = new HashMap<>();
+
     private final HashMap<Integer, double[]> cellToPositionHashMap = new HashMap<>();
+
     // the size of the cell in which particles are stored
     // if it's big the particles are easier to get, less linked lists to concatenate
     // with the cost of having to discard a lot of particles in the force calculation
@@ -22,12 +27,12 @@ public class ParticleGridMap {
     // a smaller amount of particles
     private final int CELL_SIZE;
 
+    private final int FINE_GRAINED_CELL_SIZE;
+
     // with the default values the  cell_lookup_radius should amount to 40 / 5 = 8
     // it's the amount of cells in each direction from the source cell that the
     // program should look for particles
     private final int CELL_LOOKUP_RADIUS;
-    private final int width;
-    private final int height;
 
     // LOD = level of detail, used mostly in games to render high quality textures
     // when player is close up to target and low quality if it's far away
@@ -38,11 +43,11 @@ public class ParticleGridMap {
     // amount of layers from the outside that should be approximated per cell basis
     private final int LOD_THRESHOLD;
 
-    // if two or more particles are close they can be approximated to a single particle
+    // if two or more particles fit in the same FINE_GRAINED_CELL_SIZE
+    // they will get approximated to one
     private final boolean CLUSTER_CLOSE_PARTICLES;
 
     // the maximum distance between two particles that would make them a cluster
-    private final double CLUSTER_PARTICLE_DISTANCE;
 
     // I use this number to calculate the range of cells from the source particle
     // in which particles should be checked, because it's hard to simulate a circle, thus
@@ -53,9 +58,13 @@ public class ParticleGridMap {
     // https://en.wikipedia.org/wiki/Squaring_the_circle
     private final int CIRCLE_APPROXIMATION_OFFSET;
 
+    private final int width;
+    private final int height;
+
     ParticleGridMap(double canvasWidth, double canvasHeight){
         CELL_SIZE = 5;
         CELL_LOOKUP_RADIUS = (int) ParticleSimulation.maxAttractionDistance / CELL_SIZE;
+        FINE_GRAINED_CELL_SIZE = 1;         //  double the particle radius
         CIRCLE_APPROXIMATION_OFFSET = 1;
         USE_LOD = true;
         // this is necessary because there are methods that use the lod threshold for calculations
@@ -63,7 +72,6 @@ public class ParticleGridMap {
         LOD_THRESHOLD = USE_LOD ? LOD_VALUE : 0;
 
         CLUSTER_CLOSE_PARTICLES = true;
-        CLUSTER_PARTICLE_DISTANCE = 1;
 
         width = (int) canvasWidth / CELL_SIZE + 1;
         height = (int) canvasHeight / CELL_SIZE + 1;
