@@ -15,7 +15,10 @@ public class Particle {
     private final double[] deltaPosition;
     private double[] force;
     public double[] velocity;
+    public boolean mixedSpecies;
+    public int[] containingSpecies;
     double[] directionVector = new double[2];
+    public double[] attractionFactor;
     Particle(int x, int y, double radius, Color color, double mass, int species){
         this.RADIUS = radius;
         this.MASS = mass;
@@ -25,8 +28,34 @@ public class Particle {
         this.deltaPosition = new double[]{0, 0};
         this.force = new double[]{0,0};
         this.velocity = new double[]{0,0};
+        this.mixedSpecies = false;
+        attractionFactor = new double[7];
     }
+    Particle(double[] position, int[] containingSpecies){
+        this.position = position;
+        this.mixedSpecies = true;
+        this.containingSpecies = containingSpecies;
+        this.deltaPosition = new double[]{0, 0};
+        this.force = new double[]{0,0};
+        this.velocity = new double[]{0,0};
+        RADIUS = 0;
+        MASS = 0;
+        SPECIES = 0;
+        // here I am calculating the cumulative attraction factor that the particle would have
+        // if any other particle want to calculate the force with it
+        // for example a yellow particle could consider this particle as attractive
+        // while a red one could consider it as repulsive
+        attractionFactor = new double[7];
 
+        for (int i = 0; i < 7; i++) {       // where 7 is the number of species
+            attractionFactor[i] = 0;
+
+            // if I was particle with species i (0) what is my attraction to this approximated particle?
+            for (int j = 0; j < 7; j++) {
+                attractionFactor[i] += AttractionMatrix.attractionMatrix[i][j] * containingSpecies[j];
+            }
+        }
+    }
     /**
      * Copy constructor for the particle
      * @param original the original particle
@@ -41,6 +70,9 @@ public class Particle {
         this.force = original.force.clone();
         this.velocity = original.velocity.clone();
         this.directionVector = new double[]{0,0};
+        this.mixedSpecies = original.mixedSpecies;
+        this.containingSpecies = original.containingSpecies;
+        this.attractionFactor = original.attractionFactor;
     }
 
     public void adjustPositionWrapping(){
@@ -55,15 +87,18 @@ public class Particle {
             position[1] -= ParticleSimulation.CANVAS_HEIGHT -1;
         }
     }
+
     public void simulate(){
         force[0] = 0;
         force[1] = 0;
-        ParticleSimulation.particleGridMap.getApproximatedParticlesAround(this).forEach(particle -> {
-            // the data I need from the particle is:
-            // 1. direction vector, which I believe can be approximated with the grid distance
-            // 2. attraction matrix, which can be combined for multiple particles in difference cells into one
-            // 3. if the particle for which the force is being calculated is not the particle in the list, which can be sorted off by removing all particles
-            // whose distance is lower than a threshold
+
+        // the data I need from the particle is:
+        // 1. direction vector, which I believe can be approximated with the grid distance
+        // 2. attraction matrix, which can be combined for multiple particles in difference cells into one
+        // 3. if the particle for which the force is being calculated is not the particle in the list, which can be sorted off by removing all particles
+        // whose distance is lower than a threshold
+
+        ParticleSimulation.particleGridMap.getParticleAround(this).forEach(particle -> {
             directionVector[0] = particle.position[0] - position[0];
             directionVector[1] = particle.position[1] - position[1];
 
@@ -71,23 +106,27 @@ public class Particle {
                 return;
             }
             if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
-               return;
+                return;
             }
 
             double[] directionVector = calculateVectorWrap();
-//
-//            // length of the relative distance
+            // length of the relative distance
             double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
-//
+
             if(distance > 1) {
-               return;
+                return;
             }
 
+            double attractionFactor;
+            if(particle.mixedSpecies){
+                attractionFactor = particle.attractionFactor[SPECIES];
+            }
+            else {
+                attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][particle.SPECIES];
 
-//            double attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][particle.SPECIES];
-            double attractionFactor = particle.attractionFactor[SPECIES];
+            }
+
             double magnitude =  calculateAttractionForce(distance, attractionFactor);
-            //                double magnitude = calculateAttractionForceNewton(distance, this, particle);
             double[] normalisedDirectionVector = normalizeVector(directionVector);
 
             force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;

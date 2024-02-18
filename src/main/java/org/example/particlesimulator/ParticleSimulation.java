@@ -42,7 +42,7 @@ public class ParticleSimulation{
         CENTRAL_ATTRACTION_MULTIPLIER = 5;
         RADIUS = 0.5;
         friction = 0.4;
-        maxAttractionDistance = 30;
+        maxAttractionDistance = 40;
         attractionRelativeDistanceCutout = 0.3;
 
         forceMultiplier = 5;

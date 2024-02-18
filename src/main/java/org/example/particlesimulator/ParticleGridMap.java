@@ -7,19 +7,23 @@ import java.util.stream.Stream;
 public class ParticleGridMap {
     private final HashMap<Integer, LinkedList<Particle>> particleHashMap;
     private final LinkedList<Particle>[] particleGrid;                                // a 2d array of list of particles
-    private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMap = new HashMap<>();
-    private final HashMap<Integer, ParticleApproximation> cellAveragedParticleHashMap = new HashMap<>();
+    private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMap = new HashMap<>();           // returns the keys in the grid to cell within CELL_LOOKUP_RADIUS
+
+    // returns the keys in the grid to cell within LOD_THRESHOLD layers outside CELL_LOOKUP_RADIUS
+    // It's used to retrieve averaged particles around the central particle, like it's a level of detail
+    private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMapLOD = new HashMap<>();
+    private final HashMap<Integer, Particle> cellAveragedParticleHashMap = new HashMap<>();
     private final HashMap<Integer, double[]> cellToPositionHashMap = new HashMap<>();
     private final int CELL_SIZE;
     private final int CELL_LOOKUP_RADIUS;
     private final int width;
     private final int height;
-    private final boolean COMPUTE_LOD;
     private final int LOD_THRESHOLD;
+    private final boolean USE_LOD;
     ParticleGridMap(double canvasWidth, double canvasHeight){
         CELL_SIZE = 10;
+        USE_LOD = true;
         CELL_LOOKUP_RADIUS = (int) ParticleSimulation.maxAttractionDistance / CELL_SIZE;
-        COMPUTE_LOD = true;
         LOD_THRESHOLD = 1; // the most outside layer
 
         width = (int) canvasWidth / CELL_SIZE + 1;
@@ -34,39 +38,41 @@ public class ParticleGridMap {
             particleGrid[i] = new LinkedList<>();
         }
 
-        preComputeCellLookupIndices();
+        preComputeNeighbourLookupHashmap();
         preComputeCellToPositionHashMap();
+        preComputeNeighbourLookupHashMapLOD();
     }
     public void update(List<Particle> particles){
         clearGrid();
         placeParticlesInGrid(particles);
-        averageParticles();
+        if(USE_LOD){
+            averageParticles();
+        }
     }
     public Stream<Particle> getParticleAround(Particle particle){
         int indexRow = (int) particle.position[0] / CELL_SIZE;
         int indexColumn = (int) particle.position[1] / CELL_SIZE;
         int key = indexRow * height + indexColumn;
 
-        return neighbourLookupHashMap.get(key).stream()
-                .map(particleHashMap::get)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream);
-        // for further optimizations I need to precalculate the distance and the attraction matrix
-        // I can do this with the help of the level of detail in which cells that are further out enough
-        // get approximated to a single point in the middle of the cell, which holds mass of the total of
-        // the particles and has a sum of their attraction constants (one sum for each source particle)
+        if(USE_LOD){
+            return  Stream.concat(
+                    neighbourLookupHashMap.get(key).stream()
+                            .map(particleHashMap::get)
+                            .filter(Objects::nonNull)
+                            .flatMap(List::stream),
+                    neighbourLookupHashMapLOD.get(key).stream()
+                            .map(cellAveragedParticleHashMap::get)
+                            .filter(Objects::nonNull)
+            );
+        }
+
+        else{
+            return neighbourLookupHashMap.get(key).stream()
+                    .map(particleHashMap::get)
+                    .filter(Objects::nonNull)
+                    .flatMap(List::stream);
+        }
     }
-
-    public Stream<ParticleApproximation> getApproximatedParticlesAround(Particle particle){
-        int indexRow = (int) particle.position[0] / CELL_SIZE;
-        int indexColumn = (int) particle.position[1] / CELL_SIZE;
-        int key = indexRow * height + indexColumn;
-
-        return neighbourLookupHashMap.get(key).stream()
-                .map(cellAveragedParticleHashMap::get)
-                .filter(Objects::nonNull);
-    }
-
 
     private void placeParticlesInGrid(List<Particle> particles){
         particleHashMap.clear();
@@ -76,49 +82,8 @@ public class ParticleGridMap {
             int key = indexRow * height + indexColumn;
             particleHashMap.putIfAbsent(key, new LinkedList<>());
             particleHashMap.get(key).add(particle);
-//            particleGrid[key].add(particle);
         });
     }
-    private void clearGrid(){
-        for (LinkedList<Particle> list : particleGrid) {
-            list.clear();
-        }
-    }
-    private void preComputeCellLookupIndices(){
-        for (int row = 0; row < width; row++) {
-            for (int column = 0; column < height; column++) {
-//                int[] targetCellKeys = new int[(int) Math.pow(CELL_LOOKUP_RADIUS*2+1,2)]; // 2x the radius from the center + 1 to account for the center, squared
-                LinkedList<Integer> targetCellKeys = new LinkedList<>();
-                int squareIndexStartRow = (row - CELL_LOOKUP_RADIUS);
-                int squareIndexEndRow = (row + CELL_LOOKUP_RADIUS);
-                int squareIndexStartColumn = (column - CELL_LOOKUP_RADIUS);
-                int squareIndexEndColumn = (column + CELL_LOOKUP_RADIUS);
-
-//                int targetCellKeysCounter = 0;
-                for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
-                    int mathFloorWidth = Math.floorMod(i, width);
-                    for (int j = squareIndexStartColumn; j < squareIndexEndColumn; j++) {
-                        int mathFloorHeight = Math.floorMod(j, height);
-                        int keyToCell = mathFloorWidth * height + mathFloorHeight;
-//                        targetCellKeys[targetCellKeysCounter] = keyToCell;
-                        targetCellKeys.add(keyToCell);
-//                        targetCellKeysCounter++;
-                    }
-                }
-                int sourceKey = row * height + column;
-                neighbourLookupHashMap.put(sourceKey,targetCellKeys);
-            }
-        }
-    }
-
-    private void preComputeCellToPositionHashMap(){
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                cellToPositionHashMap.put(i * height + j, new double[]{(i+0.5)*CELL_SIZE, (j+0.5)*CELL_SIZE});
-            }
-        }
-    }
-
     private void averageParticles() {
         // going over each (non-empty) cell and getting the entry
         for (Map.Entry<Integer, LinkedList<Particle>> particleHashMapEntry : particleHashMap.entrySet()) {
@@ -131,10 +96,77 @@ public class ParticleGridMap {
             for (Particle particle : particleHashMapEntry.getValue()){
                 speciesPresent[particle.SPECIES] ++;
             }
-            ParticleApproximation particle = new ParticleApproximation(position, speciesPresent);
+            Particle particle = new Particle(position, speciesPresent);
             cellAveragedParticleHashMap.put(key, particle);
         }
-
     }
+    private void clearGrid(){
+        for (LinkedList<Particle> list : particleGrid) {
+            list.clear();
+        }
+    }
+    private void preComputeNeighbourLookupHashmap(){
+        for (int row = 0; row < width; row++) {
+            for (int column = 0; column < height; column++) {
+                LinkedList<Integer> targetCellKeys = new LinkedList<>();
+                int squareIndexStartRow = (row - CELL_LOOKUP_RADIUS) + LOD_THRESHOLD;
+                int squareIndexEndRow = (row + CELL_LOOKUP_RADIUS) - LOD_THRESHOLD;
+                int squareIndexStartColumn = (column - CELL_LOOKUP_RADIUS) + LOD_THRESHOLD;
+                int squareIndexEndColumn = (column + CELL_LOOKUP_RADIUS) - LOD_THRESHOLD;
 
+                for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
+                    int mathFloorWidth = Math.floorMod(i, width);
+                    for (int j = squareIndexStartColumn; j < squareIndexEndColumn; j++) {
+                        int mathFloorHeight = Math.floorMod(j, height);
+                        int keyToCell = mathFloorWidth * height + mathFloorHeight;
+                        targetCellKeys.add(keyToCell);
+                    }
+                }
+                int sourceKey = row * height + column;
+                neighbourLookupHashMap.put(sourceKey,targetCellKeys);
+            }
+        }
+    }
+    private void preComputeCellToPositionHashMap(){
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                cellToPositionHashMap.put(i * height + j, new double[]{(i+0.5)*CELL_SIZE, (j+0.5)*CELL_SIZE});
+            }
+        }
+    }
+    private void preComputeNeighbourLookupHashMapLOD(){
+        for (int row = 0; row < width; row++) {
+            for (int column = 0; column < height; column++) {
+                LinkedList<Integer> targetCellKeys = new LinkedList<>();
+                int squareIndexStartRow = (row - CELL_LOOKUP_RADIUS);
+                int squareIndexEndRow = (row + CELL_LOOKUP_RADIUS);
+                int squareIndexStartColumn = (column - CELL_LOOKUP_RADIUS);
+                int squareIndexEndColumn = (column + CELL_LOOKUP_RADIUS);
+
+                int LODThresholdStartRow = squareIndexStartRow + LOD_THRESHOLD;
+                int LODThresholdEndRow = squareIndexEndRow - LOD_THRESHOLD;
+                int LODThresholdStartColumn = squareIndexStartColumn + LOD_THRESHOLD;
+                int LODThresholdEndColumn = squareIndexEndColumn - LOD_THRESHOLD;
+
+                for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
+                    if(i > LODThresholdStartRow && i < LODThresholdEndRow){
+                        continue;
+                    }
+
+                    int mathFloorWidth = Math.floorMod(i, width);
+                    for (int j = squareIndexStartColumn; j < squareIndexEndColumn; j++) {
+                        if(j > LODThresholdStartColumn && j < LODThresholdEndColumn){
+                            continue;
+                        }
+
+                        int mathFloorHeight = Math.floorMod(j, height);
+                        int keyToCell = mathFloorWidth * height + mathFloorHeight;
+                        targetCellKeys.add(keyToCell);
+                    }
+                }
+                int sourceKey = row * height + column;
+                neighbourLookupHashMapLOD.put(sourceKey,targetCellKeys);
+            }
+        }
+    }
 }
