@@ -12,7 +12,8 @@ import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class AttractionMatrix {
+public class AttractionMatrix{
+
     public static double[][] attractionMatrix; // this is static for faster access from each Particle
     private String seed;
     private final int size;
