@@ -39,18 +39,17 @@ public class ParticleSimulation{
 
     ParticleSimulation(Canvas canvas){
         DEFAULT_PARTICLE_COUNT = 1500;
-        CENTRAL_ATTRACTION_MULTIPLIER = 1;
+        CENTRAL_ATTRACTION_MULTIPLIER = 5;
         RADIUS = 0.5;
         friction = 0.4;
-        maxAttractionDistance = 40;
+        maxAttractionDistance = 30;
         attractionRelativeDistanceCutout = 0.3;
 
         forceMultiplier = 5;
-        SIMULATION_FPS = 30;
+        SIMULATION_FPS = 60;
         CAP_FPS = false;
         UPDATE_RATE_MS = (double) 1000 / SIMULATION_FPS;
         UPDATE_RATE_NANOSEC = (long) 1_000_000_000 / SIMULATION_FPS;
-        lastUpdateTime = 0;
 
         particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
             put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
@@ -93,6 +92,23 @@ public class ParticleSimulation{
     }
     public void update(){
         timer = new AnimationTimer() {
+            private void simulate(){
+                clearCanvas();
+                particles.forEach(particle -> {
+                    particle.adjustPositionWrapping();
+                    drawParticle(particle);
+                });
+
+                if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
+                    simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
+                }
+
+                particleGridMap.update(particles);
+
+                particles.parallelStream().forEach(Particle::simulate);
+            }
+
+
             @Override
             public void handle(long now) {
                 long elapsedTime = now - lastUpdateTime;
@@ -101,40 +117,12 @@ public class ParticleSimulation{
                 if(CAP_FPS){
                     // limit the animation to only work at 30fps
                     if(elapsedTime >= UPDATE_RATE_NANOSEC){
-
-                        clearCanvas();
-                        particles.forEach(particle -> {
-                            particle.adjustPositionWrapping();
-                            drawParticle(particle);
-                        });
-
-                        if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
-                            simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
-                        }
-
-                        particleGridMap.update(particles);
-
-                        particles.parallelStream().forEach(Particle::simulate);
-
+                        simulate();
                         lastUpdateTime = now;
-
                     }
                 }
                 else{
-                    clearCanvas();
-                    particles.forEach(particle -> {
-                        particle.adjustPositionWrapping();
-                        drawParticle(particle);
-                    });
-
-                    if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
-                        simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
-                    }
-
-                    particleGridMap.update(particles);
-
-                    particles.parallelStream().forEach(Particle::simulate);
-
+                    simulate();
                     lastUpdateTime = now;
                 }
 
