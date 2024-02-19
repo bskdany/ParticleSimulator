@@ -93,61 +93,54 @@ public class Particle {
         }
     }
 
-    public void simulate(){
-        force[0] = 0;
-        force[1] = 0;
+    public static double[] calculateCumulativeParticleForce(Particle sourceParticle){
+        double[] force = new double[2];
 
-        // the data I need from the particle is:
-        // 1. direction vector, which I believe can be approximated with the grid distance
-        // 2. attraction matrix, which can be combined for multiple particles in difference cells into one
-        // 3. if the particle for which the force is being calculated is not the particle in the list, which can be sorted off by removing all particles
-        // whose distance is lower than a threshold
-        AtomicInteger discarded = new AtomicInteger();
-        AtomicInteger total = new AtomicInteger();
+        ParticleSimulation.particleGridMap.getParticleAround(sourceParticle).forEach(targetParticle -> {
 
-        ParticleSimulation.particleGridMap.getParticleAround(this).forEach(particle -> {
-            total.addAndGet(1);
+            double[] directionVector = new double[2];
 
-            directionVector[0] = particle.position[0] - position[0];
-            directionVector[1] = particle.position[1] - position[1];
+            directionVector[0] = targetParticle.position[0] - sourceParticle.position[0];
+            directionVector[1] = targetParticle.position[1] - sourceParticle.position[1];
 
+            if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
+                return;
+            }
+            if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
+                return;
+            }
 
-//            if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
-//                discarded.addAndGet(1);
-//                return;
-//            }
-//            if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
-//                discarded.addAndGet(1);
-//                return;
-//            }
+            Particle.calculateVectorWrap(directionVector);
 
-            double[] directionVector = calculateVectorWrap();
             // length of the relative distance
             double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
 
             if(distance > 1) {
-                discarded.addAndGet(1);
                 return;
             }
 
             double attractionFactor;
-            if(particle.mixedSpecies){
-                attractionFactor = particle.attractionFactor[SPECIES];
+            if(targetParticle.mixedSpecies){
+                attractionFactor = targetParticle.attractionFactor[sourceParticle.SPECIES];
             }
             else {
-                attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][particle.SPECIES];
+                attractionFactor = AttractionMatrix.attractionMatrix[sourceParticle.SPECIES][targetParticle.SPECIES];
 
             }
 
             double magnitude =  calculateAttractionForce(distance, attractionFactor);
             double[] normalisedDirectionVector = normalizeVector(directionVector);
 
-            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance * particle.containingSpeciesCount;
-            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance * particle.containingSpeciesCount;
+            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance * targetParticle.containingSpeciesCount;
+            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance * targetParticle.containingSpeciesCount;
         });
 
-        particleMissRate += (int) ((double )discarded.intValue() / total.intValue() * 100);
-        particleChecks ++;
+        return force;
+    }
+
+
+    public void simulate(){
+        force = calculateCumulativeParticleForce(this);
 
         // all particles move towards the center slowly
         double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
@@ -173,7 +166,6 @@ public class Particle {
 
         position[0] += velocity[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
         position[1] += velocity[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
-
     }
 
     public static double[] normalizeVector(double[] vector) {
@@ -193,12 +185,7 @@ public class Particle {
         return 0;
     }
 
-//    private static double calculateAttractionForceNewton(double distance, Particle particle1, Particle particle2){
-//        double G = 6.674 * Math.pow(10, -11);
-//        return G * (particle1.MASS * particle2.MASS) / (distance * distance);
-//    }
-
-    private double[] calculateVectorWrap(){
+    private static double[] calculateVectorWrap(double[] directionVector){
         // vector from source to target
         if(directionVector[0] > ParticleSimulation.wrapDirectionLimitWidth){  // warp left
             directionVector[0] = directionVector[0] - ParticleSimulation.CANVAS_WIDTH -1;
