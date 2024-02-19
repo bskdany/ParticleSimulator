@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleForceCache.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" afterDir="false" />
@@ -44,7 +45,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Main.executor": "Profiler#1",
+    "Application.Main.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
     "JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar.executor": "Run",
     "JAR Application.ParticleSimulation-1.0-SNAPSHOT.jar.executor": "Run",
@@ -174,7 +175,7 @@
       <workItem from="1708092624639" duration="20484000" />
       <workItem from="1708183527671" duration="11370000" />
       <workItem from="1708263138442" duration="24119000" />
-      <workItem from="1708308445930" duration="8298000" />
+      <workItem from="1708308445930" duration="14127000" />
     </task>
     <servers />
   </component>

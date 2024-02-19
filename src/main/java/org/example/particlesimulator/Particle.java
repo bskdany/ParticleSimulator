@@ -138,9 +138,11 @@ public class Particle {
         return force;
     }
 
-
     public void simulate(){
         force = calculateCumulativeParticleForce(this);
+
+        
+
 
         // all particles move towards the center slowly
         double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
