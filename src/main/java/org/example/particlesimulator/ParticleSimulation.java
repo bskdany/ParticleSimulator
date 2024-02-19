@@ -70,6 +70,7 @@ public class ParticleSimulation{
         attractionMatrix = new AttractionMatrix(particleData.size());
         particleGridMap = new ParticleGridMap(CANVAS_WIDTH, CANVAS_HEIGHT);
 
+
     }
 
     public void initContent() {

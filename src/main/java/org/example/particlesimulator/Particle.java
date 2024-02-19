@@ -4,7 +4,6 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Particle {
     public double[] position;
@@ -95,9 +94,7 @@ public class Particle {
 
     public static double[] calculateCumulativeParticleForce(Particle sourceParticle){
         double[] force = new double[2];
-
         ParticleSimulation.particleGridMap.getParticleAround(sourceParticle).forEach(targetParticle -> {
-
             double[] directionVector = new double[2];
 
             directionVector[0] = targetParticle.position[0] - sourceParticle.position[0];
@@ -134,14 +131,79 @@ public class Particle {
             force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance * targetParticle.containingSpeciesCount;
             force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance * targetParticle.containingSpeciesCount;
         });
+        return force;
+    }
 
+    public static double[] calculateSpeciesParticleForce(Particle sourceParticle, ArrayList<Integer> keysToCells, int targetSpecie){
+        double[] force = new double[2];
+        ParticleSimulation.particleGridMap.getParticlesAtKeysOfSpecie(keysToCells, targetSpecie).forEach(targetParticle -> {
+            double[] directionVector = new double[2];
+
+            directionVector[0] = targetParticle.position[0] - sourceParticle.position[0];
+            directionVector[1] = targetParticle.position[1] - sourceParticle.position[1];
+
+            if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
+                return;
+            }
+            if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
+                return;
+            }
+
+            Particle.calculateVectorWrap(directionVector);
+
+            // length of the relative distance
+            double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
+
+            if(distance > 1) {
+                return;
+            }
+
+            double attractionFactor;
+            if(targetParticle.mixedSpecies){
+                attractionFactor = targetParticle.attractionFactor[sourceParticle.SPECIES];
+            }
+            else {
+                attractionFactor = AttractionMatrix.attractionMatrix[sourceParticle.SPECIES][targetParticle.SPECIES];
+
+            }
+
+            double magnitude =  calculateAttractionForce(distance, attractionFactor);
+            double[] normalisedDirectionVector = normalizeVector(directionVector);
+
+            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance * targetParticle.containingSpeciesCount;
+            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance * targetParticle.containingSpeciesCount;
+        });
         return force;
     }
 
     public void simulate(){
-        force = calculateCumulativeParticleForce(this);
+        force[0] = 0;
+        force[1] = 0;
 
-        
+        ParticleForceCache particleForceCache = ParticleForceCache.getInstance();
+
+        // 7 configurations, one for each species
+        ArrayList<Integer>[] particleConfiguration = particleForceCache.encodeParticlesConfiguration(this);
+
+        for (int i = 0; i < particleConfiguration.length; i++) {
+            if(particleConfiguration[i].isEmpty()){
+                continue;
+            }
+
+            double[] cachedForce = particleForceCache.getCachedConfiguration(particleConfiguration[i], i);
+
+            if(cachedForce == null){
+                // I need to calculate the force for only the particles that are not cached
+                double[] calculatedForce = calculateSpeciesParticleForce(this, particleConfiguration[i], i);
+//                particleForceCache.addConfigurationToCache(particleConfiguration[i], i, calculatedForce);
+                force[0] += calculatedForce[0];
+                force[1] += calculatedForce[1];
+            }
+            else{
+                force[0] += cachedForce[0];
+                force[1] += cachedForce[1];
+            }
+        }
 
 
         // all particles move towards the center slowly
