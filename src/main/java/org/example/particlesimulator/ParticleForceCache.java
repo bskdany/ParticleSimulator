@@ -6,23 +6,33 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ParticleForceCache {
-    private static final HashMap<Integer[], Double>[] particleForceCache = new HashMap[7];
+    // singleton
+    private static ParticleForceCache instance;
 
-    public static ArrayList<Integer>[] encodeParticlesConfiguration(Particle sourceParticle){
+    // because it's hard to encode everything all at once I divide the configuration in pieces
+    // SPECIES
+    //  0  ->   {{[hashKey, quantity],[...],[...],[],[]} -> TOTAL FORCE} , {{[hashKey, quantity],[...],[...],[],[]} -> TOTAL FORCE...}
+    //  1       ...
+    //  2       ...
+    private final HashMap<ArrayList<Integer>, double[]>[] particleForceCache = new HashMap[7];
+    // and yes I am aware hard-coding the number 7 everywhere in my code is not the brightest idea
+
+    private ParticleForceCache(){
+        for (int i = 0; i < particleForceCache.length; i++) {
+            particleForceCache[i] = new HashMap<>();
+        }
+    }
+
+    public ArrayList<Integer>[] encodeParticlesConfiguration(Particle sourceParticle){
         ParticleGridMap gridMap = ParticleSimulation.particleGridMap;
 
         int hashKey = ParticleGridMap.particleToHashKey(sourceParticle);
         List<Integer> keysToNeighbours = gridMap.getKeysToNeighbours(hashKey);
 
-        // because it's hard to encode everything all at once I divide the configuration in pieces
-
-        // SPECIES
-        //  0  ->   {[hashKey, quantity],[...],[...],[],[]}     ->  TOTAL FORCE
-        //  1       ...
-        //  2       ...
-
         ArrayList<Integer>[] encodedConfiguration = new ArrayList[7];
-        // and yes I am aware hard-coding the number 7 everywhere in my code is not the brightest idea
+        for (int i = 0; i < encodedConfiguration.length; i++) {
+            encodedConfiguration[i] = new ArrayList<>();
+        }
 
         for (int i = 0; i < keysToNeighbours.size(); i++) {
             List<Particle> neighbourParticlesAtKey = gridMap.getParticlesAtKey(i);
@@ -30,15 +40,36 @@ public class ParticleForceCache {
                 continue;
             }
 
+            int key = keysToNeighbours.get(i);
             for(Particle neighbourParticle :neighbourParticlesAtKey){
-                int keyOffset = i - hashKey;        // there are sure ways to make the key offset more efficient
 
                 // assuming there is only one particle per cell
-                encodedConfiguration[neighbourParticle.SPECIES].add(keyOffset);
+                encodedConfiguration[neighbourParticle.SPECIES].add(key);
             }
         }
         
         return encodedConfiguration;
     }
 
+    public double[] getCachedConfiguration(ArrayList<Integer> configuration, int species){
+        return particleForceCache[species].get(configuration);
+    }
+
+    public void addConfigurationToCache(ArrayList<Integer> configuration, int species, double[] force){
+        particleForceCache[species].put(configuration, force);
+    }
+
+
+    public static ParticleForceCache getInstance(){
+        if (instance == null){
+            instance = new ParticleForceCache();
+        }
+        return instance;
+    }
 }
+
+
+
+
+
+

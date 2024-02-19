@@ -1,7 +1,5 @@
 package org.example.particlesimulator;
 
-import javafx.beans.value.WritableDoubleValue;
-
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -69,7 +67,7 @@ public class ParticleGridMap {
     private final int fineHeight;
 
     ParticleGridMap(double canvasWidth, double canvasHeight){
-        CELL_SIZE = 5;
+        CELL_SIZE = 4;
         CELL_LOOKUP_RADIUS = (int) ParticleSimulation.maxAttractionDistance / CELL_SIZE;
         FINE_GRAINED_CELL_SIZE = 1;         //  double the particle radius
         CIRCLE_APPROXIMATION_OFFSET = 1;
@@ -100,9 +98,7 @@ public class ParticleGridMap {
         }
     }
     public Stream<Particle> getParticleAround(Particle particle){
-        int indexRow = (int) particle.position[0] / CELL_SIZE;
-        int indexColumn = (int) particle.position[1] / CELL_SIZE;
-        int key = indexRow * HEIGHT + indexColumn;
+        int key = particleToHashKey(particle);
 
         if(USE_LOD){
             return  Stream.concat(
@@ -123,6 +119,14 @@ public class ParticleGridMap {
                     .flatMap(List::stream);
         }
     }
+
+    public Stream<Particle> getParticlesAtKeysOfSpecie(ArrayList<Integer> keysToCells, int targetSpecies){
+        return keysToCells.stream().map(particlesPositionHashMap::get)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .filter(p -> p.SPECIES == targetSpecies);
+    }
+
     private void hashParticlePositions(List<Particle> particles){
         particlesPositionHashMap.clear();
 
