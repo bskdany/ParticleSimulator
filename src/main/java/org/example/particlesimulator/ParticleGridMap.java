@@ -1,6 +1,7 @@
 package org.example.particlesimulator;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ParticleGridMap {
@@ -8,7 +9,6 @@ public class ParticleGridMap {
     private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMap;
 
     private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMapFineGrained;
-
 
     // helper hashmap that based on a particle position hash returns all the keys to the particle position hashmap
     // in which it should check for neighbours
@@ -60,6 +60,9 @@ public class ParticleGridMap {
     // the discarded particles would amount to 20%, with it only 6%
     // https://en.wikipedia.org/wiki/Squaring_the_circle
     private final int CIRCLE_APPROXIMATION_OFFSET;
+
+
+
 
     private final int width;
     private final int height;
@@ -116,6 +119,34 @@ public class ParticleGridMap {
         }
 
         else{
+            if(particle.SPECIES == 0){
+                // this one might be expensive
+                List<Integer> keysToNeighbours =  neighbourLookupHashMap.get(key);
+
+                List<Particle> particleList = new ArrayList<>();
+
+                // List of arrays, 0 -> key, 1 -> particles present
+                List<int[]> cacheParticlePositionConfiguration = new ArrayList<>();
+
+                for (int i = 0; i < keysToNeighbours.size(); i++) {
+                    // filtering the keys that only have particles as value
+                    List<Particle> temp = particlesPositionHashMap.get(i);
+                    if(temp != null){
+                        int offsetFromCenter = key - i;
+                        int particlesPresent = 0;
+                        for (Particle neighbourParticle : temp){
+                            if(neighbourParticle.SPECIES == 0){
+                                particlesPresent++;
+                            }
+                        }
+
+                        cacheParticlePositionConfiguration.add(new int[]{offsetFromCenter, particlesPresent});
+                        particleList.addAll(temp);
+                    }
+                }
+            }
+
+
             return neighbourLookupHashMap.get(key).stream()
                     .map(particlesPositionHashMap::get)
                     .filter(Objects::nonNull)
