@@ -34,20 +34,19 @@ public class ParticleForceCache {
             encodedConfiguration[i] = new ArrayList<>();
         }
 
-        for (int i = 0; i < keysToNeighbours.size(); i++) {
-            List<Particle> neighbourParticlesAtKey = gridMap.getParticlesAtKey(i);
+        for(int key : keysToNeighbours){
+            List<Particle> neighbourParticlesAtKey = gridMap.getParticlesAtKey(key);
             if (neighbourParticlesAtKey == null){
                 continue;
             }
 
-            int key = keysToNeighbours.get(i);
             for(Particle neighbourParticle :neighbourParticlesAtKey){
 
                 // assuming there is only one particle per cell
                 encodedConfiguration[neighbourParticle.SPECIES].add(key);
             }
         }
-        
+
         return encodedConfiguration;
     }
 

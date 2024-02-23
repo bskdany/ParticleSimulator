@@ -195,7 +195,7 @@ public class Particle {
             if(cachedForce == null){
                 // I need to calculate the force for only the particles that are not cached
                 double[] calculatedForce = calculateSpeciesParticleForce(this, particleConfiguration[i], i);
-//                particleForceCache.addConfigurationToCache(particleConfiguration[i], i, calculatedForce);
+                particleForceCache.addConfigurationToCache(particleConfiguration[i], i, calculatedForce);
                 force[0] += calculatedForce[0];
                 force[1] += calculatedForce[1];
             }
@@ -205,6 +205,7 @@ public class Particle {
             }
         }
 
+        
 
         // all particles move towards the center slowly
         double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
