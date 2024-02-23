@@ -123,8 +123,8 @@ public class ParticleGridMap {
     public Stream<Particle> getParticlesAtKeysOfSpecie(ArrayList<Integer> keysToCells, int targetSpecies){
         return keysToCells.stream().map(particlesPositionHashMap::get)
                 .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .filter(p -> p.SPECIES == targetSpecies);
+                .flatMap(List::stream);
+//                .filter(p -> p.SPECIES == targetSpecies);
     }
 
     private void hashParticlePositions(List<Particle> particles){
