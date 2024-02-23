@@ -42,6 +42,7 @@ public class ParticleForceCache {
 
             for(Particle neighbourParticle :neighbourParticlesAtKey){
 
+
                 // assuming there is only one particle per cell
                 encodedConfiguration[neighbourParticle.SPECIES].add(key);
             }
