@@ -39,11 +39,11 @@ public class ParticleSimulation{
     private long lastFpsShowTime;
     private int updateCount = 0;
     ParticleSimulation(Canvas canvas){
-        DEFAULT_PARTICLE_COUNT = 1000;
+        DEFAULT_PARTICLE_COUNT = 1500;
         CENTRAL_ATTRACTION_MULTIPLIER = 5;
         RADIUS = 0.5;
         friction = 0.4;
-        maxAttractionDistance = 40;
+        maxAttractionDistance = 30;
         attractionRelativeDistanceCutout = 0.3;
 
         forceMultiplier = 5;

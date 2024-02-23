@@ -9,6 +9,7 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleForceCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleForceCache.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +83,7 @@
     "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.41954023",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "profiler.jvm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -182,7 +183,7 @@
       <workItem from="1708263138442" duration="24119000" />
       <workItem from="1708308445930" duration="23961000" />
       <workItem from="1708482341373" duration="2018000" />
-      <workItem from="1708662551759" duration="3115000" />
+      <workItem from="1708662551759" duration="9977000" />
     </task>
     <servers />
   </component>
@@ -198,11 +199,6 @@
         </breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
-          <line>175</line>
-          <option name="timeStamp" value="41" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
           <line>145</line>
           <option name="timeStamp" value="43" />
         </line-breakpoint>
@@ -213,16 +209,15 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
-          <line>139</line>
-          <option name="timeStamp" value="45" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
-          <line>137</line>
+          <line>140</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ParticleSimulation$Main.ic" NAME="Main Coverage Results" MODIFIED="1708097815287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
