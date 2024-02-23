@@ -222,6 +222,14 @@ public class Particle {
         velocity[0] += accelerationX * ParticleSimulation.UPDATE_RATE_MS / 1000;
         velocity[1] += accelerationY * ParticleSimulation.UPDATE_RATE_MS / 1000;
 
+        if(Math.pow(velocity[0]*velocity[1],2)>1){  // I made this value up
+            isMoving = true;
+        }
+        else{
+            isMoving = false;
+        }
+
+
         deltaPosition[0] = velocity[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
         deltaPosition[1] = velocity[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
 
@@ -229,12 +237,7 @@ public class Particle {
             // explode
         }
 
-        if(deltaPosition[0]*deltaPosition[1]>0){
-            isMoving = true;
-        }
-        else{
-            isMoving = false;
-        }
+
 
 
         position[0] += velocity[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
