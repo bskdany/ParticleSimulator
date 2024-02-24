@@ -17,11 +17,40 @@ public class ParticleForceCache {
     private final HashMap<ArrayList<Integer>, double[]>[] particleForceCache = new HashMap[7];
     // and yes I am aware hard-coding the number 7 everywhere in my code is not the brightest idea
 
+    private final HashMap<Integer, double[]>[] positionToForceCache = new HashMap[7];
+
+
     private ParticleForceCache(){
         for (int i = 0; i < particleForceCache.length; i++) {
             particleForceCache[i] = new HashMap<>();
         }
+
+        for (int i = 0; i < positionToForceCache.length; i++) {
+            positionToForceCache[i] = new HashMap<>();
+        }
     }
+
+    public void clearCache(){
+        for(HashMap<Integer, double[]> map : positionToForceCache){
+            map.clear();
+        }
+    }
+
+    public void cacheForce(int species, double[] position, double[] force){
+        positionToForceCache[species].put(positionToKey(position), force);
+    }
+
+    public double[] getCachedForce(int species, double[] position){
+        return positionToForceCache[species].get(positionToKey(position));
+    }
+
+    private static int positionToKey(double[] position){
+        int radiusSize = 3;
+        return ((int) position[0]/radiusSize * ((int) ParticleSimulation.CANVAS_HEIGHT / radiusSize) + (int) position[1] / radiusSize);
+    }
+
+
+
 
     public ArrayList<Integer>[] encodeParticlesConfiguration(Particle sourceParticle){
         ParticleGridMap gridMap = ParticleSimulation.particleGridMap;

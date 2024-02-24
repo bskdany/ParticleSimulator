@@ -101,6 +101,7 @@ public class ParticleSimulation{
                     drawParticle(particle);
                 });
                 updateCount ++;
+                ParticleForceCache.getInstance().clearCache();
 
                 if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
                     simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
