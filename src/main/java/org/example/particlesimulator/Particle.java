@@ -180,7 +180,7 @@ public class Particle {
         force[0] = 0;
         force[1] = 0;
 
-//        ParticleForceCache particleForceCache = ParticleForceCache.getInstance();
+        ParticleForceCache particleForceCache = ParticleForceCache.getInstance();
 //
 //        // 7 configurations, one for each species
 //        ArrayList<Integer>[] particleConfiguration = particleForceCache.encodeParticlesConfiguration(this);
@@ -205,7 +205,16 @@ public class Particle {
 //            }
 //        }
 
-        force = calculateCumulativeParticleForce(this);
+        double[] tempForce = particleForceCache.getCachedForce(SPECIES, position);
+        if(tempForce != null){
+            force = tempForce;
+        }
+        else{
+            force = calculateCumulativeParticleForce(this);
+            particleForceCache.cacheForce(SPECIES,position, force);
+        }
+
+
 
         // all particles move towards the center slowly
 //        double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
