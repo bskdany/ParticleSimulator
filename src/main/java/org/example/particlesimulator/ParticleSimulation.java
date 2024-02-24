@@ -38,6 +38,8 @@ public class ParticleSimulation{
     public static ParticleGridMap particleGridMap;
     private long lastFpsShowTime;
     private int updateCount = 0;
+
+    private OptimizationTracking optimizationTracking;
     ParticleSimulation(Canvas canvas){
         DEFAULT_PARTICLE_COUNT = 1500;
         CENTRAL_ATTRACTION_MULTIPLIER = 5;
@@ -69,8 +71,6 @@ public class ParticleSimulation{
         simulationTimeline = new SimulationTimeline();
         attractionMatrix = new AttractionMatrix(particleData.size());
         particleGridMap = new ParticleGridMap(CANVAS_WIDTH, CANVAS_HEIGHT);
-
-
     }
 
     public void initContent() {
@@ -134,7 +134,8 @@ public class ParticleSimulation{
                 }
 
                 if(elapsedTimeFromLastSecond > 1_000_000_000){
-                    System.out.println("FPS: "  + updateCount);
+                    System.out.println("FPS:        "  + updateCount);
+                    OptimizationTracking.getInstance().showOptimizationData();
                     lastFpsShowTime = now;
                     updateCount = 0;
                 }
