@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 public class ParticleGridMap {
     // encoding the positions of the particles for categorization and quick access via spartial hashing
     private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMap;
-
     private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMapFineGrained;
 
     // helper hashmap that based on a particle position hash returns all the keys to the particle position hashmap
@@ -33,7 +32,7 @@ public class ParticleGridMap {
     // a smaller amount of particles
     public static  int CELL_SIZE;
 
-    private final int FINE_GRAINED_CELL_SIZE;
+    private final int CELL_SIZE_FINE;
 
     // with the default values the  cell_lookup_radius should amount to 40 / 5 = 8
     // it's the amount of cells in each direction from the source cell that the
@@ -49,7 +48,7 @@ public class ParticleGridMap {
     // amount of layers from the outside that should be approximated per cell basis
     private final int LOD_THRESHOLD;
 
-    // if two or more particles fit in the same FINE_GRAINED_CELL_SIZE
+    // if two or more particles fit in the same CELL_SIZE_FINE
     // they will get approximated to one
     private final boolean CLUSTER_CLOSE_PARTICLES;
 
@@ -67,35 +66,35 @@ public class ParticleGridMap {
     public static int WIDTH;
     public static int HEIGHT;
 
-    private final int fineWidth;
-    private final int fineHeight;
+    private final int WIDTH_FINE;
+    private final int HEIGHT_FINE;
 
     ParticleGridMap(double canvasWidth, double canvasHeight){
         CELL_LOOKUP_RADIUS = 3;
         CELL_SIZE = (int) ParticleSimulation.maxAttractionDistance / CELL_LOOKUP_RADIUS;
-
-        FINE_GRAINED_CELL_SIZE = 1;         //  double the particle radius
-        CIRCLE_APPROXIMATION_OFFSET = 1;
-        NEIGHBOUR_LOOKUP_HASHMAP_OFFSET = 1;
-        USE_LOD = false;
-        // this is necessary because there are methods that use the lod threshold for calculations
-        int LOD_VALUE = 4;
-        LOD_THRESHOLD = USE_LOD ? LOD_VALUE : 0;
-
-        CLUSTER_CLOSE_PARTICLES = false;
+        CELL_SIZE_FINE = 3;
 
         WIDTH = (int) canvasWidth / CELL_SIZE + 1;
         HEIGHT = (int) canvasHeight / CELL_SIZE + 1;
 
-        fineWidth = (int) canvasWidth / FINE_GRAINED_CELL_SIZE + 1;
-        fineHeight = (int) canvasHeight / FINE_GRAINED_CELL_SIZE + 1;
+        WIDTH_FINE = (int) canvasWidth / CELL_SIZE_FINE + 1;
+        HEIGHT_FINE = (int) canvasHeight / CELL_SIZE_FINE + 1;
+
+        CIRCLE_APPROXIMATION_OFFSET = 1;
+        NEIGHBOUR_LOOKUP_HASHMAP_OFFSET = 1;
+
+        USE_LOD = true;
+        // this is necessary because there are methods that use the lod threshold for calculations
+        int LOD_VALUE = 1;
+        LOD_THRESHOLD = USE_LOD ? LOD_VALUE : 0;
+
+        CLUSTER_CLOSE_PARTICLES = false;
 
         particlesPositionHashMap = new HashMap<>();
         particlesPositionHashMapFineGrained = new HashMap<>();
 
         preComputeNeighbourLookupHashmap();
         preComputeNeighbourLookupHashmapWithOffset();
-
         preComputeCellToPositionHashMap();
         preComputeNeighbourLookupHashMapLOD();
     }
@@ -142,7 +141,7 @@ public class ParticleGridMap {
             particlesPositionHashMapFineGrained.clear();
 
             particles.forEach(particle -> {
-                int fineKey = hashParticlePositionFine(particle);
+                int fineKey = particleToHashKeyFine(particle);
                 particlesPositionHashMapFineGrained.putIfAbsent(fineKey, new LinkedList<>());  // add new linked list if space not initialized
                 particlesPositionHashMapFineGrained.get(fineKey).add(particle);
             });
@@ -269,7 +268,6 @@ public class ParticleGridMap {
             }
         }
     }
-
     private void preComputeCellToPositionHashMap(){
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
@@ -313,10 +311,10 @@ public class ParticleGridMap {
         int indexColumn = (int) particle.position[1] / CELL_SIZE;
         return indexRow * HEIGHT + indexColumn;
     }
-    private int hashParticlePositionFine(Particle particle){
-        int indexRow = (int) particle.position[0] / FINE_GRAINED_CELL_SIZE;
-        int indexColumn = (int) particle.position[1] / FINE_GRAINED_CELL_SIZE;
-        return indexRow * fineHeight + indexColumn;
+    private int particleToHashKeyFine(Particle particle){
+        int indexRow = (int) particle.position[0] / CELL_SIZE_FINE;
+        int indexColumn = (int) particle.position[1] / CELL_SIZE_FINE;
+        return indexRow * HEIGHT_FINE + indexColumn;
     }
     public LinkedList<Integer> getKeysToNeighbours(int key){
         return neighbourLookupHashMap.get(key);
