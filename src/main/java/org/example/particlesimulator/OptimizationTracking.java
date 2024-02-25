@@ -8,7 +8,10 @@ public class OptimizationTracking {
     private int calculationSavedByImmobileParticle;
     private int discardedDueToOutOfRange;
     private int usedInCalculation;
-    private int totalParticleStream;
+    private int totalParticleInteractions;
+    private int numberOfParticlesAveraged;
+    private int numberOfParticles;
+    private int updateCounter;
     OptimizationTracking(){
         resetValues();
     }
@@ -25,22 +28,23 @@ public class OptimizationTracking {
     public void increaseUsedInCalculation(){
         usedInCalculation++;
     }
-    public void increaseTotal(){totalParticleStream++;}
-
+    public void increaseParticlesAveraged(){numberOfParticlesAveraged++;}
+    public void increaseTotalInteractions(){totalParticleInteractions++;}
+    public void increaseUpdate(){updateCounter++;}
     public void showOptimizationData(){
-        System.out.println("Optimizations");
-        System.out.println("Caching     " + calculatePercentage(calculationSavedByCaching));
-        System.out.println("Immobile    " + calculatePercentage(calculationSavedByImmobileParticle));
-        System.out.println("Range       " + calculatePercentage(discardedDueToOutOfRange));
-        System.out.println("Used        " + calculatePercentage(usedInCalculation));
+        System.out.println("Caching     " + calculatePercentage(calculationSavedByCaching, totalParticleInteractions));
+        System.out.println("Immobile    " + calculatePercentage(calculationSavedByImmobileParticle, totalParticleInteractions));
+        System.out.println("Averaged    " + calculatePercentage(numberOfParticlesAveraged, numberOfParticles * updateCounter));
+        System.out.println("Range       " + calculatePercentage(discardedDueToOutOfRange, totalParticleInteractions));
+        System.out.println("Used        " + calculatePercentage(usedInCalculation, totalParticleInteractions));
         System.out.println();
 
         resetValues();
     }
 
-    private String calculatePercentage(int value){
+    private String calculatePercentage(int value, int relative){
         DecimalFormat df = new DecimalFormat("#.##");
-        return df.format((double) value / totalParticleStream * 100) + "%";
+        return df.format((double) value / relative * 100) + "%";
     }
 
     private void resetValues(){
@@ -48,7 +52,10 @@ public class OptimizationTracking {
         calculationSavedByImmobileParticle = 0;
         discardedDueToOutOfRange = 0;
         usedInCalculation = 0;
-        totalParticleStream = 1;
+        totalParticleInteractions = 1;
+        numberOfParticlesAveraged = 0;
+        numberOfParticles = 1500 * 7;
+        updateCounter = 0;
     }
 
     public static OptimizationTracking getInstance() {

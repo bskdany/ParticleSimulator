@@ -21,7 +21,7 @@ public class Particle {
     public static int particleChecks = 0;
     public int[] containingSpecies;
     double[] directionVector = new double[2];
-    public double[] attractionFactor;
+    public double[] localAttractionFactor;
     public int containingSpeciesCount;
     Particle(int x, int y, double radius, Color color, double mass, int species){
         this.RADIUS = radius;
@@ -33,10 +33,9 @@ public class Particle {
         this.force = new double[]{0,0};
         this.velocity = new double[]{0,0};
         this.mixedSpecies = false;
-        attractionFactor = new double[7];
+        localAttractionFactor = new double[7];
         containingSpeciesCount = 1;
         isMoving = true;
-        isCluster = false;
     }
     Particle(double[] position, int[] containingSpecies){
         this.position = position;
@@ -45,21 +44,21 @@ public class Particle {
         this.deltaPosition = new double[]{0, 0};
         this.force = new double[]{0,0};
         this.velocity = new double[]{0,0};
-        RADIUS = 0;
-        MASS = 0;
+        RADIUS = 1;
+        MASS = 1;
         SPECIES = 0;
         // here I am calculating the cumulative attraction factor that the particle would have
         // if any other particle want to calculate the force with it
         // for example a yellow particle could consider this particle as attractive
         // while a red one could consider it as repulsive
-        attractionFactor = new double[7];
+        localAttractionFactor = new double[7];
 
         for (int i = 0; i < 7; i++) {       // where 7 is the number of species
-            attractionFactor[i] = 0;
+            localAttractionFactor[i] = 0;
 
             // if I was particle with species i (0) what is my attraction to this approximated particle?
             for (int j = 0; j < 7; j++) {
-                attractionFactor[i] += AttractionMatrix.attractionMatrix[i][j] * containingSpecies[j];
+                localAttractionFactor[i] += AttractionMatrix.attractionMatrix[i][j] * containingSpecies[j];
             }
             containingSpeciesCount += containingSpecies[i];
         }
@@ -80,7 +79,7 @@ public class Particle {
         this.directionVector = new double[]{0,0};
         this.mixedSpecies = original.mixedSpecies;
         this.containingSpecies = original.containingSpecies;
-        this.attractionFactor = original.attractionFactor;
+        this.localAttractionFactor = original.localAttractionFactor;
     }
 
     public void adjustPositionWrapping(){
@@ -101,7 +100,7 @@ public class Particle {
         OptimizationTracking tracking = OptimizationTracking.getInstance();
 
         ParticleSimulation.particleGridMap.getParticleAround(this).forEach(targetParticle -> {
-            tracking.increaseTotal();
+            tracking.increaseTotalInteractions();
 
             if(!targetParticle.isMoving && !isMoving){
                 tracking.increaseImmobileCounter();
@@ -135,38 +134,37 @@ public class Particle {
 
             double attractionFactor;
             if(targetParticle.mixedSpecies){
-                attractionFactor = targetParticle.attractionFactor[SPECIES];
+                attractionFactor = targetParticle.localAttractionFactor[SPECIES];
             }
             else {
                 attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][targetParticle.SPECIES];
             }
 
-            double magnitude =  calculateAttractionForce(distance, attractionFactor);
+            double magnitude = calculateAttractionForce(distance, attractionFactor)* targetParticle.containingSpeciesCount;
             double[] normalisedDirectionVector = normalizeVector(directionVector);
 
-            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance * targetParticle.containingSpeciesCount;
-            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance * targetParticle.containingSpeciesCount;
+            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
+            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
         });
         return force;
     }
 
     public void simulate(){
-        isCluster = false;
-
         force[0] = 0;
         force[1] = 0;
 
-        ParticleForceCache particleForceCache = ParticleForceCache.getInstance();
+//        ParticleForceCache particleForceCache = ParticleForceCache.getInstance();
+//        double[] tempForce = particleForceCache.getCachedForce(SPECIES, position);
+//        if(tempForce != null){
+//            force = tempForce;
+//            OptimizationTracking.getInstance().increaseCachingCounter();
+//        }
+//        else{
+//            force = calculateCumulativeParticleForce();
+//            particleForceCache.cacheForce(SPECIES,position, force);
+//        }
 
-        double[] tempForce = particleForceCache.getCachedForce(SPECIES, position);
-        if(tempForce != null){
-            force = tempForce;
-            OptimizationTracking.getInstance().increaseCachingCounter();
-        }
-        else{
-            force = calculateCumulativeParticleForce();
-            particleForceCache.cacheForce(SPECIES,position, force);
-        }
+        force = calculateCumulativeParticleForce();
 
         // all particles move towards the center slowly
 //        double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});
