@@ -49,9 +49,6 @@ public class ParticleForceCache {
         return ((int) position[0]/radiusSize * ((int) ParticleSimulation.CANVAS_HEIGHT / radiusSize) + (int) position[1] / radiusSize);
     }
 
-
-
-
     public ArrayList<Integer>[] encodeParticlesConfiguration(Particle sourceParticle){
         ParticleGridMap gridMap = ParticleSimulation.particleGridMap;
 
