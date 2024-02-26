@@ -3,7 +3,9 @@ package org.example.particlesimulator;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Particle {
     public double[] position;
@@ -95,6 +97,61 @@ public class Particle {
         }
     }
 
+    public void calculateCumulativeForce(List<Particle> targetParticles){
+        Arrays.fill(force, 0);
+
+        OptimizationTracking tracking = OptimizationTracking.getInstance();
+
+        targetParticles.forEach(targetParticle -> {
+            tracking.increaseTotalInteractions();
+
+            if(!targetParticle.isMoving && !isMoving){
+                tracking.increaseImmobileCounter();
+                return;
+            }
+
+            double[] directionVector = getParticleDirectionVector(this, targetParticle);
+
+            if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
+                tracking.increaseDiscardedOutOfRange();
+                return;
+
+            }
+            if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
+                tracking.increaseDiscardedOutOfRange();
+                return;
+            }
+
+            Particle.calculateVectorWrap(directionVector);
+
+            // length of the relative distance
+            double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
+
+            if(distance > 1) {
+                OptimizationTracking.getInstance().increaseDiscardedOutOfRange();
+                return;
+            }
+
+            OptimizationTracking.getInstance().increaseUsedInCalculation();
+
+
+            double attractionFactor;
+            if(targetParticle.mixedSpecies){
+                attractionFactor = targetParticle.localAttractionFactor[SPECIES];
+            }
+            else {
+                attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][targetParticle.SPECIES];
+            }
+
+            double magnitude = calculateAttractionForce(distance, attractionFactor)* targetParticle.containingSpeciesCount;
+            double[] normalisedDirectionVector = normalizeVector(directionVector);
+
+            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
+            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
+        });
+    }
+
+
     public double[] calculateCumulativeParticleForce(){
         double[] force = new double[2];
         OptimizationTracking tracking = OptimizationTracking.getInstance();
@@ -150,8 +207,8 @@ public class Particle {
     }
 
     public void simulate(){
-        force[0] = 0;
-        force[1] = 0;
+//        force[0] = 0;
+//        force[1] = 0;
 
 //        ParticleForceCache particleForceCache = ParticleForceCache.getInstance();
 //        double[] tempForce = particleForceCache.getCachedForce(SPECIES, position);
@@ -164,7 +221,7 @@ public class Particle {
 //            particleForceCache.cacheForce(SPECIES,position, force);
 //        }
 
-        force = calculateCumulativeParticleForce();
+//        force = calculateCumulativeParticleForce();
 
         // all particles move towards the center slowly
 //        double[] vectorTowardsCenter = normalizeVector(new double[] {(( ParticleSimulation.CANVAS_WIDTH / 2) - position[0]), ( ParticleSimulation.CANVAS_HEIGHT / 2) - position[1]});

@@ -6,10 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/OptimizationTracking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/OptimizationTracking.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleForceCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleForceCache.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,7 +185,10 @@
       <workItem from="1708662551759" duration="11577000" />
       <workItem from="1708789618131" duration="3221000" />
       <workItem from="1708805291129" duration="11496000" />
-      <workItem from="1708821265987" duration="1659000" />
+      <workItem from="1708821265987" duration="2660000" />
+      <workItem from="1708914665894" duration="770000" />
+      <workItem from="1708964707789" duration="1361000" />
+      <workItem from="1708974264300" duration="4558000" />
     </task>
     <servers />
   </component>
@@ -224,18 +226,23 @@
         </breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
-          <line>63</line>
+          <line>65</line>
           <option name="timeStamp" value="57" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
-          <line>147</line>
+          <line>204</line>
           <option name="timeStamp" value="59" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java</url>
-          <line>193</line>
+          <line>194</line>
           <option name="timeStamp" value="62" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java</url>
+          <line>100</line>
+          <option name="timeStamp" value="63" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

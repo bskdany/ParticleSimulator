@@ -95,11 +95,24 @@ public class ParticleSimulation{
     public void update(){
         timer = new AnimationTimer() {
             private void simulate(){
+                particleGridMap.update(particles);
+
+                particleGridMap.getParticlesPositionHashMap().forEach((cellHashKey, particles) -> {
+                    List<Particle> neighbourParticles =  particleGridMap.getParticlesAroundKey(cellHashKey);
+
+                    particles.forEach(particle -> {
+                        particle.calculateCumulativeForce(neighbourParticles);
+                    });
+                    particles.forEach(Particle::simulate);
+                });
+
                 clearCanvas();
+
                 particles.forEach(particle -> {
                     particle.adjustPositionWrapping();
                     drawParticle(particle);
                 });
+
                 updateCount ++;
                 ParticleForceCache.getInstance().clearCache();
 
@@ -107,12 +120,6 @@ public class ParticleSimulation{
                     simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
                 }
 
-                particleGridMap.update(particles);
-
-                particles.parallelStream().forEach(Particle::simulate);
-
-
-//                System.out.println(Particle.particleMissRate / Particle.particleChecks);
             }
 
 
