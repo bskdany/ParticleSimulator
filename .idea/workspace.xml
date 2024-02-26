@@ -186,7 +186,7 @@
       <workItem from="1708821265987" duration="2660000" />
       <workItem from="1708914665894" duration="770000" />
       <workItem from="1708964707789" duration="1361000" />
-      <workItem from="1708974264300" duration="8568000" />
+      <workItem from="1708974264300" duration="10462000" />
     </task>
     <servers />
   </component>
@@ -231,11 +231,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java</url>
           <line>204</line>
           <option name="timeStamp" value="59" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java</url>
-          <line>193</line>
-          <option name="timeStamp" value="62" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

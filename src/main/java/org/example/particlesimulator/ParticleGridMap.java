@@ -7,22 +7,18 @@ import java.util.stream.Stream;
 public class ParticleGridMap {
     // encoding the positions of the particles for categorization and quick access via spartial hashing
     private final ConcurrentHashMap<Integer, ArrayList<Particle>> particlesPositionHashMap;
+    private final ConcurrentHashMap<Integer, ArrayList<Particle>> particlesPositionHashMapAveraged;
+
     private final ConcurrentHashMap<Integer, ArrayList<Particle>> particlesPositionHashMapFine;
     private final ConcurrentHashMap<Integer, Particle> cellAveragedParticleHashMap = new ConcurrentHashMap<>();
 
     // helper hashmap that based on a particle position hash returns all the keys to the particle position hashmap
     // in which it should check for neighbours
     private final ConcurrentHashMap<Integer, ArrayList<Integer>> neighbourLookupHashMap = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Integer, ArrayList<Integer>> neighbourLookupHashMapOutOffset = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Integer, ArrayList<Integer>> neighbourLookupHashMapInOffset = new ConcurrentHashMap<>();
-
 
     // returns the keys in the grid to cell within LOD_OFFSET layers outside CELL_LOOKUP_RADIUS
     // It's used to retrieve averaged particles around the central particle, like it's a level of detail
     private final ConcurrentHashMap<Integer, ArrayList<Integer>> neighbourLookupHashMapLOD = new ConcurrentHashMap<>();
-
-
-    private final ConcurrentHashMap<Integer, double[]> cellToPositionHashMap = new ConcurrentHashMap<>();
 
     // the size of the cell in which particles are stored
     // if it's big the particles are easier to get, less linked lists to concatenate
@@ -38,14 +34,6 @@ public class ParticleGridMap {
     // it's the amount of cells in each direction from the source cell that the
     // program should look for particles
     private final int CELL_LOOKUP_RADIUS;
-
-    // LOD = level of detail, used mostly in games to render high quality textures
-    // when player is close up to target and low quality if it's far away
-    // in my case I use it to approximate particles that are in the far side of the
-    // cell check radius
-    private final boolean USE_LOD;
-
-    private final int LOD_OFFSET;
 
     // if two or more particles fit in the same CELL_SIZE_FINE
     // they will get approximated to one
@@ -79,22 +67,15 @@ public class ParticleGridMap {
         WIDTH_FINE = (int) canvasWidth / CELL_SIZE_FINE + 1;
         HEIGHT_FINE = (int) canvasHeight / CELL_SIZE_FINE + 1;
 
+        CLUSTER_CLOSE_PARTICLES = false;
+
         CIRCLE_APPROXIMATION_OFFSET = 1;
-
-        USE_LOD = false;
-        // this is necessary because there are methods that use the lod threshold for calculations
-        int LOD_VALUE = 0;
-        LOD_OFFSET = USE_LOD ? LOD_VALUE : 0;
-
-        CLUSTER_CLOSE_PARTICLES = true;
 
         particlesPositionHashMap = new ConcurrentHashMap<>();
         particlesPositionHashMapFine = new ConcurrentHashMap<>();
+        particlesPositionHashMapAveraged = new ConcurrentHashMap<>();
 
         preComputeNeighbourLookupHashmap();
-        preComputeNeighbourLookupHashmapWithOffset();
-        preComputeCellToPositionHashMap();
-        preComputeNeighbourLookupHashMapLOD();
     }
     public void update(List<Particle> particles){
         hashParticlePositions(particles);
@@ -103,35 +84,18 @@ public class ParticleGridMap {
     public Stream<Particle> getParticleAround(Particle particle){
         int key = particleToHashKey(particle);
 
-        if(USE_LOD){
-            return  Stream.concat(
-                    neighbourLookupHashMapOutOffset.get(key).stream()
-                            .map(cellAveragedParticleHashMap::get)
-                            .filter(Objects::nonNull)
-                    ,
-                    neighbourLookupHashMapInOffset.get(key).stream()
-                            .map(particlesPositionHashMap::get)
-                            .filter(Objects::nonNull)
-                            .flatMap(List::stream)
-            );
+        if(CLUSTER_CLOSE_PARTICLES){
+            return  neighbourLookupHashMap.get(key).stream()
+                    .map(particlesPositionHashMapAveraged::get)
+                    .filter(Objects::nonNull)
+                    .flatMap(List::stream);
         }
-
         else{
-            return Stream.concat(
-                    neighbourLookupHashMap.get(key).stream()
-                        .map(cellAveragedParticleHashMap::get)
-                        .filter(Objects::nonNull)
-                    ,
-                    particlesPositionHashMap.get(key).stream()
-                        .filter(Objects::nonNull)
-                );
+            return neighbourLookupHashMap.get(key).stream()
+                    .map(particlesPositionHashMap::get)
+                    .filter(Objects::nonNull)
+                    .flatMap(List::stream);
         }
-    }
-    public Stream<Particle> getParticlesAtKeysOfSpecie(ArrayList<Integer> keysToCells, int targetSpecies){
-        return keysToCells.stream().map(particlesPositionHashMap::get)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream);
-//                .filter(p -> p.SPECIES == targetSpecies);
     }
     private void hashParticlePositions(List<Particle> particles){
         particlesPositionHashMap.clear();
@@ -140,6 +104,7 @@ public class ParticleGridMap {
 
         if(CLUSTER_CLOSE_PARTICLES){
             particlesPositionHashMapFine.clear();
+            particlesPositionHashMapAveraged.clear();
 
             particles.forEach(particle -> {
                 int fineKey = particleToHashKeyFine(particle);
@@ -172,14 +137,14 @@ public class ParticleGridMap {
                     }
                     mergedParticleList.add(new Particle(new double[]{averageX, averageY}, speciesPresent));
                     OptimizationTracking.getInstance().increaseParticlesAveraged();
-
                 }
 
             }
 
             mergedParticleList.forEach(particle -> {
                 int key = particleToHashKey(particle);
-                cellAveragedParticleHashMap.put(key, particle);
+                particlesPositionHashMapAveraged.putIfAbsent(key, new ArrayList<>());  // add new linked list if space not initialized
+                particlesPositionHashMapAveraged.get(key).add(particle);
             });
         }
 
@@ -190,38 +155,15 @@ public class ParticleGridMap {
         });
 
     }
-    private void averageParticles() {
-        cellAveragedParticleHashMap.clear();
 
-        // going over each (non-empty) cell and getting the entry
-        for (Map.Entry<Integer, ArrayList<Particle>> particleHashMapEntry : particlesPositionHashMap.entrySet()) {
-            int key = particleHashMapEntry.getKey();
-
-            if(particleHashMapEntry.getValue().size() == 1){
-                cellAveragedParticleHashMap.put(key, particleHashMapEntry.getValue().getFirst());
-                continue;
-            }
-
-            double[] position = cellToPositionHashMap.get(key);
-
-            int[] speciesPresent = new int[7];
-            Arrays.fill(speciesPresent, 0);
-
-            for (Particle particle : particleHashMapEntry.getValue()){
-                speciesPresent[particle.SPECIES] ++;
-            }
-            Particle particle = new Particle(position, speciesPresent);
-            cellAveragedParticleHashMap.put(key, particle);
-        }
-    }
     private void preComputeNeighbourLookupHashmap(){
         for (int row = 0; row < WIDTH; row++) {
             for (int column = 0; column < HEIGHT; column++) {
                 ArrayList<Integer> targetCellKeys = new ArrayList<>();
-                int squareIndexStartRow = (row - CELL_LOOKUP_RADIUS) + LOD_OFFSET;
-                int squareIndexEndRow = (row + CELL_LOOKUP_RADIUS) - LOD_OFFSET;
-                int squareIndexStartColumn = (column - CELL_LOOKUP_RADIUS) + LOD_OFFSET;
-                int squareIndexEndColumn = (column + CELL_LOOKUP_RADIUS) - LOD_OFFSET;
+                int squareIndexStartRow = row - CELL_LOOKUP_RADIUS;
+                int squareIndexEndRow = row + CELL_LOOKUP_RADIUS;
+                int squareIndexStartColumn = column - CELL_LOOKUP_RADIUS;
+                int squareIndexEndColumn = column + CELL_LOOKUP_RADIUS;
 
                 for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
                     int mathFloorWidth = Math.floorMod(i, WIDTH);
@@ -235,76 +177,6 @@ public class ParticleGridMap {
                 }
                 int sourceKey = row * HEIGHT + column;
                 neighbourLookupHashMap.put(sourceKey,targetCellKeys);
-            }
-        }
-    }
-    private void preComputeNeighbourLookupHashmapWithOffset(){
-        for (int row = 0; row < WIDTH; row++) {
-            for (int column = 0; column < HEIGHT; column++) {
-                ArrayList<Integer> targetCellKeysOutOffset = new ArrayList<>();
-                ArrayList<Integer> targetCellKeysInOffset = new ArrayList<>();
-
-                int squareIndexStartRow = row - CELL_LOOKUP_RADIUS;
-                int squareIndexEndRow = row + CELL_LOOKUP_RADIUS;
-                int squareIndexStartColumn = column - CELL_LOOKUP_RADIUS;
-                int squareIndexEndColumn = column + CELL_LOOKUP_RADIUS;
-
-                for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
-                    int mathFloorWidth = Math.floorMod(i, WIDTH);
-
-                    for (int j = squareIndexStartColumn; j < squareIndexEndColumn; j++) {
-                        int mathFloorHeight = Math.floorMod(j, HEIGHT);
-                        int keyToCell = mathFloorWidth * HEIGHT + mathFloorHeight;
-
-                        if(j > column - LOD_OFFSET && j < column + LOD_OFFSET && i > row - LOD_OFFSET && i < row + LOD_OFFSET){
-                            targetCellKeysInOffset.add(keyToCell);
-                            continue;
-                        }
-
-                        targetCellKeysOutOffset.add(keyToCell);
-                    }
-                }
-                int sourceKey = row * HEIGHT + column;
-                neighbourLookupHashMapOutOffset.put(sourceKey,targetCellKeysOutOffset);
-                neighbourLookupHashMapInOffset.put(sourceKey,targetCellKeysInOffset);
-            }
-        }
-    }
-    private void preComputeCellToPositionHashMap(){
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                cellToPositionHashMap.put(i * HEIGHT + j, new double[]{(i+0.5)*CELL_SIZE, (j+0.5)*CELL_SIZE});
-            }
-        }
-    }
-    private void preComputeNeighbourLookupHashMapLOD(){
-        for (int row = 0; row < WIDTH; row++) {
-            for (int column = 0; column < HEIGHT; column++) {
-                ArrayList<Integer> targetCellKeys = new ArrayList<>();
-                int squareIndexStartRow = (row - CELL_LOOKUP_RADIUS) + CIRCLE_APPROXIMATION_OFFSET;
-                int squareIndexEndRow = (row + CELL_LOOKUP_RADIUS) - CIRCLE_APPROXIMATION_OFFSET;
-                int squareIndexStartColumn = (column - CELL_LOOKUP_RADIUS) + CIRCLE_APPROXIMATION_OFFSET;
-                int squareIndexEndColumn = (column + CELL_LOOKUP_RADIUS) - CIRCLE_APPROXIMATION_OFFSET;
-
-                int LODThresholdStartRow = squareIndexStartRow + LOD_OFFSET;
-                int LODThresholdEndRow = squareIndexEndRow - LOD_OFFSET;
-                int LODThresholdStartColumn = squareIndexStartColumn + LOD_OFFSET;
-                int LODThresholdEndColumn = squareIndexEndColumn - LOD_OFFSET;
-
-                for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
-
-                    for (int j = squareIndexStartColumn; j < squareIndexEndColumn; j++) {
-                        if(j > LODThresholdStartColumn && j < LODThresholdEndColumn && i > LODThresholdStartRow && i < LODThresholdEndRow){
-                            continue;
-                        }
-                        int mathFloorWidth = Math.floorMod(i, WIDTH);
-                        int mathFloorHeight = Math.floorMod(j, HEIGHT);
-                        int keyToCell = mathFloorWidth * HEIGHT + mathFloorHeight;
-                        targetCellKeys.add(keyToCell);
-                    }
-                }
-                int sourceKey = row * HEIGHT + column;
-                neighbourLookupHashMapLOD.put(sourceKey,targetCellKeys);
             }
         }
     }
@@ -323,17 +195,6 @@ public class ParticleGridMap {
     }
     public ArrayList<Particle> getParticlesAtKey(int key){
         return particlesPositionHashMap.get(key);
-    }
-
-    public Stream<Particle> getParticlesAroundKey(int key){
-        return Stream.concat(
-                neighbourLookupHashMap.get(key).stream()
-                        .map(cellAveragedParticleHashMap::get)
-                        .filter(Objects::nonNull)
-                ,
-                particlesPositionHashMap.get(key).stream()
-                        .filter(Objects::nonNull)
-        );
     }
     public ConcurrentHashMap<Integer, ArrayList<Particle>> getParticlesPositionHashMap() {
         return particlesPositionHashMap;
