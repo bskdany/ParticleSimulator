@@ -8,7 +8,6 @@ public class ParticleGridMap {
     private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMap;
     private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMapFine;
     private final HashMap<Integer, Particle> cellAveragedParticleHashMap = new HashMap<>();
-    private final HashMap<Integer, Particle> clusteredParticlesHashMap;
 
     // helper hashmap that based on a particle position hash returns all the keys to the particle position hashmap
     // in which it should check for neighbours
@@ -90,7 +89,6 @@ public class ParticleGridMap {
 
         particlesPositionHashMap = new HashMap<>();
         particlesPositionHashMapFine = new HashMap<>();
-        clusteredParticlesHashMap = new HashMap<>();
 
         preComputeNeighbourLookupHashmap();
         preComputeNeighbourLookupHashmapWithOffset();
@@ -326,16 +324,15 @@ public class ParticleGridMap {
         return particlesPositionHashMap.get(key);
     }
 
-    public List<Particle> getParticlesAroundKey(int key){
-
-
-
-        List<Integer> keysToNeighbours = getKeysToNeighbours(key);
-        List<Particle> result = new ArrayList<>();
-        for (int k :keysToNeighbours){
-            result.addAll(particlesPositionHashMap.getOrDefault(k, new LinkedList<>()));
-        }
-        return result;
+    public Stream<Particle> getParticlesAroundKey(int key){
+        return Stream.concat(
+                neighbourLookupHashMap.get(key).stream()
+                        .map(cellAveragedParticleHashMap::get)
+                        .filter(Objects::nonNull)
+                ,
+                particlesPositionHashMap.get(key).stream()
+                        .filter(Objects::nonNull)
+        );
     }
     public HashMap<Integer, LinkedList<Particle>> getParticlesPositionHashMap() {
         return particlesPositionHashMap;

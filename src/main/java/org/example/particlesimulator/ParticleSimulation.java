@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 
 public class ParticleSimulation{
@@ -97,14 +98,13 @@ public class ParticleSimulation{
             private void simulate(){
                 particleGridMap.update(particles);
 
-                particleGridMap.getParticlesPositionHashMap().forEach((cellHashKey, particles) -> {
-                    List<Particle> neighbourParticles =  particleGridMap.getParticlesAroundKey(cellHashKey);
-
+                particleGridMap.getParticlesPositionHashMap().values().stream().parallel().forEach(particles -> {
                     particles.forEach(particle -> {
-                        particle.calculateCumulativeForce(neighbourParticles);
+                        particle.calculateCumulativeForce(particleGridMap.getParticleAround(particle));
                     });
-                    particles.forEach(Particle::simulate);
                 });
+
+                particles.forEach(Particle::simulate);
 
                 clearCanvas();
 

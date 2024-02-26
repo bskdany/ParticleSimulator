@@ -97,13 +97,13 @@ public class Particle {
         }
     }
 
-    public void calculateCumulativeForce(List<Particle> targetParticles){
+    public void calculateCumulativeForce(Stream<Particle> targetParticles){
         Arrays.fill(force, 0);
 
         OptimizationTracking tracking = OptimizationTracking.getInstance();
 
         targetParticles.forEach(targetParticle -> {
-            tracking.increaseTotalInteractions();
+//            tracking.increaseTotalInteractions();
 
             if(!targetParticle.isMoving && !isMoving){
                 tracking.increaseImmobileCounter();
