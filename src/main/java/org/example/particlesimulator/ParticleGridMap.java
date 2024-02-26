@@ -1,27 +1,28 @@
 package org.example.particlesimulator;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 public class ParticleGridMap {
     // encoding the positions of the particles for categorization and quick access via spartial hashing
-    private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMap;
-    private final HashMap<Integer, LinkedList<Particle>> particlesPositionHashMapFine;
-    private final HashMap<Integer, Particle> cellAveragedParticleHashMap = new HashMap<>();
+    private final ConcurrentHashMap<Integer, ArrayList<Particle>> particlesPositionHashMap;
+    private final ConcurrentHashMap<Integer, ArrayList<Particle>> particlesPositionHashMapFine;
+    private final ConcurrentHashMap<Integer, Particle> cellAveragedParticleHashMap = new ConcurrentHashMap<>();
 
     // helper hashmap that based on a particle position hash returns all the keys to the particle position hashmap
     // in which it should check for neighbours
-    private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMap = new HashMap<>();
-    private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMapOutOffset = new HashMap<>();
-    private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMapInOffset = new HashMap<>();
+    private final ConcurrentHashMap<Integer, ArrayList<Integer>> neighbourLookupHashMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ArrayList<Integer>> neighbourLookupHashMapOutOffset = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ArrayList<Integer>> neighbourLookupHashMapInOffset = new ConcurrentHashMap<>();
 
 
     // returns the keys in the grid to cell within LOD_OFFSET layers outside CELL_LOOKUP_RADIUS
     // It's used to retrieve averaged particles around the central particle, like it's a level of detail
-    private final HashMap<Integer, LinkedList<Integer>> neighbourLookupHashMapLOD = new HashMap<>();
+    private final ConcurrentHashMap<Integer, ArrayList<Integer>> neighbourLookupHashMapLOD = new ConcurrentHashMap<>();
 
 
-    private final HashMap<Integer, double[]> cellToPositionHashMap = new HashMap<>();
+    private final ConcurrentHashMap<Integer, double[]> cellToPositionHashMap = new ConcurrentHashMap<>();
 
     // the size of the cell in which particles are stored
     // if it's big the particles are easier to get, less linked lists to concatenate
@@ -87,8 +88,8 @@ public class ParticleGridMap {
 
         CLUSTER_CLOSE_PARTICLES = true;
 
-        particlesPositionHashMap = new HashMap<>();
-        particlesPositionHashMapFine = new HashMap<>();
+        particlesPositionHashMap = new ConcurrentHashMap<>();
+        particlesPositionHashMapFine = new ConcurrentHashMap<>();
 
         preComputeNeighbourLookupHashmap();
         preComputeNeighbourLookupHashmapWithOffset();
@@ -142,12 +143,12 @@ public class ParticleGridMap {
 
             particles.forEach(particle -> {
                 int fineKey = particleToHashKeyFine(particle);
-                particlesPositionHashMapFine.putIfAbsent(fineKey, new LinkedList<>());  // add new linked list if space not initialized
+                particlesPositionHashMapFine.putIfAbsent(fineKey, new ArrayList<>());  // add new linked list if space not initialized
                 particlesPositionHashMapFine.get(fineKey).add(particle);
             });
 
             List<Particle> mergedParticleList = new LinkedList<>();
-            for(LinkedList<Particle> list : particlesPositionHashMapFine.values()){
+            for(ArrayList<Particle> list : particlesPositionHashMapFine.values()){
                 if(list.size() == 1){
                     mergedParticleList.add(list.getFirst());
                 }
@@ -184,7 +185,7 @@ public class ParticleGridMap {
 
         particles.forEach(particle -> {
             int key = particleToHashKey(particle);
-            particlesPositionHashMap.putIfAbsent(key, new LinkedList<>());  // add new linked list if space not initialized
+            particlesPositionHashMap.putIfAbsent(key, new ArrayList<>());  // add new linked list if space not initialized
             particlesPositionHashMap.get(key).add(particle);
         });
 
@@ -193,7 +194,7 @@ public class ParticleGridMap {
         cellAveragedParticleHashMap.clear();
 
         // going over each (non-empty) cell and getting the entry
-        for (Map.Entry<Integer, LinkedList<Particle>> particleHashMapEntry : particlesPositionHashMap.entrySet()) {
+        for (Map.Entry<Integer, ArrayList<Particle>> particleHashMapEntry : particlesPositionHashMap.entrySet()) {
             int key = particleHashMapEntry.getKey();
 
             if(particleHashMapEntry.getValue().size() == 1){
@@ -216,7 +217,7 @@ public class ParticleGridMap {
     private void preComputeNeighbourLookupHashmap(){
         for (int row = 0; row < WIDTH; row++) {
             for (int column = 0; column < HEIGHT; column++) {
-                LinkedList<Integer> targetCellKeys = new LinkedList<>();
+                ArrayList<Integer> targetCellKeys = new ArrayList<>();
                 int squareIndexStartRow = (row - CELL_LOOKUP_RADIUS) + LOD_OFFSET;
                 int squareIndexEndRow = (row + CELL_LOOKUP_RADIUS) - LOD_OFFSET;
                 int squareIndexStartColumn = (column - CELL_LOOKUP_RADIUS) + LOD_OFFSET;
@@ -240,8 +241,8 @@ public class ParticleGridMap {
     private void preComputeNeighbourLookupHashmapWithOffset(){
         for (int row = 0; row < WIDTH; row++) {
             for (int column = 0; column < HEIGHT; column++) {
-                LinkedList<Integer> targetCellKeysOutOffset = new LinkedList<>();
-                LinkedList<Integer> targetCellKeysInOffset = new LinkedList<>();
+                ArrayList<Integer> targetCellKeysOutOffset = new ArrayList<>();
+                ArrayList<Integer> targetCellKeysInOffset = new ArrayList<>();
 
                 int squareIndexStartRow = row - CELL_LOOKUP_RADIUS;
                 int squareIndexEndRow = row + CELL_LOOKUP_RADIUS;
@@ -279,7 +280,7 @@ public class ParticleGridMap {
     private void preComputeNeighbourLookupHashMapLOD(){
         for (int row = 0; row < WIDTH; row++) {
             for (int column = 0; column < HEIGHT; column++) {
-                LinkedList<Integer> targetCellKeys = new LinkedList<>();
+                ArrayList<Integer> targetCellKeys = new ArrayList<>();
                 int squareIndexStartRow = (row - CELL_LOOKUP_RADIUS) + CIRCLE_APPROXIMATION_OFFSET;
                 int squareIndexEndRow = (row + CELL_LOOKUP_RADIUS) - CIRCLE_APPROXIMATION_OFFSET;
                 int squareIndexStartColumn = (column - CELL_LOOKUP_RADIUS) + CIRCLE_APPROXIMATION_OFFSET;
@@ -317,10 +318,10 @@ public class ParticleGridMap {
         int indexColumn = (int) particle.position[1] / CELL_SIZE_FINE;
         return indexRow * HEIGHT_FINE + indexColumn;
     }
-    public LinkedList<Integer> getKeysToNeighbours(int key){
+    public ArrayList<Integer> getKeysToNeighbours(int key){
         return neighbourLookupHashMap.get(key);
     }
-    public LinkedList<Particle> getParticlesAtKey(int key){
+    public ArrayList<Particle> getParticlesAtKey(int key){
         return particlesPositionHashMap.get(key);
     }
 
@@ -334,7 +335,7 @@ public class ParticleGridMap {
                         .filter(Objects::nonNull)
         );
     }
-    public HashMap<Integer, LinkedList<Particle>> getParticlesPositionHashMap() {
+    public ConcurrentHashMap<Integer, ArrayList<Particle>> getParticlesPositionHashMap() {
         return particlesPositionHashMap;
     }
 }
