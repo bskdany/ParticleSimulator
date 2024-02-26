@@ -81,9 +81,9 @@ public class ParticleGridMap {
 
         CIRCLE_APPROXIMATION_OFFSET = 1;
 
-        USE_LOD = true;
+        USE_LOD = false;
         // this is necessary because there are methods that use the lod threshold for calculations
-        int LOD_VALUE = 2;
+        int LOD_VALUE = 0;
         LOD_OFFSET = USE_LOD ? LOD_VALUE : 0;
 
         CLUSTER_CLOSE_PARTICLES = true;
@@ -100,6 +100,7 @@ public class ParticleGridMap {
     public void update(List<Particle> particles){
         hashParticlePositions(particles);
     }
+
     public Stream<Particle> getParticleAround(Particle particle){
         int key = particleToHashKey(particle);
 
@@ -323,5 +324,20 @@ public class ParticleGridMap {
     }
     public LinkedList<Particle> getParticlesAtKey(int key){
         return particlesPositionHashMap.get(key);
+    }
+
+    public List<Particle> getParticlesAroundKey(int key){
+
+
+
+        List<Integer> keysToNeighbours = getKeysToNeighbours(key);
+        List<Particle> result = new ArrayList<>();
+        for (int k :keysToNeighbours){
+            result.addAll(particlesPositionHashMap.getOrDefault(k, new LinkedList<>()));
+        }
+        return result;
+    }
+    public HashMap<Integer, LinkedList<Particle>> getParticlesPositionHashMap() {
+        return particlesPositionHashMap;
     }
 }
