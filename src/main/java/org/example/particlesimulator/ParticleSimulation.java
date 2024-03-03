@@ -93,10 +93,11 @@ public class ParticleSimulation{
             }
         }
     }
+
     public void update(){
         timer = new AnimationTimer() {
             private void simulate(){
-                particleGridMap.update(particles);
+                particleGridMap.update((ArrayList<Particle>) particles);
 
                 particleGridMap.getParticlesPositionHashMap().values().stream().parallel().forEach(particles -> {
                     particles.forEach(particle -> {
@@ -114,7 +115,7 @@ public class ParticleSimulation{
                 });
 
                 updateCount ++;
-                ParticleForceCache.getInstance().clearCache();
+//                ParticleForceCache.getInstance().clearCache();
 
                 if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
                     simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));

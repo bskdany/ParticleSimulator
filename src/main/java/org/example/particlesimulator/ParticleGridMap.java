@@ -1,5 +1,6 @@
 package org.example.particlesimulator;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -10,7 +11,6 @@ public class ParticleGridMap {
     private final ConcurrentHashMap<Integer, ArrayList<Particle>> particlesPositionHashMapAveraged;
 
     private final ConcurrentHashMap<Integer, ArrayList<Particle>> particlesPositionHashMapFine;
-    private final ConcurrentHashMap<Integer, Particle> cellAveragedParticleHashMap = new ConcurrentHashMap<>();
 
     // helper hashmap that based on a particle position hash returns all the keys to the particle position hashmap
     // in which it should check for neighbours
@@ -59,7 +59,7 @@ public class ParticleGridMap {
     ParticleGridMap(double canvasWidth, double canvasHeight){
         CELL_LOOKUP_RADIUS = 3;
         CELL_SIZE = (int) ParticleSimulation.maxAttractionDistance / CELL_LOOKUP_RADIUS;
-        CELL_SIZE_FINE = 5;
+        CELL_SIZE_FINE = 3;
 
         WIDTH = (int) canvasWidth / CELL_SIZE + 1;
         HEIGHT = (int) canvasHeight / CELL_SIZE + 1;
@@ -67,7 +67,7 @@ public class ParticleGridMap {
         WIDTH_FINE = (int) canvasWidth / CELL_SIZE_FINE + 1;
         HEIGHT_FINE = (int) canvasHeight / CELL_SIZE_FINE + 1;
 
-        CLUSTER_CLOSE_PARTICLES = false;
+        CLUSTER_CLOSE_PARTICLES = true;
 
         CIRCLE_APPROXIMATION_OFFSET = 1;
 
@@ -77,18 +77,23 @@ public class ParticleGridMap {
 
         preComputeNeighbourLookupHashmap();
     }
-    public void update(List<Particle> particles){
+    public void update(ArrayList<Particle> particles){
         hashParticlePositions(particles);
     }
 
     public Stream<Particle> getParticleAround(Particle particle){
         int key = particleToHashKey(particle);
+        int fineKey = particleToHashKeyFine(particle);
 
         if(CLUSTER_CLOSE_PARTICLES){
-            return  neighbourLookupHashMap.get(key).stream()
-                    .map(particlesPositionHashMapAveraged::get)
-                    .filter(Objects::nonNull)
-                    .flatMap(List::stream);
+            return Stream.concat(
+                    neighbourLookupHashMap.get(key).stream()
+                        .map(particlesPositionHashMapAveraged::get)
+                        .filter(Objects::nonNull)
+                        .flatMap(List::stream)
+                    ,
+                    particlesPositionHashMapFine.get(fineKey).stream().filter(Objects::nonNull)
+            );
         }
         else{
             return neighbourLookupHashMap.get(key).stream()
@@ -97,7 +102,7 @@ public class ParticleGridMap {
                     .flatMap(List::stream);
         }
     }
-    private void hashParticlePositions(List<Particle> particles){
+    private void hashParticlePositions(ArrayList<Particle> particles){
         particlesPositionHashMap.clear();
 
         OptimizationTracking.getInstance().increaseUpdate();
@@ -135,7 +140,8 @@ public class ParticleGridMap {
                     for (Particle particle : list){
                         speciesPresent[particle.SPECIES] ++;
                     }
-                    mergedParticleList.add(new Particle(new double[]{averageX, averageY}, speciesPresent));
+
+                    mergedParticleList.add(list.getFirst());
                     OptimizationTracking.getInstance().increaseParticlesAveraged();
                 }
 
@@ -147,13 +153,13 @@ public class ParticleGridMap {
                 particlesPositionHashMapAveraged.get(key).add(particle);
             });
         }
-
-        particles.forEach(particle -> {
-            int key = particleToHashKey(particle);
-            particlesPositionHashMap.putIfAbsent(key, new ArrayList<>());  // add new linked list if space not initialized
-            particlesPositionHashMap.get(key).add(particle);
-        });
-
+        else{
+            particles.forEach(particle -> {
+                int key = particleToHashKey(particle);
+                particlesPositionHashMap.putIfAbsent(key, new ArrayList<>());  // add new linked list if space not initialized
+                particlesPositionHashMap.get(key).add(particle);
+            });
+        }
     }
 
     private void preComputeNeighbourLookupHashmap(){
@@ -197,6 +203,6 @@ public class ParticleGridMap {
         return particlesPositionHashMap.get(key);
     }
     public ConcurrentHashMap<Integer, ArrayList<Particle>> getParticlesPositionHashMap() {
-        return particlesPositionHashMap;
+        return particlesPositionHashMapAveraged;
     }
 }
