@@ -99,11 +99,18 @@ public class ParticleSimulation{
             private void simulate(){
                 particleGridMap.update((ArrayList<Particle>) particles);
 
-                particleGridMap.getParticlesPositionHashMap().values().stream().parallel().forEach(particles -> {
+                particleGridMap.getParticlesPositionHashMap().stream().parallel().forEach(particles -> {
                     particles.forEach(particle -> {
                         particle.calculateCumulativeForce(particleGridMap.getParticleAround(particle));
                     });
                 });
+
+
+//                particleGridMap.getParticlesPositionHashMap().values().stream().parallel().forEach(particles -> {
+//                    particles.forEach(particle -> {
+//                        particle.calculateCumulativeForce(particleGridMap.getParticleAround(particle));
+//                    });
+//                });
 
                 particles.forEach(Particle::simulate);
 

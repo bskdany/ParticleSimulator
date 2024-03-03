@@ -58,31 +58,35 @@ public class Particle {
         OptimizationTracking tracking = OptimizationTracking.getInstance();
 
         targetParticles.forEach(targetParticle -> {
-//            tracking.increaseTotalInteractions();
+            tracking.increaseTotalInteractions();
 
             if(!targetParticle.isMoving && !isMoving){
                 tracking.increaseImmobileCounter();
                 return;
             }
 
-            double[] directionVector = getParticleDirectionVector(this, targetParticle);
+            double directionVectorX = targetParticle.position[0] - position[0];
+            double directionVectorY = targetParticle.position[1] - position[1];
 
-            if(Math.abs(directionVector[0]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[0]) < ParticleSimulation.wrapDirectionLimitWidth){
-                tracking.increaseDiscardedOutOfRange();
-                return;
 
+            if(directionVectorX > ParticleSimulation.wrapDirectionLimitWidth){  // warp left
+                directionVectorX -= ParticleSimulation.CANVAS_WIDTH -1;
             }
-            if(Math.abs(directionVector[1]) > ParticleSimulation.maxAttractionDistance && Math.abs(directionVector[1]) < ParticleSimulation.wrapDirectionLimitHeight){
-                tracking.increaseDiscardedOutOfRange();
-                return;
+            else if(directionVectorX < -ParticleSimulation.wrapDirectionLimitWidth){ // warp right
+                directionVectorX += ParticleSimulation.CANVAS_WIDTH +1;
             }
 
-            Particle.calculateVectorWrap(directionVector);
+            if(directionVectorY > ParticleSimulation.wrapDirectionLimitHeight){ // warp top
+                directionVectorY -= ParticleSimulation.CANVAS_HEIGHT -1;
+            }
+            else if(directionVectorY < -ParticleSimulation.wrapDirectionLimitHeight){ // warp bottom
+                directionVectorY += ParticleSimulation.CANVAS_HEIGHT +1;
+            }
 
-            // length of the relative distance
-            double distance = Math.sqrt(directionVector[0] * directionVector[0] + directionVector[1] * directionVector[1]) / ParticleSimulation.maxAttractionDistance;
 
-            if(distance > 1) {
+            double distance = Math.sqrt(directionVectorX * directionVectorX + directionVectorY * directionVectorY) / ParticleSimulation.maxAttractionDistance;
+
+            if(distance > 1.0) {
                 OptimizationTracking.getInstance().increaseDiscardedOutOfRange();
                 return;
             }
@@ -92,7 +96,7 @@ public class Particle {
             double attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][targetParticle.SPECIES];
 
             double magnitude = calculateAttractionForce(distance, attractionFactor);
-            double[] normalisedDirectionVector = normalizeVector(directionVector);
+            double[] normalisedDirectionVector = normalizeVector(directionVectorX, directionVectorY);
 
             force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
             force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
@@ -125,12 +129,12 @@ public class Particle {
         position[1] += velocity[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
     }
 
-    public static double[] normalizeVector(double[] vector) {
-        double magnitude = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
+    public static double[] normalizeVector(double directionVectorX, double directionVectorY) {
+        double magnitude = Math.sqrt(directionVectorX * directionVectorX + directionVectorY * directionVectorY);
         if(magnitude < 1e-10){ // where 1e-10 is the tollerance, this is more efficient than the comparison to 0 because of floating point
-            return vector;
+            return new double[]{directionVectorX, directionVectorY};
         }
-        return new double[]{vector[0]/magnitude, vector[1]/magnitude};
+        return new double[]{directionVectorX/magnitude, directionVectorY/magnitude};
     }
 
     public static double calculateAttractionForce(double relativeDistance, double attractionFactor){
@@ -142,7 +146,7 @@ public class Particle {
         return 0;
     }
 
-    private static void calculateVectorWrap(double[] directionVector){
+    private void calculateVectorWrap(double[] directionVector){
         // vector from source to target
         if(directionVector[0] > ParticleSimulation.wrapDirectionLimitWidth){  // warp left
             directionVector[0] = directionVector[0] - ParticleSimulation.CANVAS_WIDTH -1;
@@ -167,7 +171,7 @@ public class Particle {
         return newList;
     }
 
-    public static double[] getParticleDirectionVector(Particle sourceParticle, Particle destinationParticle){
-        return new double[]{destinationParticle.position[0]-sourceParticle.position[0], destinationParticle.position[1]-sourceParticle.position[1]};
+    public static double[] getParticleDirectionVector(double[] sourceParticle, double[] destinationParticle){
+        return new double[]{destinationParticle[0]-sourceParticle[0], destinationParticle[1]-sourceParticle[1]};
     }
 }

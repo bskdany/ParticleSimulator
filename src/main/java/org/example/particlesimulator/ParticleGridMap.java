@@ -1,6 +1,5 @@
 package org.example.particlesimulator;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -67,7 +66,7 @@ public class ParticleGridMap {
         WIDTH_FINE = (int) canvasWidth / CELL_SIZE_FINE + 1;
         HEIGHT_FINE = (int) canvasHeight / CELL_SIZE_FINE + 1;
 
-        CLUSTER_CLOSE_PARTICLES = true;
+        CLUSTER_CLOSE_PARTICLES = false;
 
         CIRCLE_APPROXIMATION_OFFSET = 1;
 
@@ -202,7 +201,10 @@ public class ParticleGridMap {
     public ArrayList<Particle> getParticlesAtKey(int key){
         return particlesPositionHashMap.get(key);
     }
-    public ConcurrentHashMap<Integer, ArrayList<Particle>> getParticlesPositionHashMap() {
-        return particlesPositionHashMapAveraged;
+    public Collection<ArrayList<Particle>> getParticlesPositionHashMap() {
+        if(CLUSTER_CLOSE_PARTICLES){
+            return particlesPositionHashMapAveraged.values();
+        }
+        return particlesPositionHashMap.values();
     }
 }
