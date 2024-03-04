@@ -10,6 +10,7 @@ public class OptimizationTracking {
     private int usedInCalculation;
     private int totalParticleInteractions;
     private int numberOfParticlesAveraged;
+    private int randomRejectedParticles;
     private int numberOfParticles;
     private int updateCounter;
     OptimizationTracking(){
@@ -30,6 +31,7 @@ public class OptimizationTracking {
     }
     public void increaseParticlesAveraged(){numberOfParticlesAveraged++;}
     public void increaseTotalInteractions(){totalParticleInteractions++;}
+    public void increaseRandomRejected(){randomRejectedParticles++;}
     public void increaseUpdate(){updateCounter++;}
     public void showOptimizationData(){
         System.out.println("Caching     " + calculatePercentage(calculationSavedByCaching, totalParticleInteractions));
@@ -37,6 +39,7 @@ public class OptimizationTracking {
         System.out.println("Averaged    " + calculatePercentage(numberOfParticlesAveraged, numberOfParticles * updateCounter));
         System.out.println("Range       " + calculatePercentage(discardedDueToOutOfRange, totalParticleInteractions));
         System.out.println("Used        " + calculatePercentage(usedInCalculation, totalParticleInteractions));
+        System.out.println("Rejected    " + calculatePercentage(randomRejectedParticles, totalParticleInteractions));
         System.out.println();
 
         resetValues();
@@ -56,6 +59,7 @@ public class OptimizationTracking {
         numberOfParticlesAveraged = 0;
         numberOfParticles = 1500 * 7;
         updateCounter = 0;
+        randomRejectedParticles = 0;
     }
 
     public static OptimizationTracking getInstance() {
