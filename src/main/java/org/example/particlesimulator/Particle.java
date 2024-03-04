@@ -58,18 +58,14 @@ public class Particle {
     }
 
     public void calculateCumulativeForce(Stream<Particle> targetParticles){
-        Arrays.fill(force, 0);
+        double[] newForce = new double[]{0,0};
+
 
         OptimizationTracking tracking = OptimizationTracking.getInstance();
         Random random = new Random();
 
         targetParticles.forEach(targetParticle -> {
             tracking.increaseTotalInteractions();
-
-            if(random.nextDouble() < rejectionProbability){
-                tracking.increaseRandomRejected();
-                return;
-            }
 
             if(!targetParticle.isMoving && !isMoving){
                 tracking.increaseImmobileCounter();
@@ -78,7 +74,6 @@ public class Particle {
 
             double directionVectorX = targetParticle.position[0] - position[0];
             double directionVectorY = targetParticle.position[1] - position[1];
-
 
             if(directionVectorX > ParticleSimulation.wrapDirectionLimitWidth){  // warp left
                 directionVectorX -= ParticleSimulation.CANVAS_WIDTH -1;
@@ -94,11 +89,15 @@ public class Particle {
                 directionVectorY += ParticleSimulation.CANVAS_HEIGHT +1;
             }
 
-
             double distance = Math.sqrt(directionVectorX * directionVectorX + directionVectorY * directionVectorY) / ParticleSimulation.maxAttractionDistance;
 
             if(distance > 1.0) {
                 OptimizationTracking.getInstance().increaseDiscardedOutOfRange();
+                return;
+            }
+
+            if(random.nextDouble() < rejectionProbability){
+                tracking.increaseRandomRejected();
                 return;
             }
 
@@ -109,16 +108,16 @@ public class Particle {
             double magnitude = calculateAttractionForce(distance, attractionFactor);
             double[] normalisedDirectionVector = normalizeVector(directionVectorX, directionVectorY);
 
-            force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
-            force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
+            newForce[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
+            newForce[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
         });
 
         // computing prediction for next force calculation
         double rejectionProbabilityThreshold = 10;
-        double forceXPredictionPercentage = Math.abs(100 - (100 / previousForce[0]) * force[0]);    // 0 means the same, 10 means 10% of the values are off
-        double forceYPredictionPercentage = Math.abs(100 - (100 / previousForce[1]) * force[1]);
+        double forceXPredictionPercentage = Math.abs(100 - (100 / previousForce[0]) * newForce[0]);    // 0 means the same, 10 means 10% of the values are off
+        double forceYPredictionPercentage = Math.abs(100 - (100 / previousForce[1]) * newForce[1]);
 
-        double rejectionProbabilityMaxValue = 30;
+        double rejectionProbabilityMaxValue = 90;
 
         // if the current force and the previous have less than rejectionProbability difference
         // I can then assume that the force calculation after will be similar
@@ -126,17 +125,22 @@ public class Particle {
         //
         if(forceXPredictionPercentage < rejectionProbabilityThreshold && forceYPredictionPercentage < rejectionProbabilityThreshold){
             if(rejectionProbability < rejectionProbabilityMaxValue){
-                rejectionProbability++;
+                rejectionProbability += 1;
             }
         }
         else{
             if(rejectionProbability > 0){
-                rejectionProbability--;
+                // -2 because I feel like if the force suddenly is not what it's supposed value then
+                // the confidence should drop
+                rejectionProbability -= 1;
             }
         }
 
+        force[0] = (newForce[0] + previousForce[0]) / 2;
+        force[1] = (newForce[1] + previousForce[1]) / 2;
 
-        previousForce = force.clone();
+        previousForce[0] = force[0];
+        previousForce[1] = force[1];
     }
 
     public void simulate(double updateTime){
@@ -157,9 +161,9 @@ public class Particle {
         deltaPosition[0] = velocity[0] * updateTime;
         deltaPosition[1] = velocity[1] * updateTime;
 
-        if(deltaPosition[0] > RADIUS * 10){
-            // explode
-        }
+//        if(deltaPosition[0] > RADIUS * 10){
+//            // explode
+//        }
 
         position[0] += velocity[0] * updateTime;
         position[1] += velocity[1] * updateTime;
