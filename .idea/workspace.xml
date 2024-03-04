@@ -7,7 +7,6 @@
     <list default="true" id="415a52cc-449b-4e7b-88bc-be6fb9617b3e" name="Changes" comment="reverting">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/Particle.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleGridMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/particlesimulator/ParticleSimulation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,7 +47,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Main.executor": "Profiler#1",
+    "Application.Main.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
     "JAR Application.ParticleSimulation-1.0-SNAPSHOT-jar-with-dependencies.jar.executor": "Run",
     "JAR Application.ParticleSimulation-1.0-SNAPSHOT.jar.executor": "Run",
@@ -115,6 +114,7 @@
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="org.example.particlesimulator.Main" />
       <module name="ParticleSimulation" />
+      <option name="PROGRAM_PARAMETERS" value="-XX:+AggressiveOpts" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -196,7 +196,8 @@
       <workItem from="1708974264300" duration="10462000" />
       <workItem from="1709300175450" duration="2746000" />
       <workItem from="1709482120090" duration="4482000" />
-      <workItem from="1709502837184" duration="5921000" />
+      <workItem from="1709502837184" duration="10921000" />
+      <workItem from="1709575301755" duration="5947000" />
     </task>
     <task id="LOCAL-00001" summary="reverting">
       <option name="closed" value="true" />

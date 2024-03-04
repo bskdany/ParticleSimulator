@@ -103,7 +103,7 @@ public class Particle {
         });
     }
 
-    public void simulate(){
+    public void simulate(double updateTime){
         // F = m / a
         double accelerationX = force[0] * ParticleSimulation.forceMultiplier;
         double accelerationY = force[1] * ParticleSimulation.forceMultiplier;
@@ -111,22 +111,22 @@ public class Particle {
         velocity[0] *= ParticleSimulation.friction;
         velocity[1] *= ParticleSimulation.friction;
 
-        velocity[0] += accelerationX * ParticleSimulation.UPDATE_RATE_MS / 1000;
-        velocity[1] += accelerationY * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        velocity[0] += accelerationX * updateTime;
+        velocity[1] += accelerationY * updateTime;
 
                             // I made this value up
-        isMoving = Math.pow(velocity[0] * velocity[1], 2) > 1;
+        isMoving = velocity[0] + velocity[1] > 1.1;
 
         double[] deltaPosition = new double[]{0,0};
-        deltaPosition[0] = velocity[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
-        deltaPosition[1] = velocity[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        deltaPosition[0] = velocity[0] * updateTime;
+        deltaPosition[1] = velocity[1] * updateTime;
 
         if(deltaPosition[0] > RADIUS * 10){
             // explode
         }
 
-        position[0] += velocity[0] * ParticleSimulation.UPDATE_RATE_MS / 1000;
-        position[1] += velocity[1] * ParticleSimulation.UPDATE_RATE_MS / 1000;
+        position[0] += velocity[0] * updateTime;
+        position[1] += velocity[1] * updateTime;
     }
 
     public static double[] normalizeVector(double directionVectorX, double directionVectorY) {

@@ -1,16 +1,11 @@
 package org.example.particlesimulator;
 
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 
 public class ParticleSimulation{
@@ -21,9 +16,8 @@ public class ParticleSimulation{
     private List<Particle> particles = new ArrayList<>();
     public static double CANVAS_WIDTH;
     public static double CANVAS_HEIGHT;
-    private final int SIMULATION_FPS;
-    public static double UPDATE_RATE_MS;
-    private final long UPDATE_RATE_NANOSEC;
+    private final int TARGET_SIMULATION_FPS;
+    public static volatile double UPDATE_RATE_MS;
     private final GraphicsContext gc;
     private AnimationTimer timer;
     public static double friction;
@@ -50,10 +44,9 @@ public class ParticleSimulation{
         attractionRelativeDistanceCutout = 0.3;
 
         forceMultiplier = 5;
-        SIMULATION_FPS = 60;
+        TARGET_SIMULATION_FPS = 40;
         CAP_FPS = false;
-        UPDATE_RATE_MS = (double) 1000 / SIMULATION_FPS;
-        UPDATE_RATE_NANOSEC = (long) 1_000_000_000 / SIMULATION_FPS;
+        UPDATE_RATE_MS = 10;
 
         particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
             put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
@@ -96,7 +89,7 @@ public class ParticleSimulation{
 
     public void update(){
         timer = new AnimationTimer() {
-            private void simulate(){
+            private void simulate(double timeUpdate){
                 particleGridMap.update((ArrayList<Particle>) particles);
 
                 particleGridMap.getParticlesPositionHashMap().stream().parallel().forEach(particles -> {
@@ -105,19 +98,15 @@ public class ParticleSimulation{
                     });
                 });
 
+                particles.forEach(particle -> particle.simulate(timeUpdate));
 
-//                particleGridMap.getParticlesPositionHashMap().values().stream().parallel().forEach(particles -> {
-//                    particles.forEach(particle -> {
-//                        particle.calculateCumulativeForce(particleGridMap.getParticleAround(particle));
-//                    });
-//                });
-
-                particles.forEach(Particle::simulate);
+                particles.forEach(particle -> {
+                    particle.adjustPositionWrapping();
+                });
 
                 clearCanvas();
 
                 particles.forEach(particle -> {
-                    particle.adjustPositionWrapping();
                     drawParticle(particle);
                 });
 
@@ -127,24 +116,30 @@ public class ParticleSimulation{
                 if(System.currentTimeMillis() - simulationTimeline.lastSaveMs > SimulationTimeline.timeToSaveMs){
                     simulationTimeline.add(new ParticleSimulationData(attractionMatrix.getSeed(), ParticleSpeciesData.deepCopy(particleData), Particle.deepCloneList(particles), AttractionMatrix.attractionMatrix, friction, maxAttractionDistance, attractionRelativeDistanceCutout, forceMultiplier));
                 }
-
             }
-
 
             @Override
             public void handle(long now) {
                 long elapsedTimeFromLastUpdate = now - lastUpdateTime;      // all this stuff is in nanoseconds
                 long elapsedTimeFromLastSecond = now - lastFpsShowTime;
 
+
+                // calculating the update time at every update
+                double timeUpdate = (double) elapsedTimeFromLastUpdate / 1_000_000_000;
+                if(timeUpdate >= 0.1){
+                    // this is needed because at the beginning elapsed time is 0
+                    timeUpdate = (double) (1_000 / TARGET_SIMULATION_FPS) / 1000 ;
+                }
+
                 if(CAP_FPS){
                     // limit the animation to only work at the TARGET_FPS
-                    if(elapsedTimeFromLastUpdate >= UPDATE_RATE_NANOSEC){
-                        simulate();
+                    if(elapsedTimeFromLastUpdate >= TARGET_SIMULATION_FPS * 1_000_000L){
+                        simulate(timeUpdate);
                         lastUpdateTime = now;
                     }
                 }
                 else{
-                    simulate();
+                    simulate(timeUpdate);
                     lastUpdateTime = now;
                 }
 
