@@ -5,12 +5,15 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class Particle {
     public double[] position;
     public double[] velocity;
     public double[] force;
+    private double[] previousForce;
+    private double rejectionProbability;
 
     public final double RADIUS;
     public final Color color;
@@ -25,6 +28,8 @@ public class Particle {
         this.force = new double[]{0,0};
         this.velocity = new double[]{0,0};
         isMoving = true;
+        rejectionProbability = 0;
+        previousForce = new double[]{0,0};
     }
 
     /**
@@ -56,9 +61,15 @@ public class Particle {
         Arrays.fill(force, 0);
 
         OptimizationTracking tracking = OptimizationTracking.getInstance();
+        Random random = new Random();
 
         targetParticles.forEach(targetParticle -> {
             tracking.increaseTotalInteractions();
+
+            if(random.nextDouble() < rejectionProbability){
+                tracking.increaseRandomRejected();
+                return;
+            }
 
             if(!targetParticle.isMoving && !isMoving){
                 tracking.increaseImmobileCounter();
@@ -101,6 +112,31 @@ public class Particle {
             force[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
             force[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
         });
+
+        // computing prediction for next force calculation
+        double rejectionProbabilityThreshold = 10;
+        double forceXPredictionPercentage = Math.abs(100 - (100 / previousForce[0]) * force[0]);    // 0 means the same, 10 means 10% of the values are off
+        double forceYPredictionPercentage = Math.abs(100 - (100 / previousForce[1]) * force[1]);
+
+        double rejectionProbabilityMaxValue = 30;
+
+        // if the current force and the previous have less than rejectionProbability difference
+        // I can then assume that the force calculation after will be similar
+        // if it is indeed similar then I can use a random selection of neighbour particles instead of all neighbours
+        //
+        if(forceXPredictionPercentage < rejectionProbabilityThreshold && forceYPredictionPercentage < rejectionProbabilityThreshold){
+            if(rejectionProbability < rejectionProbabilityMaxValue){
+                rejectionProbability++;
+            }
+        }
+        else{
+            if(rejectionProbability > 0){
+                rejectionProbability--;
+            }
+        }
+
+
+        previousForce = force.clone();
     }
 
     public void simulate(double updateTime){
