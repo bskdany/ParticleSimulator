@@ -33,6 +33,7 @@ public class ParticleSimulation{
     public static ParticleGridMap particleGridMap;
     private long lastFpsShowTime;
     private int updateCount = 0;
+    public static boolean REJECT_RANDOM_PARTICLES;
 
     private OptimizationTracking optimizationTracking;
     ParticleSimulation(Canvas canvas){
@@ -47,6 +48,7 @@ public class ParticleSimulation{
         TARGET_SIMULATION_FPS = 40;
         CAP_FPS = false;
         UPDATE_RATE_MS = 10;
+        REJECT_RANDOM_PARTICLES = false;
 
         particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
             put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));

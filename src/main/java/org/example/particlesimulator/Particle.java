@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 public class Particle {
@@ -60,9 +61,7 @@ public class Particle {
     public void calculateCumulativeForce(Stream<Particle> targetParticles){
         double[] newForce = new double[]{0,0};
 
-
         OptimizationTracking tracking = OptimizationTracking.getInstance();
-        Random random = new Random();
 
         targetParticles.forEach(targetParticle -> {
             tracking.increaseTotalInteractions();
@@ -70,6 +69,13 @@ public class Particle {
             if(!targetParticle.isMoving && !isMoving){
                 tracking.increaseImmobileCounter();
                 return;
+            }
+
+            if(ParticleSimulation.REJECT_RANDOM_PARTICLES){
+                if(ThreadLocalRandom.current().nextDouble() < rejectionProbability){
+                    tracking.increaseRandomRejected();
+                    return;
+                }
             }
 
             double directionVectorX = targetParticle.position[0] - position[0];
@@ -96,10 +102,6 @@ public class Particle {
                 return;
             }
 
-            if(random.nextDouble() < rejectionProbability){
-                tracking.increaseRandomRejected();
-                return;
-            }
 
             OptimizationTracking.getInstance().increaseUsedInCalculation();
 
@@ -112,35 +114,49 @@ public class Particle {
             newForce[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
         });
 
-        // computing prediction for next force calculation
-        double rejectionProbabilityThreshold = 10;
-        double forceXPredictionPercentage = Math.abs(100 - (100 / previousForce[0]) * newForce[0]);    // 0 means the same, 10 means 10% of the values are off
-        double forceYPredictionPercentage = Math.abs(100 - (100 / previousForce[1]) * newForce[1]);
+        if(ParticleSimulation.REJECT_RANDOM_PARTICLES){
+            // computing prediction for next force calculation
+            double rejectionProbabilityThreshold = 15;
+            double forceXPredictionPercentage = Math.abs(100 - (100 / previousForce[0]) * newForce[0]);    // 0 means the same, 10 means 10% of the values are off
+            double forceYPredictionPercentage = Math.abs(100 - (100 / previousForce[1]) * newForce[1]);
 
-        double rejectionProbabilityMaxValue = 90;
+            double rejectionProbabilityMaxValue = 50;
 
-        // if the current force and the previous have less than rejectionProbability difference
-        // I can then assume that the force calculation after will be similar
-        // if it is indeed similar then I can use a random selection of neighbour particles instead of all neighbours
-        //
-        if(forceXPredictionPercentage < rejectionProbabilityThreshold && forceYPredictionPercentage < rejectionProbabilityThreshold){
-            if(rejectionProbability < rejectionProbabilityMaxValue){
-                rejectionProbability += 1;
+            // if the current force and the previous have less than rejectionProbability difference
+            // I can then assume that the force calculation after will be similar
+            // if it is indeed similar then I can use a random selection of neighbour particles instead of all neighbours
+            //
+            if(forceXPredictionPercentage < rejectionProbabilityThreshold && forceYPredictionPercentage < rejectionProbabilityThreshold){
+                if(rejectionProbability < rejectionProbabilityMaxValue){
+                    rejectionProbability += 3;
+                }
+                // setting force in case we are under the threshold
+                force[0] = previousForce[0];
+                force[1] = previousForce[1];
+
             }
+            else{
+                if(rejectionProbability > 0){
+                    rejectionProbability = 0;
+                }
+
+                // setting force in case we are over the threshold and something went wrong, like if the particle has to change direction
+                force[0] = (previousForce[0] + newForce[0]) / 2;
+                force[1] = (previousForce[1] + newForce[1]) / 2;
+
+            }
+
+//        force[0] = (newForce[0] + previousForce[0]) / 2;
+//        force[1] = (newForce[1] + previousForce[1]) / 2;
+
+            previousForce[0] = force[0];
+            previousForce[1] = force[1];
         }
         else{
-            if(rejectionProbability > 0){
-                // -2 because I feel like if the force suddenly is not what it's supposed value then
-                // the confidence should drop
-                rejectionProbability -= 1;
-            }
+            force[0] = newForce[0];
+            force[1] = newForce[1];
         }
 
-        force[0] = (newForce[0] + previousForce[0]) / 2;
-        force[1] = (newForce[1] + previousForce[1]) / 2;
-
-        previousForce[0] = force[0];
-        previousForce[1] = force[1];
     }
 
     public void simulate(double updateTime){
