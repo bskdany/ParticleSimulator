@@ -40,7 +40,7 @@ public class ParticleSimulation{
         DEFAULT_PARTICLE_COUNT = 1500;
         CENTRAL_ATTRACTION_MULTIPLIER = 5;
         RADIUS = 0.5;
-        friction = 0.4;
+        friction = 0.04;
         maxAttractionDistance = 30;
         attractionRelativeDistanceCutout = 0.3;
 
