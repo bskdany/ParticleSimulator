@@ -37,6 +37,7 @@ public class ParticleGridMap {
     // if two or more particles fit in the same CELL_SIZE_FINE
     // they will get approximated to one
     private final boolean CLUSTER_CLOSE_PARTICLES;
+    private final boolean APPROXIMATE_CIRCLE;
 
     // the maximum distance between two particles that would make them a cluster
 
@@ -57,7 +58,8 @@ public class ParticleGridMap {
 
     ParticleGridMap(double canvasWidth, double canvasHeight){
         CELL_LOOKUP_RADIUS = 3;
-        CELL_SIZE = (int) ParticleSimulation.maxAttractionDistance / CELL_LOOKUP_RADIUS;
+        CIRCLE_APPROXIMATION_OFFSET = 1;
+        CELL_SIZE = (int) ParticleSimulation.maxAttractionDistance / CELL_LOOKUP_RADIUS ;
         CELL_SIZE_FINE = 3;
 
         WIDTH = (int) canvasWidth / CELL_SIZE + 1;
@@ -67,8 +69,8 @@ public class ParticleGridMap {
         HEIGHT_FINE = (int) canvasHeight / CELL_SIZE_FINE + 1;
 
         CLUSTER_CLOSE_PARTICLES = false;
+        APPROXIMATE_CIRCLE = true;
 
-        CIRCLE_APPROXIMATION_OFFSET = 1;
 
         particlesPositionHashMap = new ConcurrentHashMap<>();
         particlesPositionHashMapFine = new ConcurrentHashMap<>();
@@ -170,10 +172,20 @@ public class ParticleGridMap {
                 int squareIndexStartColumn = column - CELL_LOOKUP_RADIUS;
                 int squareIndexEndColumn = column + CELL_LOOKUP_RADIUS;
 
-                for (int i = squareIndexStartRow; i < squareIndexEndRow; i++) {
+                for (int i = squareIndexStartRow; i <= squareIndexEndRow; i++) {
                     int mathFloorWidth = Math.floorMod(i, WIDTH);
 
-                    for (int j = squareIndexStartColumn; j < squareIndexEndColumn; j++) {
+                    for (int j = squareIndexStartColumn; j <= squareIndexEndColumn; j++) {
+
+                        if(APPROXIMATE_CIRCLE){
+                            int offsetFromOriginRow = Math.abs(i - row);
+                            int offsetFromOriginColumn = Math.abs(j - column);
+
+                            if(Math.round(Math.sqrt(Math.pow(offsetFromOriginRow, 2) + Math.pow(offsetFromOriginColumn, 2))) > CELL_LOOKUP_RADIUS){
+                                continue;
+                            }
+
+                        }
 
                         int mathFloorHeight = Math.floorMod(j, HEIGHT);
                         int keyToCell = mathFloorWidth * HEIGHT + mathFloorHeight;

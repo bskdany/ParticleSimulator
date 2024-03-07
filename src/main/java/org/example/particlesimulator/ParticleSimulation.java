@@ -48,7 +48,7 @@ public class ParticleSimulation{
         TARGET_SIMULATION_FPS = 40;
         CAP_FPS = false;
         UPDATE_RATE_MS = 10;
-        REJECT_RANDOM_PARTICLES = false;
+        REJECT_RANDOM_PARTICLES = true;
 
         particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
             put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
