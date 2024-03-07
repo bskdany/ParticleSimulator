@@ -45,10 +45,10 @@ public class ParticleSimulation{
         attractionRelativeDistanceCutout = 0.3;
 
         forceMultiplier = 5;
-        TARGET_SIMULATION_FPS = 40;
-        CAP_FPS = false;
+        TARGET_SIMULATION_FPS = 30;
+        CAP_FPS = true;
         UPDATE_RATE_MS = 10;
-        REJECT_RANDOM_PARTICLES = true;
+        REJECT_RANDOM_PARTICLES = false;
 
         particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
             put(Color.RED, new ParticleSpeciesData(DEFAULT_PARTICLE_COUNT, RADIUS));
@@ -91,6 +91,8 @@ public class ParticleSimulation{
 
     public void update(){
         timer = new AnimationTimer() {
+            static private boolean simulationBufferReady = false;
+
             private void simulate(double timeUpdate){
                 particleGridMap.update((ArrayList<Particle>) particles);
 
@@ -106,6 +108,8 @@ public class ParticleSimulation{
                     particle.adjustPositionWrapping();
                 });
 
+            }
+            private void display(){
                 clearCanvas();
 
                 particles.forEach(particle -> {
@@ -125,23 +129,38 @@ public class ParticleSimulation{
                 long elapsedTimeFromLastUpdate = now - lastUpdateTime;      // all this stuff is in nanoseconds
                 long elapsedTimeFromLastSecond = now - lastFpsShowTime;
 
-
-                // calculating the update time at every update
-                double timeUpdate = (double) elapsedTimeFromLastUpdate / 1_000_000_000;
-                if(timeUpdate >= 0.1){
-                    // this is needed because at the beginning elapsed time is 0
-                    timeUpdate = (double) (1_000 / TARGET_SIMULATION_FPS) / 1000 ;
-                }
-
                 if(CAP_FPS){
-                    // limit the animation to only work at the TARGET_FPS
-                    if(elapsedTimeFromLastUpdate >= TARGET_SIMULATION_FPS * 1_000_000L){
+                    double timeUpdate = (double) TARGET_SIMULATION_FPS / 1000;
+
+                    if(!simulationBufferReady){
                         simulate(timeUpdate);
+                        simulationBufferReady = true;
+                    }
+
+                    if(elapsedTimeFromLastUpdate >= (double) TARGET_SIMULATION_FPS * 1_000_000){
+                        if(simulationBufferReady){
+                            display();
+                            simulationBufferReady = false;
+                        }
+                        else{
+                            System.out.println("FPS falling behind target");
+                            simulate(timeUpdate);
+                            display();
+                        }
                         lastUpdateTime = now;
                     }
+
                 }
                 else{
+                    // calculating the update time at every update
+                    double timeUpdate = (double) elapsedTimeFromLastUpdate / 1_000_000_000;
+                    if(timeUpdate >= 0.1){
+                        // this is needed because at the beginning elapsed time is 0
+                        timeUpdate = (double) (1_000 / TARGET_SIMULATION_FPS) / 1000 ;
+                    }
+
                     simulate(timeUpdate);
+                    display();
                     lastUpdateTime = now;
                 }
 
