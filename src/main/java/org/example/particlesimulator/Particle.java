@@ -173,9 +173,9 @@ public class Particle {
                             // I made this value up
         isMoving = velocity[0] + velocity[1] > 1.1;
 
-        double[] deltaPosition = new double[]{0,0};
-        deltaPosition[0] = velocity[0] * updateTime;
-        deltaPosition[1] = velocity[1] * updateTime;
+//        double[] deltaPosition = new double[]{0,0};
+//        deltaPosition[0] = velocity[0] * updateTime;
+//        deltaPosition[1] = velocity[1] * updateTime;
 
 //        if(deltaPosition[0] > RADIUS * 10){
 //            // explode
