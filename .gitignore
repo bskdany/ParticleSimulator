@@ -29,3 +29,4 @@ replay_pid*
 /target/maven-archiver/
 /target/classes/
 /target/archive-tmp/
+.idea/workspace.xml
