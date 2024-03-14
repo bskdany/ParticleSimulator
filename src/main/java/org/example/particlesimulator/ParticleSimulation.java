@@ -130,10 +130,10 @@ public class ParticleSimulation{
                 long elapsedTimeFromLastSecond = now - lastFpsShowTime;
 
                 if(CAP_FPS){
-                    double timeUpdate = (double) TARGET_SIMULATION_FPS / 1000;
+                    double targetTimeUpdate = (double) 1000 / TARGET_SIMULATION_FPS; // milliseconds
 
                     if(!simulationBufferReady){
-                        simulate(timeUpdate);
+                        simulate(targetTimeUpdate/1000);
                         simulationBufferReady = true;
                     }
 
@@ -144,7 +144,7 @@ public class ParticleSimulation{
                         }
                         else{
                             System.out.println("FPS falling behind target");
-                            simulate(timeUpdate);
+                            simulate(targetTimeUpdate/1000);
                             display();
                         }
                         lastUpdateTime = now;

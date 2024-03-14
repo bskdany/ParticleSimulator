@@ -170,19 +170,18 @@ public class Particle {
         velocity[0] += accelerationX * updateTime;
         velocity[1] += accelerationY * updateTime;
 
-                            // I made this value up
-        isMoving = velocity[0] + velocity[1] > 1.1;
+        double[] deltaPosition = new double[]{0,0};
+        deltaPosition[0] = velocity[0] * updateTime;
+        deltaPosition[1] = velocity[1] * updateTime;
 
-//        double[] deltaPosition = new double[]{0,0};
-//        deltaPosition[0] = velocity[0] * updateTime;
-//        deltaPosition[1] = velocity[1] * updateTime;
+        isMoving = Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / 5;
 
 //        if(deltaPosition[0] > RADIUS * 10){
 //            // explode
 //        }
 
-        position[0] += velocity[0] * updateTime;
-        position[1] += velocity[1] * updateTime;
+        position[0] += deltaPosition[0];
+        position[1] += deltaPosition[1];
     }
 
     public static double[] normalizeVector(double directionVectorX, double directionVectorY) {
