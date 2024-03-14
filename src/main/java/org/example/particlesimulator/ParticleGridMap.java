@@ -69,7 +69,7 @@ public class ParticleGridMap {
         HEIGHT_FINE = (int) canvasHeight / CELL_SIZE_FINE + 1;
 
         CLUSTER_CLOSE_PARTICLES = false;
-        APPROXIMATE_CIRCLE = true;
+        APPROXIMATE_CIRCLE = false;
 
 
         particlesPositionHashMap = new ConcurrentHashMap<>();

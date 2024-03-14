@@ -20,6 +20,7 @@ public class Particle {
     public final Color color;
     public final int SPECIES;
     public boolean isMoving;
+    public boolean isRogue;
 
     Particle(int x, int y, double radius, Color color, double mass, int species){
         this.RADIUS = radius;
@@ -29,6 +30,7 @@ public class Particle {
         this.force = new double[]{0,0};
         this.velocity = new double[]{0,0};
         isMoving = true;
+        isRogue = false;
         rejectionProbability = 0;
         previousForce = new double[]{0,0};
     }
@@ -67,7 +69,6 @@ public class Particle {
             tracking.increaseTotalInteractions();
 
             if(!targetParticle.isMoving && !isMoving){
-                tracking.increaseImmobileCounter();
                 return;
             }
 
@@ -160,9 +161,18 @@ public class Particle {
     }
 
     public void simulate(double updateTime){
-        // F = m / a
-        double accelerationX = force[0] * ParticleSimulation.forceMultiplier;
-        double accelerationY = force[1] * ParticleSimulation.forceMultiplier;
+        double accelerationX;
+        double accelerationY;
+        // Not using the force multiplier if the particle is rogue
+        if(isRogue){
+            // F = m / a
+            accelerationX = force[0];
+            accelerationY = force[1];
+        }
+        else{
+            accelerationX = force[0] * ParticleSimulation.forceMultiplier;
+            accelerationY = force[1] * ParticleSimulation.forceMultiplier;
+        }
 
         velocity[0] *= ParticleSimulation.friction;
         velocity[1] *= ParticleSimulation.friction;
@@ -176,9 +186,7 @@ public class Particle {
 
         isMoving = Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / 5;
 
-//        if(deltaPosition[0] > RADIUS * 10){
-//            // explode
-//        }
+        isRogue = Math.abs(deltaPosition[0]) > RADIUS * 3 || Math.abs(deltaPosition[1]) > RADIUS * 3;
 
         position[0] += deltaPosition[0];
         position[1] += deltaPosition[1];

@@ -5,7 +5,8 @@ import java.text.DecimalFormat;
 public class OptimizationTracking {
     private static OptimizationTracking instance;
     private int calculationSavedByCaching;
-    private int calculationSavedByImmobileParticle;
+    private int immobileParticles;
+    private int rogueParticles;
     private int discardedDueToOutOfRange;
     private int usedInCalculation;
     private int totalParticleInteractions;
@@ -13,6 +14,7 @@ public class OptimizationTracking {
     private int randomRejectedParticles;
     private int numberOfParticles;
     private int updateCounter;
+    private int totalParticleCount;
     OptimizationTracking(){
         resetValues();
     }
@@ -21,8 +23,12 @@ public class OptimizationTracking {
         calculationSavedByCaching++;
     }
     public void increaseImmobileCounter(){
-        calculationSavedByImmobileParticle++;
+        immobileParticles++;
     }
+    public void increaseRogueParticles(){rogueParticles++;}
+    public void setImmobile(int num){immobileParticles+=num;}
+    public void setRogue(int num){rogueParticles+=num;}
+
     public void increaseDiscardedOutOfRange(){
         discardedDueToOutOfRange++;
     }
@@ -33,9 +39,11 @@ public class OptimizationTracking {
     public void increaseTotalInteractions(){totalParticleInteractions++;}
     public void increaseRandomRejected(){randomRejectedParticles++;}
     public void increaseUpdate(){updateCounter++;}
+    public void setParticleCount(int num){totalParticleCount = num;}
     public void showOptimizationData(){
         System.out.println("Caching     " + calculatePercentage(calculationSavedByCaching, totalParticleInteractions));
-        System.out.println("Immobile    " + calculatePercentage(calculationSavedByImmobileParticle, totalParticleInteractions));
+        System.out.println("Immobile    " + calculatePercentage(immobileParticles, totalParticleCount * updateCounter));
+        System.out.println("Rogue       " + calculatePercentage(rogueParticles, totalParticleCount * updateCounter));
         System.out.println("Averaged    " + calculatePercentage(numberOfParticlesAveraged, numberOfParticles * updateCounter));
         System.out.println("Range       " + calculatePercentage(discardedDueToOutOfRange, totalParticleInteractions));
         System.out.println("Used        " + calculatePercentage(usedInCalculation, totalParticleInteractions));
@@ -52,7 +60,8 @@ public class OptimizationTracking {
 
     private void resetValues(){
         calculationSavedByCaching = 0;
-        calculationSavedByImmobileParticle = 0;
+        rogueParticles = 0;
+        immobileParticles = 0;
         discardedDueToOutOfRange = 0;
         usedInCalculation = 0;
         totalParticleInteractions = 1;

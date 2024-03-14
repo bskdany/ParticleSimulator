@@ -35,7 +35,6 @@ public class ParticleSimulation{
     private int updateCount = 0;
     public static boolean REJECT_RANDOM_PARTICLES;
 
-    private OptimizationTracking optimizationTracking;
     ParticleSimulation(Canvas canvas){
         DEFAULT_PARTICLE_COUNT = 1500;
         CENTRAL_ATTRACTION_MULTIPLIER = 5;
@@ -87,6 +86,7 @@ public class ParticleSimulation{
                 createParticle(speciesData.getKey());
             }
         }
+        OptimizationTracking.getInstance().setParticleCount(particles.size());
     }
 
     public void update(){
@@ -104,10 +104,10 @@ public class ParticleSimulation{
 
                 particles.forEach(particle -> particle.simulate(timeUpdate));
 
-                particles.forEach(particle -> {
-                    particle.adjustPositionWrapping();
-                });
+                particles.forEach(Particle::adjustPositionWrapping);
 
+                OptimizationTracking.getInstance().setImmobile((int) particles.stream().filter(particle -> particle.isMoving).count());
+                OptimizationTracking.getInstance().setRogue((int) particles.stream().filter(particle -> particle.isRogue).count());
             }
             private void display(){
                 clearCanvas();
