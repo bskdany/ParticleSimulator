@@ -3,9 +3,7 @@ package org.example.particlesimulator;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
@@ -20,6 +18,8 @@ public class Particle {
     public final Color color;
     public final int SPECIES;
     public boolean isMoving;
+    private int isMovingCoolDownFrames;
+    private int isRogueCoolDownFrames;
     public boolean isRogue;
 
     Particle(int x, int y, double radius, Color color, double mass, int species){
@@ -33,6 +33,8 @@ public class Particle {
         isRogue = false;
         rejectionProbability = 0;
         previousForce = new double[]{0,0};
+        isMovingCoolDownFrames = 0;
+        isRogueCoolDownFrames = 0;
     }
 
     /**
@@ -184,9 +186,36 @@ public class Particle {
         deltaPosition[0] = velocity[0] * updateTime;
         deltaPosition[1] = velocity[1] * updateTime;
 
-        isMoving = Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / 5;
+        isMovingCoolDownFrames -= 1;
+        // if the particle speed is past the threshold
+        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / 5){
+            // if at the last cycle the particle was not moving
+            if(!isMoving){
+                // set the number of frames that need to be waited before the particle can be not moving again
+                isMovingCoolDownFrames = 3;
+            }
+            isMoving = true;
+        }
+        else{
+            if(isMovingCoolDownFrames<0){
+                isMoving = false;
+            }
+        }
 
-        isRogue = Math.abs(deltaPosition[0]) > RADIUS * 3 || Math.abs(deltaPosition[1]) > RADIUS * 3;
+        // if the particle speed is past the threshold
+        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * 10){
+            // if at the last cycle the particle was not moving
+            if(!isRogue){
+                // set the number of frames that need to be waited before the particle can be not moving again
+                isRogueCoolDownFrames = 3;
+            }
+            isRogue = true;
+        }
+        else{
+            if(isRogueCoolDownFrames<0){
+                isRogue = false;
+            }
+        }
 
         position[0] += deltaPosition[0];
         position[1] += deltaPosition[1];
