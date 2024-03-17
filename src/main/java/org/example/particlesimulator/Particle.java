@@ -18,6 +18,7 @@ public class Particle {
     public final Color color;
     public final int SPECIES;
     private boolean isMovingBuffer;
+    private boolean isRogueBuffer;
     public boolean isMoving;
     private int isMovingCoolDownFrames;
     private int isRogueCoolDownFrames;
@@ -33,6 +34,7 @@ public class Particle {
         isMoving = true;
         isMovingBuffer = true;
         isRogue = false;
+        isRogueBuffer = false;
         rejectionProbability = 0;
         previousForce = new double[]{0,0};
         isMovingCoolDownFrames = 0;
@@ -107,7 +109,6 @@ public class Particle {
                 return;
             }
 
-
             OptimizationTracking.getInstance().increaseUsedInCalculation();
 
             double attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][targetParticle.SPECIES];
@@ -170,8 +171,10 @@ public class Particle {
         // Not using the force multiplier if the particle is rogue
         if(isRogue){
             // F = m / a
-            accelerationX = force[0];
-            accelerationY = force[1];
+//            accelerationX = force[0]/2;
+//            accelerationY = force[1]/2;
+            accelerationX = force[0] * ParticleSimulation.forceMultiplier;
+            accelerationY = force[1] * ParticleSimulation.forceMultiplier;
         }
         else{
             accelerationX = force[0] * ParticleSimulation.forceMultiplier;
@@ -195,30 +198,28 @@ public class Particle {
             // if at the last cycle the particle was not moving
             if(!isMoving){
                 // set the number of frames that need to be waited before the particle can be not moving again
-                isMovingCoolDownFrames = 10;
+                isMovingCoolDownFrames = 5;
             }
-//            isMoving = true;
             isMovingBuffer = true;
         }
         else{
             if(isMovingCoolDownFrames<0){
                 isMovingBuffer = false;
-//                isMoving = false;
             }
         }
 
         // if the particle speed is past the threshold
-        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * 5 ){
+        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * 10 ){
             // if at the last cycle the particle was not moving
             if(!isRogue){
                 // set the number of frames that need to be waited before the particle can be not moving again
                 isRogueCoolDownFrames = 3;
             }
-//            isRogue = true;
+            isRogueBuffer = true;
         }
         else{
             if(isRogueCoolDownFrames<0){
-                isRogue = false;
+                isRogueBuffer = false;
             }
         }
 
@@ -236,11 +237,13 @@ public class Particle {
 
     public static double calculateAttractionForce(double relativeDistance, double attractionFactor){
         if(relativeDistance < ParticleSimulation.attractionRelativeDistanceCutout){
-//            relativeDistance / ParticleSimulation.attractionRelativeDistanceCutout - 1
+            return - Math.pow(relativeDistance / ParticleSimulation.attractionRelativeDistanceCutout - 1, 2);
             // ((rel distance - cutout) * 5) ^ 3)
-            return -Math.pow((10*(relativeDistance-ParticleSimulation.attractionRelativeDistanceCutout)), 2);
+//            return -Math.pow((10*(relativeDistance-ParticleSimulation.attractionRelativeDistanceCutout)), 2);
         } else if (relativeDistance < 1.0) {
-            return (-Math.abs(relativeDistance - ParticleSimulation.attractionRelativeDistanceCutout - 0.5) + 0.5 ) * 2 * attractionFactor;
+//            double halfWay = (1-ParticleSimulation.attractionRelativeDistanceCutout)/2;
+//            return -(Math.abs(relativeDistance-0.3-halfWay)+halfWay)*attractionFactor;
+            return (-Math.abs(relativeDistance - ParticleSimulation.attractionRelativeDistanceCutout - 0.5) + 0.5 ) * attractionFactor;
         }
         return 0;
     }
@@ -276,5 +279,8 @@ public class Particle {
 
     public void finalizeIsMovingVariable(){
         isMoving = isMovingBuffer;
+    }
+    public void finalizeIsRogueVariable(){
+        isRogue = isRogueBuffer;
     }
 }

@@ -41,9 +41,9 @@ public class ParticleSimulation{
         RADIUS = 0.5;
         friction = 0.04;
         maxAttractionDistance = 30;
-        attractionRelativeDistanceCutout = 0.3;
+        attractionRelativeDistanceCutout = 0.4;
 
-        forceMultiplier = 5;
+        forceMultiplier = 4;
         TARGET_SIMULATION_FPS = 30;
         CAP_FPS = true;
         UPDATE_RATE_MS = 10;
@@ -107,6 +107,7 @@ public class ParticleSimulation{
                 particles.forEach(particle -> {
                     particle.adjustPositionWrapping();
                     particle.finalizeIsMovingVariable();
+                    particle.finalizeIsRogueVariable();
                 });
 
 
