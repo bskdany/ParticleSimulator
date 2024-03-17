@@ -17,6 +17,7 @@ public class Particle {
     public final double RADIUS;
     public final Color color;
     public final int SPECIES;
+    private boolean isMovingBuffer;
     public boolean isMoving;
     private int isMovingCoolDownFrames;
     private int isRogueCoolDownFrames;
@@ -30,6 +31,7 @@ public class Particle {
         this.force = new double[]{0,0};
         this.velocity = new double[]{0,0};
         isMoving = true;
+        isMovingBuffer = true;
         isRogue = false;
         rejectionProbability = 0;
         previousForce = new double[]{0,0};
@@ -193,13 +195,15 @@ public class Particle {
             // if at the last cycle the particle was not moving
             if(!isMoving){
                 // set the number of frames that need to be waited before the particle can be not moving again
-                isMovingCoolDownFrames = 3;
+                isMovingCoolDownFrames = 10;
             }
-            isMoving = true;
+//            isMoving = true;
+            isMovingBuffer = true;
         }
         else{
             if(isMovingCoolDownFrames<0){
-                isMoving = false;
+                isMovingBuffer = false;
+//                isMoving = false;
             }
         }
 
@@ -268,5 +272,9 @@ public class Particle {
 
     public static double[] getParticleDirectionVector(double[] sourceParticle, double[] destinationParticle){
         return new double[]{destinationParticle[0]-sourceParticle[0], destinationParticle[1]-sourceParticle[1]};
+    }
+
+    public void finalizeIsMovingVariable(){
+        isMoving = isMovingBuffer;
     }
 }
