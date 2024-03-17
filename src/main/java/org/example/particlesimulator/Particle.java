@@ -187,6 +187,7 @@ public class Particle {
         deltaPosition[1] = velocity[1] * updateTime;
 
         isMovingCoolDownFrames -= 1;
+        isRogueCoolDownFrames -= 1;
         // if the particle speed is past the threshold
         if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / 5){
             // if at the last cycle the particle was not moving
@@ -203,13 +204,13 @@ public class Particle {
         }
 
         // if the particle speed is past the threshold
-        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * 10){
+        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * 5 ){
             // if at the last cycle the particle was not moving
             if(!isRogue){
                 // set the number of frames that need to be waited before the particle can be not moving again
                 isRogueCoolDownFrames = 3;
             }
-            isRogue = true;
+//            isRogue = true;
         }
         else{
             if(isRogueCoolDownFrames<0){
@@ -223,7 +224,7 @@ public class Particle {
 
     public static double[] normalizeVector(double directionVectorX, double directionVectorY) {
         double magnitude = Math.sqrt(directionVectorX * directionVectorX + directionVectorY * directionVectorY);
-        if(magnitude < 1e-10){ // where 1e-10 is the tollerance, this is more efficient than the comparison to 0 because of floating point
+        if(magnitude < 1e-10){ // where 1e-10 is the tolerance, this is more efficient than the comparison to 0 because of floating point
             return new double[]{directionVectorX, directionVectorY};
         }
         return new double[]{directionVectorX/magnitude, directionVectorY/magnitude};
@@ -231,7 +232,9 @@ public class Particle {
 
     public static double calculateAttractionForce(double relativeDistance, double attractionFactor){
         if(relativeDistance < ParticleSimulation.attractionRelativeDistanceCutout){
-            return (relativeDistance / ParticleSimulation.attractionRelativeDistanceCutout - 1) * 2;
+//            relativeDistance / ParticleSimulation.attractionRelativeDistanceCutout - 1
+            // ((rel distance - cutout) * 5) ^ 3)
+            return -Math.pow((10*(relativeDistance-ParticleSimulation.attractionRelativeDistanceCutout)), 2);
         } else if (relativeDistance < 1.0) {
             return (-Math.abs(relativeDistance - ParticleSimulation.attractionRelativeDistanceCutout - 0.5) + 0.5 ) * 2 * attractionFactor;
         }
