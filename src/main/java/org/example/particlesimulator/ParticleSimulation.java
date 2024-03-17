@@ -104,9 +104,13 @@ public class ParticleSimulation{
 
                 particles.forEach(particle -> particle.simulate(timeUpdate));
 
-                particles.forEach(Particle::adjustPositionWrapping);
+                particles.forEach(particle -> {
+                    particle.adjustPositionWrapping();
+                    particle.finalizeIsMovingVariable();
+                });
 
-                OptimizationTracking.getInstance().setImmobile((int) particles.stream().filter(particle -> particle.isMoving).count());
+
+                OptimizationTracking.getInstance().setImmobile(particles.size() - (int) particles.stream().filter(particle -> particle.isMoving).count());
                 OptimizationTracking.getInstance().setRogue((int) particles.stream().filter(particle -> particle.isRogue).count());
             }
             private void display(){
