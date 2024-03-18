@@ -23,8 +23,9 @@ public class Particle {
     private int isMovingCoolDownFrames;
     private int isRogueCoolDownFrames;
     public boolean isRogue;
+    public int id;
 
-    Particle(int x, int y, double radius, Color color, double mass, int species){
+    Particle(int x, int y, double radius, Color color, double mass, int species, int id){
         this.RADIUS = radius;
         this.SPECIES = species;
         this.color = color;
@@ -39,6 +40,7 @@ public class Particle {
         previousForce = new double[]{0,0};
         isMovingCoolDownFrames = 0;
         isRogueCoolDownFrames = 0;
+        this.id = id;
     }
 
     /**
@@ -72,6 +74,10 @@ public class Particle {
         OptimizationTracking tracking = OptimizationTracking.getInstance();
 
         targetParticles.forEach(targetParticle -> {
+            if(id == targetParticle.id){
+                return;
+            }
+
             tracking.increaseTotalInteractions();
 
             if(!targetParticle.isMoving && !isMoving){
