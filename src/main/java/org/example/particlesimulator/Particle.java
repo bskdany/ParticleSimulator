@@ -192,19 +192,35 @@ public class Particle {
         isMovingCoolDownFrames -= 1;
         isRogueCoolDownFrames -= 1;
         // if the particle speed is past the threshold
-        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / ParticleSimulation.forceMultiplier){
+        if(Math.abs(deltaPosition[0])*updateTime*1000 > 2.0 || Math.abs(deltaPosition[1])*updateTime*1000 > 2.0 ){
             // if at the last cycle the particle was not moving
             if(!isMoving){
                 // set the number of frames that need to be waited before the particle can be not moving again
-                isMovingCoolDownFrames = 5;
+                isMovingCoolDownFrames = 3;
             }
             isMovingBuffer = true;
         }
         else{
-            if(isMovingCoolDownFrames<0){
-                isMovingBuffer = false;
+            if(isMoving){
+                if(isMovingCoolDownFrames<0){
+                    isMovingBuffer = false;
+                }
             }
         }
+        //        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / ParticleSimulation.forceMultiplier){
+//            // if at the last cycle the particle was not moving
+//            if(!isMoving){
+//                if(isMovingCoolDownFrames<0){
+//                    isMovingBuffer = true;
+//                }
+//                // set the number of frames that need to be waited before the particle can be not moving again
+//                isMovingCoolDownFrames = 3;
+//            }
+//            else{
+//                isMovingBuffer = true;
+//            }
+//        }
+
 
         // if the particle speed is past the threshold
         if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * ParticleSimulation.forceMultiplier ){

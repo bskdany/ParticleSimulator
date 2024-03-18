@@ -2,7 +2,7 @@ package org.example.particlesimulator;
 
 public class Configs {
     public static boolean USE_ROGUE_OPTIMIZATION = false;
-    public static boolean USE_IMMOBILE_OPTIMIZATION = false;
+    public static boolean USE_IMMOBILE_OPTIMIZATION = true;
     public static boolean REJECT_RANDOM_PARTICLES_OPTIMIZATION = false;
 
     public static boolean CLUSTER_CLOSE_PARTICLES_OPTIMIZATION = false;
