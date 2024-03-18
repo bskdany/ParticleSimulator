@@ -257,12 +257,8 @@ public class Particle {
 
     public static double calculateAttractionForce(double relativeDistance, double attractionFactor){
         if(relativeDistance < ParticleSimulation.attractionRelativeDistanceCutout){
-            return - Math.pow(relativeDistance / ParticleSimulation.attractionRelativeDistanceCutout - 1, 2);
-            // ((rel distance - cutout) * 5) ^ 3)
-//            return -Math.pow((10*(relativeDistance-ParticleSimulation.attractionRelativeDistanceCutout)), 2);
+            return - Math.pow(Configs.REPULSION_MULTIPLIER * relativeDistance / ParticleSimulation.attractionRelativeDistanceCutout - Configs.REPULSION_MULTIPLIER, 2);
         } else if (relativeDistance < 1.0) {
-//            double halfWay = (1-ParticleSimulation.attractionRelativeDistanceCutout)/2;
-//            return -(Math.abs(relativeDistance-0.3-halfWay)+halfWay)*attractionFactor;
             return (-Math.abs(relativeDistance - ParticleSimulation.attractionRelativeDistanceCutout - 0.5) + 0.5 ) * attractionFactor;
         }
         return 0;
