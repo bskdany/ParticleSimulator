@@ -27,29 +27,6 @@ public class ParticleGridMap {
     // a smaller amount of particles
     public static  int CELL_SIZE;
 
-    private final int CELL_SIZE_FINE;
-
-    // with the default values the  cell_lookup_radius should amount to 40 / 5 = 8
-    // it's the amount of cells in each direction from the source cell that the
-    // program should look for particles
-    private final int CELL_LOOKUP_RADIUS;
-
-    // if two or more particles fit in the same CELL_SIZE_FINE
-    // they will get approximated to one
-    private final boolean CLUSTER_CLOSE_PARTICLES;
-    private final boolean APPROXIMATE_CIRCLE;
-
-    // the maximum distance between two particles that would make them a cluster
-
-    // I use this number to calculate the range of cells from the source particle
-    // in which particles should be checked, because it's hard to simulate a circle, thus
-    // I opted to approximate it by implementing an offset from the borders
-    // of the square. The reason behind is that I have a lot of discarded particles
-    // due to them being too distant from the source particle, without this variable
-    // the discarded particles would amount to 20%, with it only 6%
-    // https://en.wikipedia.org/wiki/Squaring_the_circle
-    private final int CIRCLE_APPROXIMATION_OFFSET;
-
     public static int WIDTH;
     public static int HEIGHT;
 
@@ -57,20 +34,13 @@ public class ParticleGridMap {
     private final int HEIGHT_FINE;
 
     ParticleGridMap(double canvasWidth, double canvasHeight){
-        CELL_LOOKUP_RADIUS = 3;
-        CIRCLE_APPROXIMATION_OFFSET = 1;
-        CELL_SIZE = (int) ParticleSimulation.maxAttractionDistance / CELL_LOOKUP_RADIUS ;
-        CELL_SIZE_FINE = 3;
+        CELL_SIZE = (int) ParticleSimulation.maxAttractionDistance / Configs.GRID_MAP_LOOKUP_RADIUS ;
 
         WIDTH = (int) canvasWidth / CELL_SIZE + 1;
         HEIGHT = (int) canvasHeight / CELL_SIZE + 1;
 
-        WIDTH_FINE = (int) canvasWidth / CELL_SIZE_FINE + 1;
-        HEIGHT_FINE = (int) canvasHeight / CELL_SIZE_FINE + 1;
-
-        CLUSTER_CLOSE_PARTICLES = false;
-        APPROXIMATE_CIRCLE = false;
-
+        WIDTH_FINE = (int) canvasWidth / Configs.CELL_SIZE_FINE + 1;
+        HEIGHT_FINE = (int) canvasHeight / Configs.CELL_SIZE_FINE + 1;
 
         particlesPositionHashMap = new ConcurrentHashMap<>();
         particlesPositionHashMapFine = new ConcurrentHashMap<>();
@@ -86,7 +56,7 @@ public class ParticleGridMap {
         int key = particleToHashKey(particle);
         int fineKey = particleToHashKeyFine(particle);
 
-        if(CLUSTER_CLOSE_PARTICLES){
+        if(Configs.CLUSTER_CLOSE_PARTICLES_OPTIMIZATION){
             return Stream.concat(
                     neighbourLookupHashMap.get(key).stream()
                         .map(particlesPositionHashMapAveraged::get)
@@ -108,7 +78,7 @@ public class ParticleGridMap {
 
         OptimizationTracking.getInstance().increaseUpdate();
 
-        if(CLUSTER_CLOSE_PARTICLES){
+        if(Configs.CLUSTER_CLOSE_PARTICLES_OPTIMIZATION){
             particlesPositionHashMapFine.clear();
             particlesPositionHashMapAveraged.clear();
 
@@ -167,21 +137,21 @@ public class ParticleGridMap {
         for (int row = 0; row < WIDTH; row++) {
             for (int column = 0; column < HEIGHT; column++) {
                 ArrayList<Integer> targetCellKeys = new ArrayList<>();
-                int squareIndexStartRow = row - CELL_LOOKUP_RADIUS;
-                int squareIndexEndRow = row + CELL_LOOKUP_RADIUS;
-                int squareIndexStartColumn = column - CELL_LOOKUP_RADIUS;
-                int squareIndexEndColumn = column + CELL_LOOKUP_RADIUS;
+                int squareIndexStartRow = row - Configs.GRID_MAP_LOOKUP_RADIUS;
+                int squareIndexEndRow = row + Configs.GRID_MAP_LOOKUP_RADIUS;
+                int squareIndexStartColumn = column - Configs.GRID_MAP_LOOKUP_RADIUS;
+                int squareIndexEndColumn = column + Configs.GRID_MAP_LOOKUP_RADIUS;
 
                 for (int i = squareIndexStartRow; i <= squareIndexEndRow; i++) {
                     int mathFloorWidth = Math.floorMod(i, WIDTH);
 
                     for (int j = squareIndexStartColumn; j <= squareIndexEndColumn; j++) {
 
-                        if(APPROXIMATE_CIRCLE){
+                        if(Configs.APPROXIMATE_CIRCLE_OPTIMIZATION){
                             int offsetFromOriginRow = Math.abs(i - row);
                             int offsetFromOriginColumn = Math.abs(j - column);
 
-                            if(Math.round(Math.sqrt(Math.pow(offsetFromOriginRow, 2) + Math.pow(offsetFromOriginColumn, 2))) > CELL_LOOKUP_RADIUS){
+                            if(Math.round(Math.sqrt(Math.pow(offsetFromOriginRow, 2) + Math.pow(offsetFromOriginColumn, 2))) > Configs.GRID_MAP_LOOKUP_RADIUS){
                                 continue;
                             }
 
@@ -203,8 +173,8 @@ public class ParticleGridMap {
         return indexRow * HEIGHT + indexColumn;
     }
     private int particleToHashKeyFine(Particle particle){
-        int indexRow = (int) particle.position[0] / CELL_SIZE_FINE;
-        int indexColumn = (int) particle.position[1] / CELL_SIZE_FINE;
+        int indexRow = (int) particle.position[0] / Configs.CELL_SIZE_FINE;
+        int indexColumn = (int) particle.position[1] / Configs.CELL_SIZE_FINE;
         return indexRow * HEIGHT_FINE + indexColumn;
     }
     public ArrayList<Integer> getKeysToNeighbours(int key){
@@ -214,7 +184,7 @@ public class ParticleGridMap {
         return particlesPositionHashMap.get(key);
     }
     public Collection<ArrayList<Particle>> getParticlesPositionHashMap() {
-        if(CLUSTER_CLOSE_PARTICLES){
+        if(Configs.CLUSTER_CLOSE_PARTICLES_OPTIMIZATION){
             return particlesPositionHashMapAveraged.values();
         }
         return particlesPositionHashMap.values();

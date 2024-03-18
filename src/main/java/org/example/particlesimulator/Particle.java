@@ -78,7 +78,7 @@ public class Particle {
                 return;
             }
 
-            if(ParticleSimulation.REJECT_RANDOM_PARTICLES){
+            if(Configs.REJECT_RANDOM_PARTICLES_OPTIMIZATION){
                 if(ThreadLocalRandom.current().nextDouble() < rejectionProbability){
                     tracking.increaseRandomRejected();
                     return;
@@ -120,7 +120,7 @@ public class Particle {
             newForce[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
         });
 
-        if(ParticleSimulation.REJECT_RANDOM_PARTICLES){
+        if(Configs.REJECT_RANDOM_PARTICLES_OPTIMIZATION){
             // computing prediction for next force calculation
             double rejectionProbabilityThreshold = 15;
             double forceXPredictionPercentage = Math.abs(100 - (100 / previousForce[0]) * newForce[0]);    // 0 means the same, 10 means 10% of the values are off
@@ -171,8 +171,6 @@ public class Particle {
         // Not using the force multiplier if the particle is rogue
         if(isRogue){
             // F = m / a
-//            accelerationX = force[0]/2;
-//            accelerationY = force[1]/2;
             accelerationX = force[0] * ParticleSimulation.forceMultiplier;
             accelerationY = force[1] * ParticleSimulation.forceMultiplier;
         }
@@ -181,8 +179,8 @@ public class Particle {
             accelerationY = force[1] * ParticleSimulation.forceMultiplier;
         }
 
-        velocity[0] *= ParticleSimulation.friction;
-        velocity[1] *= ParticleSimulation.friction;
+        velocity[0] *= Configs.PARTICLE_FRICTION;
+        velocity[1] *= Configs.PARTICLE_FRICTION;
 
         velocity[0] += accelerationX * updateTime;
         velocity[1] += accelerationY * updateTime;
@@ -194,7 +192,7 @@ public class Particle {
         isMovingCoolDownFrames -= 1;
         isRogueCoolDownFrames -= 1;
         // if the particle speed is past the threshold
-        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / 5){
+        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / ParticleSimulation.forceMultiplier){
             // if at the last cycle the particle was not moving
             if(!isMoving){
                 // set the number of frames that need to be waited before the particle can be not moving again
@@ -209,7 +207,7 @@ public class Particle {
         }
 
         // if the particle speed is past the threshold
-        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * 10 ){
+        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * ParticleSimulation.forceMultiplier ){
             // if at the last cycle the particle was not moving
             if(!isRogue){
                 // set the number of frames that need to be waited before the particle can be not moving again
