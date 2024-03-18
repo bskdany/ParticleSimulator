@@ -23,5 +23,6 @@ public class Configs {
     public static int CENTRAL_ATTRACTION_MULTIPLIER = 5;
     public static double PARTICLE_FRICTION = 0.04;
     public static double PARTICLE_RADIUS = 0.5;
+    public static double REPULSION_MULTIPLIER = 1.5;
 
 }
