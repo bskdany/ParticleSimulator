@@ -23,14 +23,16 @@ public class Particle {
     private int isMovingCoolDownFrames;
     private int isRogueCoolDownFrames;
     public boolean isRogue;
+    public int id;
 
-    Particle(int x, int y, double radius, Color color, double mass, int species){
+    Particle(int x, int y, double radius, Color color, double mass, int species, int id){
         this.RADIUS = radius;
         this.SPECIES = species;
         this.color = color;
         this.position = new double[]{x,y};
         this.force = new double[]{0,0};
         this.velocity = new double[]{0,0};
+        this.id = id;
         isMoving = true;
         isMovingBuffer = true;
         isRogue = false;
@@ -68,10 +70,16 @@ public class Particle {
 
     public void calculateCumulativeForce(Stream<Particle> targetParticles){
         double[] newForce = new double[]{0,0};
+        double[] maxForceX = new double[]{-10000,10000};
+        double[] maxForceY = new double[]{-10000,10000};
 
         OptimizationTracking tracking = OptimizationTracking.getInstance();
 
         targetParticles.forEach(targetParticle -> {
+            if(id == targetParticle.id){
+                return;
+            }
+
             tracking.increaseTotalInteractions();
 
             if(!targetParticle.isMoving && !isMoving){
@@ -109,6 +117,22 @@ public class Particle {
                 return;
             }
 
+            if(Math.abs(directionVectorX) <= 1.0 && Math.abs(directionVectorY) <= 1.){
+                OptimizationTracking.getInstance().increaseCollision();
+
+                if(directionVectorX > 0 && directionVectorX < maxForceX[1]){
+                    maxForceX[1] = directionVectorX;
+                } else if( directionVectorX < 0 && directionVectorX > maxForceX[0]){
+                    maxForceX[0] = directionVectorX;
+                }
+
+                if(directionVectorY > 0 && directionVectorY < maxForceY[1]){
+                    maxForceY[1] = directionVectorY;
+                } else if( directionVectorY < 0 && directionVectorY > maxForceY[0]){
+                    maxForceY[0] = directionVectorY;
+                }
+            }
+
             OptimizationTracking.getInstance().increaseUsedInCalculation();
 
             double attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][targetParticle.SPECIES];
@@ -119,6 +143,17 @@ public class Particle {
             newForce[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
             newForce[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
         });
+
+        if(newForce[0] > 0 && newForce[0] > maxForceX[1]){
+            newForce[0] = maxForceX[1];
+        } else if (newForce[0] < 0 && newForce[0] < maxForceX[0]) {
+            newForce[0] = maxForceX[0];
+        }
+        if(newForce[1] > 0 && newForce[1] > maxForceY[1]){
+            newForce[1] = maxForceY[1];
+        } else if (newForce[1] < 0 && newForce[1] < maxForceY[0]) {
+            newForce[1] = maxForceY[0];
+        }
 
         if(Configs.REJECT_RANDOM_PARTICLES_OPTIMIZATION){
             // computing prediction for next force calculation
@@ -191,7 +226,7 @@ public class Particle {
 
         isMovingCoolDownFrames -= 1;
         isRogueCoolDownFrames -= 1;
-        // if the particle speed is past the threshold
+        // if the particle deltaX or deltaY position in the next second if going to be more than 2 units, then it is moving
         if(Math.abs(deltaPosition[0])*updateTime*1000 > 2.0 || Math.abs(deltaPosition[1])*updateTime*1000 > 2.0 ){
             // if at the last cycle the particle was not moving
             if(!isMoving){

@@ -15,6 +15,7 @@ public class OptimizationTracking {
     private int numberOfParticles;
     private int updateCounter;
     private int totalParticleCount;
+    private int collisionCount;
     OptimizationTracking(){
         resetValues();
     }
@@ -28,6 +29,7 @@ public class OptimizationTracking {
     public void increaseRogueParticles(){rogueParticles++;}
     public void setImmobile(int num){immobileParticles+=num;}
     public void setRogue(int num){rogueParticles+=num;}
+    public void increaseCollision(){collisionCount++;}
 
     public void increaseDiscardedOutOfRange(){
         discardedDueToOutOfRange++;
@@ -48,6 +50,7 @@ public class OptimizationTracking {
         System.out.println("Range       " + calculatePercentage(discardedDueToOutOfRange, totalParticleInteractions));
         System.out.println("Used        " + calculatePercentage(usedInCalculation, totalParticleInteractions));
         System.out.println("Rejected    " + calculatePercentage(randomRejectedParticles, totalParticleInteractions));
+        System.out.println("Collisions  " + calculatePercentage(collisionCount, totalParticleCount*updateCounter));
         System.out.println();
 
         resetValues();
@@ -69,6 +72,7 @@ public class OptimizationTracking {
         numberOfParticles = 1500 * 7;
         updateCounter = 0;
         randomRejectedParticles = 0;
+        collisionCount = 0;
     }
 
     public static OptimizationTracking getInstance() {

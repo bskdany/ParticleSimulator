@@ -28,6 +28,8 @@ public class ParticleSimulation{
     private long lastFpsShowTime;
     private int updateCount = 0;
 
+    private int maxParticleId = 0;
+
     ParticleSimulation(Canvas canvas){
         particleData = new LinkedHashMap<Color, ParticleSpeciesData>(){{
             put(Color.RED, new ParticleSpeciesData(Configs.DEFAULT_PARTICLE_COUNT, Configs.PARTICLE_RADIUS));
@@ -247,7 +249,8 @@ public class ParticleSimulation{
             }
             species++;
         }
-        particles.add(new Particle(particleX, particleY, particleRadius, color, 1, species));
+        particles.add(new Particle(particleX, particleY, particleRadius, color, 1, species, maxParticleId));
+        maxParticleId += 1;
     }
     public void drawParticle(Particle particle) {
         gc.setFill(particle.color);
