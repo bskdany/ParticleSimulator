@@ -96,13 +96,9 @@ public class ParticleSimulation{
                     if(Configs.USE_IMMOBILE_OPTIMIZATION){
                         particle.finalizeIsMovingVariable();
                     }
-                    if(Configs.USE_ROGUE_OPTIMIZATION){
-                        particle.finalizeIsRogueVariable();
-                    }
                 });
 
                 OptimizationTracking.getInstance().setImmobile(particles.size() - (int) particles.stream().filter(particle -> particle.isMoving).count());
-                OptimizationTracking.getInstance().setRogue((int) particles.stream().filter(particle -> particle.isRogue).count());
             }
             private void display(){
                 clearCanvas();
