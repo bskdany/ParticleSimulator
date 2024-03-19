@@ -18,11 +18,8 @@ public class Particle {
     public final Color color;
     public final int SPECIES;
     private boolean isMovingBuffer;
-    private boolean isRogueBuffer;
     public boolean isMoving;
     private int isMovingCoolDownFrames;
-    private int isRogueCoolDownFrames;
-    public boolean isRogue;
     public int id;
 
     Particle(int x, int y, double radius, Color color, double mass, int species, int id){
@@ -34,12 +31,9 @@ public class Particle {
         this.velocity = new double[]{0,0};
         isMoving = true;
         isMovingBuffer = true;
-        isRogue = false;
-        isRogueBuffer = false;
         rejectionProbability = 0;
         previousForce = new double[]{0,0};
         isMovingCoolDownFrames = 0;
-        isRogueCoolDownFrames = 0;
         this.id = id;
     }
 
@@ -174,16 +168,9 @@ public class Particle {
     public void simulate(double updateTime){
         double accelerationX;
         double accelerationY;
-        // Not using the force multiplier if the particle is rogue
-        if(isRogue){
-            // F = m / a
-            accelerationX = force[0] * ParticleSimulation.forceMultiplier;
-            accelerationY = force[1] * ParticleSimulation.forceMultiplier;
-        }
-        else{
-            accelerationX = force[0] * ParticleSimulation.forceMultiplier;
-            accelerationY = force[1] * ParticleSimulation.forceMultiplier;
-        }
+
+        accelerationX = force[0] * ParticleSimulation.forceMultiplier;
+        accelerationY = force[1] * ParticleSimulation.forceMultiplier;
 
         velocity[0] *= Configs.PARTICLE_FRICTION;
         velocity[1] *= Configs.PARTICLE_FRICTION;
@@ -195,10 +182,20 @@ public class Particle {
         deltaPosition[0] = velocity[0] * updateTime;
         deltaPosition[1] = velocity[1] * updateTime;
 
+        double totalMovementInSecond = Math.abs(deltaPosition[0])*updateTime*1000 + Math.abs(deltaPosition[1])*updateTime*1000;
+
+        if(Configs.CAP_PARTICLE_SPEED){
+            if(totalMovementInSecond > ParticleSimulation.maxAttractionDistance * 2){
+                // movement is too strong, needs to be restricted
+                double ratio = 8.0 / totalMovementInSecond;
+                deltaPosition[0] *= ratio;
+                deltaPosition[1] *= ratio;
+            }
+        }
+
         isMovingCoolDownFrames -= 1;
-        isRogueCoolDownFrames -= 1;
         // if the particle deltaX or deltaY position in the next second if going to be more than 2 units, then it is moving
-        if(Math.abs(deltaPosition[0])*updateTime*1000 > 2.0 || Math.abs(deltaPosition[1])*updateTime*1000 > 2.0 ){
+        if(totalMovementInSecond > 4.0){
             // if at the last cycle the particle was not moving
             if(!isMoving){
                 // set the number of frames that need to be waited before the particle can be not moving again
@@ -213,35 +210,8 @@ public class Particle {
                 }
             }
         }
-        //        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS / ParticleSimulation.forceMultiplier){
-//            // if at the last cycle the particle was not moving
-//            if(!isMoving){
-//                if(isMovingCoolDownFrames<0){
-//                    isMovingBuffer = true;
-//                }
-//                // set the number of frames that need to be waited before the particle can be not moving again
-//                isMovingCoolDownFrames = 3;
-//            }
-//            else{
-//                isMovingBuffer = true;
-//            }
-//        }
 
 
-        // if the particle speed is past the threshold
-        if(Math.abs(deltaPosition[0]) + Math.abs(deltaPosition[1]) > RADIUS * ParticleSimulation.forceMultiplier ){
-            // if at the last cycle the particle was not moving
-            if(!isRogue){
-                // set the number of frames that need to be waited before the particle can be not moving again
-                isRogueCoolDownFrames = 3;
-            }
-            isRogueBuffer = true;
-        }
-        else{
-            if(isRogueCoolDownFrames<0){
-                isRogueBuffer = false;
-            }
-        }
 
         position[0] += deltaPosition[0];
         position[1] += deltaPosition[1];
@@ -295,8 +265,5 @@ public class Particle {
 
     public void finalizeIsMovingVariable(){
         isMoving = isMovingBuffer;
-    }
-    public void finalizeIsRogueVariable(){
-        isRogue = isRogueBuffer;
     }
 }
