@@ -115,8 +115,8 @@
                           </HBox>
                            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="202.0" spacing="20.0">
                               <children>
-                                 <Button mnemonicParsing="false" onAction="#decreaseParticlesButton" text="- 10" />
-                                 <Button mnemonicParsing="false" onAction="#increaseParticlesButton" text="+10" />
+                                 <Button mnemonicParsing="false" onAction="#decreaseParticlesButton" text="- 100" />
+                                 <Button mnemonicParsing="false" onAction="#increaseParticlesButton" text="+100" />
                               </children>
                            </HBox>
                         </children>

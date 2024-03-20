@@ -20,6 +20,13 @@
             <artifactId>javafx-controls</artifactId>
             <version>21</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.aparapi</groupId>
+            <artifactId>aparapi</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>

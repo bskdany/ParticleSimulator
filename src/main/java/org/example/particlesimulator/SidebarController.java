@@ -82,6 +82,7 @@ public class SidebarController {
             updateParticleCount();
             speciesChoiceBox.setDisable(newValue); // disables the color selection when all are selected
         });
+        selectAllCheck.setSelected(true);
     }
     private void setupAttractionSlider(){
         particleAttractionValueSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -120,6 +121,7 @@ public class SidebarController {
             ParticleSimulation.forceMultiplier = newValue.intValue();
             particleForceMultiplierLabel.setText("Force multiplier: " + newValue.intValue());
         });
+        particleForceMultiplierSlider.setValue(Configs.DEFAULT_FORCE_MULTIPLIER);
     }
     private void setupMinAttractionDistance(){
         particleMinAttractionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -127,12 +129,14 @@ public class SidebarController {
             ParticleSimulation.attractionRelativeDistanceCutout = val;
             particleMinAttractionLabel.setText("Min attraction distance: " + decimalFormat.format(newValue));
         });
+        particleMinAttractionSlider.setValue(Configs.DEFAULT_MIN_ATTRACTION_DISTANCE_RELATIVE);
     }
     private void setupMaxAttractionDistance(){
         particleMaxAttractionDistanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             ParticleSimulation.maxAttractionDistance = newValue.intValue();
             particleMaxAttractionDistanceLabel.setText("Max attraction distance: " + newValue.intValue());
         });
+        particleMaxAttractionDistanceSlider.setValue(Configs.DEFAULT_MAX_ATTRACTION_DISTANCE);
     }
     private void setupSeedInput(){
         seedInput.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -185,9 +189,9 @@ public class SidebarController {
     }
     @FXML void resetDefaultSettingsButton(){
         // Simulation
-        ParticleSimulation.maxAttractionDistance = (100);
-        ParticleSimulation.attractionRelativeDistanceCutout = 0.3;
-        ParticleSimulation.forceMultiplier = 5;
+        ParticleSimulation.maxAttractionDistance = Configs.DEFAULT_MAX_ATTRACTION_DISTANCE;
+        ParticleSimulation.attractionRelativeDistanceCutout = Configs.DEFAULT_MIN_ATTRACTION_DISTANCE_RELATIVE;
+        ParticleSimulation.forceMultiplier = Configs.DEFAULT_FORCE_MULTIPLIER;
 
         // Particle
         simulation.getAttractionMatrix().generateDefaultAttractionMatrix();
@@ -223,11 +227,11 @@ public class SidebarController {
         }
     }
     @FXML private void increaseParticlesButton(){
-        simulation.addParticleQuantity(10, selectedSpecies, areAllSpeciesSelected);
+        simulation.addParticleQuantity(100, selectedSpecies, areAllSpeciesSelected);
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
     }
     @FXML private void decreaseParticlesButton(){
-        simulation.addParticleQuantity(-10, selectedSpecies, areAllSpeciesSelected);
+        simulation.addParticleQuantity(-100, selectedSpecies, areAllSpeciesSelected);
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies, areAllSpeciesSelected));
     }
     private void updateGridAtCoordinate(double value, int[] coordinates){

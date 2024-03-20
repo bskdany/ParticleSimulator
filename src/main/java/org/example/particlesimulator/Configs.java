@@ -2,7 +2,7 @@ package org.example.particlesimulator;
 
 public class Configs {
     public static boolean CAP_PARTICLE_SPEED = true;
-    public static boolean USE_IMMOBILE_OPTIMIZATION = true;
+    public static boolean USE_IMMOBILE_OPTIMIZATION = false;
     public static boolean REJECT_RANDOM_PARTICLES_OPTIMIZATION = true;
 
     public static boolean CLUSTER_CLOSE_PARTICLES_OPTIMIZATION = false;
@@ -17,7 +17,7 @@ public class Configs {
     public static int DEFAULT_PARTICLE_COUNT = 4300;
     public static int DEFAULT_MAX_ATTRACTION_DISTANCE = 12;
     public static double DEFAULT_MIN_ATTRACTION_DISTANCE_RELATIVE = 0.4;
-    public static int DEFAULT_FORCE_MULTIPLIER = 5;
+    public static int DEFAULT_FORCE_MULTIPLIER = 10;
 
     public static int CENTRAL_ATTRACTION_MULTIPLIER = 5;
     public static double PARTICLE_FRICTION = 0.04;
