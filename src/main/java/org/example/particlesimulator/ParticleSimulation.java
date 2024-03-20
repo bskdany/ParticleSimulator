@@ -129,15 +129,8 @@ public class ParticleSimulation{
                     }
 
                     if(elapsedTimeFromLastUpdate >= (double) Configs.TARGET_FPS * 1_000_000){
-                        if(simulationBufferReady){
-                            display();
-                            simulationBufferReady = false;
-                        }
-                        else{
-                            System.out.println("FPS falling behind target");
-                            simulate(targetTimeUpdate/1000);
-                            display();
-                        }
+                        display();
+                        simulationBufferReady = false;
                         lastUpdateTime = now;
                     }
 
@@ -145,14 +138,14 @@ public class ParticleSimulation{
                 else{
                     // calculating the update time at every update
                     double timeUpdate = (double) elapsedTimeFromLastUpdate / 1_000_000_000;
-                    if(timeUpdate >= 0.1){
+                        if(timeUpdate >= 2){
                         // this is needed because at the beginning elapsed time is 0
-                        timeUpdate = (double) (1_000 / Configs.TARGET_FPS) / 1000 ;
+                        timeUpdate = (double) 1_000 / Configs.TARGET_FPS / 1000;
                     }
-
+                    lastUpdateTime = now;
                     simulate(timeUpdate);
                     display();
-                    lastUpdateTime = now;
+
                 }
 
                 if(elapsedTimeFromLastSecond > 1_000_000_000){
