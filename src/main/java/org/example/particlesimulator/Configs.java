@@ -8,15 +8,15 @@ public class Configs {
     public static boolean CLUSTER_CLOSE_PARTICLES_OPTIMIZATION = false;
     public static boolean APPROXIMATE_CIRCLE_OPTIMIZATION = true;
 
-    public static int GRID_MAP_LOOKUP_RADIUS = 3;
+    public static int GRID_MAP_LOOKUP_RADIUS = 2;
     public static int CELL_SIZE_FINE = 3;
 
-    public static boolean CAP_FPS = true;
+    public static boolean CAP_FPS = false;
     public static int TARGET_FPS = 30;
 
-    public static int DEFAULT_PARTICLE_COUNT = 2500;
-    public static int DEFAULT_MAX_ATTRACTION_DISTANCE = 21;
-    public static double DEFAULT_MIN_ATTRACTION_DISTANCE_RELATIVE = 0.3;
+    public static int DEFAULT_PARTICLE_COUNT = 4300;
+    public static int DEFAULT_MAX_ATTRACTION_DISTANCE = 12;
+    public static double DEFAULT_MIN_ATTRACTION_DISTANCE_RELATIVE = 0.4;
     public static int DEFAULT_FORCE_MULTIPLIER = 5;
 
     public static int CENTRAL_ATTRACTION_MULTIPLIER = 5;
