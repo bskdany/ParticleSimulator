@@ -179,7 +179,7 @@ public class SidebarController {
     private void updateForceMultiplier(){
         particleForceMultiplierSlider.setValue(ParticleSimulation.forceMultiplier);
     }
-    private void updateParticleCount(){
+    public void updateParticleCount(){
         particleCountLabel.setText("Particle count: " + simulation.getParticleQuantity(selectedSpecies,areAllSpeciesSelected));
     }
     void updateAllElements(){
