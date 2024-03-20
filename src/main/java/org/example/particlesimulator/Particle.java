@@ -72,6 +72,8 @@ public class Particle {
         AtomicInteger usedInCalculation = new AtomicInteger();
         AtomicInteger discardedImmobile = new AtomicInteger();
 
+        double randomVar = ThreadLocalRandom.current().nextDouble();
+
         targetParticles.forEach(targetParticle -> {
             if(id == targetParticle.id){
                 return;
@@ -85,7 +87,7 @@ public class Particle {
             }
 
             if(Configs.REJECT_RANDOM_PARTICLES_OPTIMIZATION){
-                if(ThreadLocalRandom.current().nextDouble() < rejectionProbability){
+                if(targetParticle.id * randomVar % 100 < rejectionProbability * 100){
                     discardedRandom.addAndGet(1);
                     return;
                 }
