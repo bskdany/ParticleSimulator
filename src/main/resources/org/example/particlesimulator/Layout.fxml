@@ -17,10 +17,17 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <HBox prefHeight="750.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.particlesimulator.SidebarController">
     <children>
         <VBox fx:id="leftPane" alignment="TOP_CENTER" prefWidth="250.0">
+         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <children>
+               <Text strokeType="OUTSIDE"  strokeWidth="0.0" text="FPS:" />
+               <Text strokeType="OUTSIDE" fx:id="FPSCounter" strokeWidth="0.0" text="0" />
+            </children>
+         </HBox>
       <VBox alignment="TOP_CENTER" prefHeight="395.0" prefWidth="227.0" spacing="10.0">
           <children>
                <HBox alignment="CENTER" minHeight="-Infinity">

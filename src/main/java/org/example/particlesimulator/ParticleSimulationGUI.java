@@ -45,6 +45,7 @@ public class ParticleSimulationGUI extends Application {
         ParticleSimulation simulation = new ParticleSimulation(canvas);
         simulation.initContent();
         SidebarController controller = loader.getController();
+        simulation.setController(controller);
         controller.setMainApp(simulation);
 
         Scene scene = new Scene(main, bounds.getWidth(), bounds.getHeight());
