@@ -1,0 +1,4 @@
+--patch-module
+org.example.parclesimulator=_
+--add-reads
+org.example.parclesimulator=ALL-UNNAMED
