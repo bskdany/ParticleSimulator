@@ -209,7 +209,7 @@ public class Particle {
         if(Configs.USE_IMMOBILE_OPTIMIZATION){
             isMovingCoolDownFrames -= 1;
             // if the particle deltaX or deltaY position in the next second if going to be more than 2 units, then it is moving
-            if(totalMovementInSecond > ParticleSimulation.maxAttractionDistance * ParticleSimulation.attractionRelativeDistanceCutout / ParticleSimulation.forceMultiplier){
+            if(totalMovementInSecond > ParticleSimulation.maxAttractionDistance * ParticleSimulation.attractionRelativeDistanceCutout / ParticleSimulation.forceMultiplier * 2){
                 // if at the last cycle the particle was not moving
                 if(!isMoving){
                     // set the number of frames that need to be waited before the particle can be not moving again
