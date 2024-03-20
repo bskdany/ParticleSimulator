@@ -70,13 +70,19 @@ public class Particle {
         AtomicInteger discardedRandom = new AtomicInteger();
         AtomicInteger discardedRange = new AtomicInteger();
         AtomicInteger usedInCalculation = new AtomicInteger();
+        AtomicInteger discardedImmobile = new AtomicInteger();
 
         targetParticles.forEach(targetParticle -> {
-            if(id == targetParticle.id || (!targetParticle.isMoving && !isMoving)){
+            if(id == targetParticle.id){
                 return;
             }
 
             totalInteractions.addAndGet(1);
+
+            if(!targetParticle.isMoving && !isMoving){
+                discardedImmobile.addAndGet(1);
+                return;
+            }
 
             if(Configs.REJECT_RANDOM_PARTICLES_OPTIMIZATION){
                 if(ThreadLocalRandom.current().nextDouble() < rejectionProbability){
@@ -125,14 +131,15 @@ public class Particle {
         tracking.increaseRandomRejected(discardedRandom.intValue());
         tracking.increaseDiscardedOutOfRange(discardedRange.intValue());
         tracking.increaseUsedInCalculation(usedInCalculation.intValue());
+        tracking.increaseImmobile(discardedImmobile.intValue());
 
         if(Configs.REJECT_RANDOM_PARTICLES_OPTIMIZATION){
             // computing prediction for next force calculation
-            double rejectionProbabilityThreshold = 15;
+            double rejectionProbabilityThreshold = 30;
             double forceXPredictionPercentage = Math.abs(100 - (100 / previousForce[0]) * newForce[0]);    // 0 means the same, 10 means 10% of the values are off
             double forceYPredictionPercentage = Math.abs(100 - (100 / previousForce[1]) * newForce[1]);
 
-            double rejectionProbabilityMaxValue = 50;
+            double rejectionProbabilityMaxValue = 80;
 
             // if the current force and the previous have less than rejectionProbability difference
             // I can then assume that the force calculation after will be similar
@@ -214,8 +221,8 @@ public class Particle {
                 if(isMoving){
                     if(isMovingCoolDownFrames<0){
                         isMovingBuffer = false;
-                        deltaPosition[0] = 0;
-                        deltaPosition[1] = 0;
+//                        deltaPosition[0] = 0;
+//                        deltaPosition[1] = 0;
                     }
                 }
             }

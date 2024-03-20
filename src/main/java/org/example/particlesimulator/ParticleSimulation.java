@@ -98,7 +98,7 @@ public class ParticleSimulation{
                     }
                 });
 
-                OptimizationTracking.getInstance().setImmobile(particles.size() - (int) particles.stream().filter(particle -> particle.isMoving).count());
+//                OptimizationTracking.getInstance().setImmobile(particles.size() - (int) particles.stream().filter(particle -> particle.isMoving).count());
             }
             private void display(){
                 clearCanvas();
