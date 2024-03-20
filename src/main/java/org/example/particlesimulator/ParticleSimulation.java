@@ -153,6 +153,20 @@ public class ParticleSimulation{
                     controller.setFPSCounter(updateCount);
                     OptimizationTracking.getInstance().showOptimizationData();
                     lastFpsShowTime = now;
+
+                    if(Configs.USE_DYNAMIC_PARTICLE_COUNT){
+                        if(Configs.DYNAMIC_PARTICLE_COUNT_GRACE_PERIOD <= 0){
+                            if(updateCount < Configs.DYNAMIC_PARTICLE_COUNT_FPS_THRESHOLD){
+                                addParticleQuantity(-500, Color.BLACK, true);
+                                controller.updateParticleCount();
+                            }
+                        }
+                        else{
+                            Configs.DYNAMIC_PARTICLE_COUNT_GRACE_PERIOD-=1;
+                        }
+
+                    }
+
                     updateCount = 0;
                 }
 

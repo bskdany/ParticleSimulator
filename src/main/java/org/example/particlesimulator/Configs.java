@@ -23,5 +23,8 @@ public class Configs {
     public static double PARTICLE_FRICTION = 0.04;
     public static double PARTICLE_RADIUS = 0.5;
     public static double REPULSION_MULTIPLIER = 1;
+    public static boolean USE_DYNAMIC_PARTICLE_COUNT = true;
+    public static int DYNAMIC_PARTICLE_COUNT_FPS_THRESHOLD = 15;
+    public static int DYNAMIC_PARTICLE_COUNT_GRACE_PERIOD = 2;
 
 }
