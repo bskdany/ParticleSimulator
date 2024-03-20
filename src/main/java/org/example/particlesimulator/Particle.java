@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class Particle {
@@ -65,22 +66,21 @@ public class Particle {
     public void calculateCumulativeForce(Stream<Particle> targetParticles){
         double[] newForce = new double[]{0,0};
 
-        OptimizationTracking tracking = OptimizationTracking.getInstance();
+        AtomicInteger totalInteractions = new AtomicInteger();
+        AtomicInteger discardedRandom = new AtomicInteger();
+        AtomicInteger discardedRange = new AtomicInteger();
+        AtomicInteger usedInCalculation = new AtomicInteger();
 
         targetParticles.forEach(targetParticle -> {
-            if(id == targetParticle.id){
+            if(id == targetParticle.id || (!targetParticle.isMoving && !isMoving)){
                 return;
             }
 
-//            tracking.increaseTotalInteractions();
-
-            if(!targetParticle.isMoving && !isMoving){
-                return;
-            }
+            totalInteractions.addAndGet(1);
 
             if(Configs.REJECT_RANDOM_PARTICLES_OPTIMIZATION){
                 if(ThreadLocalRandom.current().nextDouble() < rejectionProbability){
-                    tracking.increaseRandomRejected();
+                    discardedRandom.addAndGet(1);
                     return;
                 }
             }
@@ -105,11 +105,11 @@ public class Particle {
             double distance = Math.sqrt(directionVectorX * directionVectorX + directionVectorY * directionVectorY) / ParticleSimulation.maxAttractionDistance;
 
             if(distance > 1.0) {
-//                OptimizationTracking.getInstance().increaseDiscardedOutOfRange();
+                discardedRange.addAndGet(1);
                 return;
             }
 
-            OptimizationTracking.getInstance().increaseUsedInCalculation();
+            usedInCalculation.addAndGet(1);
 
             double attractionFactor = AttractionMatrix.attractionMatrix[SPECIES][targetParticle.SPECIES];
 
@@ -119,6 +119,12 @@ public class Particle {
             newForce[0] += normalisedDirectionVector[0] * magnitude * ParticleSimulation.maxAttractionDistance;
             newForce[1] += normalisedDirectionVector[1] * magnitude * ParticleSimulation.maxAttractionDistance;
         });
+
+        OptimizationTracking tracking = OptimizationTracking.getInstance();
+        tracking.increaseTotalInteractions(totalInteractions.intValue());
+        tracking.increaseRandomRejected(discardedRandom.intValue());
+        tracking.increaseDiscardedOutOfRange(discardedRange.intValue());
+        tracking.increaseUsedInCalculation(usedInCalculation.intValue());
 
         if(Configs.REJECT_RANDOM_PARTICLES_OPTIMIZATION){
             // computing prediction for next force calculation
