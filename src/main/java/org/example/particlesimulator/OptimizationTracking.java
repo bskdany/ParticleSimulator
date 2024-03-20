@@ -23,34 +23,31 @@ public class OptimizationTracking {
     public void increaseCachingCounter(){
         calculationSavedByCaching++;
     }
-    public void increaseImmobileCounter(){
-        immobileParticles++;
+    public void increaseImmobile(int num){
+        immobileParticles+=num;
     }
     public void increaseRogueParticles(){rogueParticles++;}
     public void setImmobile(int num){immobileParticles+=num;}
     public void setRogue(int num){rogueParticles+=num;}
     public void increaseCollision(){collisionCount++;}
 
-    public void increaseDiscardedOutOfRange(){
-        discardedDueToOutOfRange++;
+    public void increaseDiscardedOutOfRange(int num){
+        discardedDueToOutOfRange+=num;
     }
-    public void increaseUsedInCalculation(){
-        usedInCalculation++;
+    public void increaseUsedInCalculation(int num){
+        usedInCalculation+=num;
     }
     public void increaseParticlesAveraged(){numberOfParticlesAveraged++;}
-    public void increaseTotalInteractions(){totalParticleInteractions++;}
-    public void increaseRandomRejected(){randomRejectedParticles++;}
+    public void increaseTotalInteractions(int num){totalParticleInteractions+=num;}
+    public void increaseRandomRejected(int num){randomRejectedParticles+=num;}
     public void increaseUpdate(){updateCounter++;}
     public void setParticleCount(int num){totalParticleCount = num;}
     public void showOptimizationData(){
-        System.out.println("Caching     " + calculatePercentage(calculationSavedByCaching, totalParticleInteractions));
         System.out.println("Immobile    " + calculatePercentage(immobileParticles, totalParticleCount * updateCounter));
-        System.out.println("Rogue       " + calculatePercentage(rogueParticles, totalParticleCount * updateCounter));
         System.out.println("Averaged    " + calculatePercentage(numberOfParticlesAveraged, numberOfParticles * updateCounter));
         System.out.println("Range       " + calculatePercentage(discardedDueToOutOfRange, totalParticleInteractions));
-        System.out.println("Used        " + calculatePercentage(usedInCalculation, totalParticleInteractions));
         System.out.println("Rejected    " + calculatePercentage(randomRejectedParticles, totalParticleInteractions));
-        System.out.println("Collisions  " + calculatePercentage(collisionCount, totalParticleCount*updateCounter));
+        System.out.println("Used        " + calculatePercentage(usedInCalculation, totalParticleInteractions));
         System.out.println();
 
         resetValues();
