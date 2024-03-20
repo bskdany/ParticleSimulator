@@ -48,6 +48,13 @@ public class Particle {
         this.color = original.color;
         this.SPECIES = original.SPECIES;
         this.velocity = original.velocity.clone();
+        this.id = original.id;
+        this.isMovingCoolDownFrames = original.isMovingCoolDownFrames;
+        this.isMoving = original.isMoving;
+        this.isMovingBuffer = original.isMovingBuffer;
+        this.force = original.force.clone();
+        this.previousForce = original.previousForce.clone();
+        this.rejectionProbability = original.rejectionProbability;
     }
 
     public void adjustPositionWrapping(){
