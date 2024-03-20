@@ -16,6 +16,7 @@ public class ParticleSimulation{
     public static double CANVAS_HEIGHT;
     private final GraphicsContext gc;
     private AnimationTimer timer;
+    private SidebarController controller;
     public static int CENTRAL_ATTRACTION_MULTIPLIER;
     public static double maxAttractionDistance;
     public static double attractionRelativeDistanceCutout;
@@ -27,7 +28,6 @@ public class ParticleSimulation{
     public static ParticleGridMap particleGridMap;
     private long lastFpsShowTime;
     private int updateCount = 0;
-
     private int maxParticleId = 0;
 
     ParticleSimulation(Canvas canvas){
@@ -150,6 +150,7 @@ public class ParticleSimulation{
 
                 if(elapsedTimeFromLastSecond > 1_000_000_000){
                     System.out.println("FPS:        "  + updateCount);
+                    controller.setFPSCounter(updateCount);
                     OptimizationTracking.getInstance().showOptimizationData();
                     lastFpsShowTime = now;
                     updateCount = 0;
@@ -264,5 +265,9 @@ public class ParticleSimulation{
     }
     public AttractionMatrix getAttractionMatrix(){
         return attractionMatrix;
+    }
+
+    public void setController(SidebarController controller){
+        this.controller = controller;
     }
 }

@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -30,6 +31,7 @@ public class SidebarController {
     @FXML private Slider particleAttractionValueSlider;
     @FXML private Button killAllParticlesButton;
     @FXML private TextField seedInput;
+    @FXML private Text FPSCounter;
 
     private Label activeAttractionGridLabel;
     private int[] activeAttractionLabelCoordinates = {0,0};
@@ -292,5 +294,9 @@ public class SidebarController {
                 attractionGrid.getChildren().add(label);
             }
         }
+    }
+
+    public void setFPSCounter(int fps){
+        FPSCounter.setText(String.valueOf(fps));
     }
 }
