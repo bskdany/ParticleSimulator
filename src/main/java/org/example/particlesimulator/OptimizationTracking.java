@@ -43,10 +43,10 @@ public class OptimizationTracking {
     public void increaseUpdate(){updateCounter++;}
     public void setParticleCount(int num){totalParticleCount = num;}
     public void showOptimizationData(){
-        System.out.println("Immobile    " + calculatePercentage(immobileParticles, totalParticleCount * updateCounter));
         System.out.println("Averaged    " + calculatePercentage(numberOfParticlesAveraged, numberOfParticles * updateCounter));
-        System.out.println("Range       " + calculatePercentage(discardedDueToOutOfRange, totalParticleInteractions));
+        System.out.println("Immobile    " + calculatePercentage(immobileParticles, totalParticleInteractions));
         System.out.println("Rejected    " + calculatePercentage(randomRejectedParticles, totalParticleInteractions));
+        System.out.println("Range       " + calculatePercentage(discardedDueToOutOfRange, totalParticleInteractions));
         System.out.println("Used        " + calculatePercentage(usedInCalculation, totalParticleInteractions));
         System.out.println();
 
