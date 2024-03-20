@@ -134,6 +134,7 @@ public class SidebarController {
     private void setupMaxAttractionDistance(){
         particleMaxAttractionDistanceSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             ParticleSimulation.maxAttractionDistance = newValue.intValue();
+            ParticleSimulation.particleGridMap.generateCellSize();
             particleMaxAttractionDistanceLabel.setText("Max attraction distance: " + newValue.intValue());
         });
         particleMaxAttractionDistanceSlider.setValue(Configs.DEFAULT_MAX_ATTRACTION_DISTANCE);

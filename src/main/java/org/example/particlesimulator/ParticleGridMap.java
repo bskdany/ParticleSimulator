@@ -30,10 +30,24 @@ public class ParticleGridMap {
     public static int WIDTH;
     public static int HEIGHT;
 
-    private final int WIDTH_FINE;
-    private final int HEIGHT_FINE;
+    private int WIDTH_FINE;
+    private int HEIGHT_FINE;
+
+    private final double canvasWidth;
+    private final double canvasHeight;
 
     ParticleGridMap(double canvasWidth, double canvasHeight){
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+
+        particlesPositionHashMap = new ConcurrentHashMap<>();
+        particlesPositionHashMapFine = new ConcurrentHashMap<>();
+        particlesPositionHashMapAveraged = new ConcurrentHashMap<>();
+
+        generateCellSize();
+    }
+
+    public void generateCellSize(){
         CELL_SIZE = (int) ParticleSimulation.maxAttractionDistance / Configs.GRID_MAP_LOOKUP_RADIUS ;
 
         WIDTH = (int) canvasWidth / CELL_SIZE + 1;
@@ -41,13 +55,9 @@ public class ParticleGridMap {
 
         WIDTH_FINE = (int) canvasWidth / Configs.CELL_SIZE_FINE + 1;
         HEIGHT_FINE = (int) canvasHeight / Configs.CELL_SIZE_FINE + 1;
-
-        particlesPositionHashMap = new ConcurrentHashMap<>();
-        particlesPositionHashMapFine = new ConcurrentHashMap<>();
-        particlesPositionHashMapAveraged = new ConcurrentHashMap<>();
-
         preComputeNeighbourLookupHashmap();
     }
+
     public void update(ArrayList<Particle> particles){
         hashParticlePositions(particles);
     }
