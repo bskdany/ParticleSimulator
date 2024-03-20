@@ -72,7 +72,7 @@ public class Particle {
                 return;
             }
 
-            tracking.increaseTotalInteractions();
+//            tracking.increaseTotalInteractions();
 
             if(!targetParticle.isMoving && !isMoving){
                 return;
@@ -105,7 +105,7 @@ public class Particle {
             double distance = Math.sqrt(directionVectorX * directionVectorX + directionVectorY * directionVectorY) / ParticleSimulation.maxAttractionDistance;
 
             if(distance > 1.0) {
-                OptimizationTracking.getInstance().increaseDiscardedOutOfRange();
+//                OptimizationTracking.getInstance().increaseDiscardedOutOfRange();
                 return;
             }
 
@@ -187,31 +187,33 @@ public class Particle {
         if(Configs.CAP_PARTICLE_SPEED){
             if(totalMovementInSecond > ParticleSimulation.maxAttractionDistance * 2){
                 // movement is too strong, needs to be restricted
-                double ratio = 8.0 / totalMovementInSecond;
+                double ratio = ParticleSimulation.maxAttractionDistance * 2 / totalMovementInSecond;
                 deltaPosition[0] *= ratio;
                 deltaPosition[1] *= ratio;
             }
         }
 
-        isMovingCoolDownFrames -= 1;
-        // if the particle deltaX or deltaY position in the next second if going to be more than 2 units, then it is moving
-        if(totalMovementInSecond > 4.0){
-            // if at the last cycle the particle was not moving
-            if(!isMoving){
-                // set the number of frames that need to be waited before the particle can be not moving again
-                isMovingCoolDownFrames = 3;
+        if(Configs.USE_IMMOBILE_OPTIMIZATION){
+            isMovingCoolDownFrames -= 1;
+            // if the particle deltaX or deltaY position in the next second if going to be more than 2 units, then it is moving
+            if(totalMovementInSecond > ParticleSimulation.maxAttractionDistance * ParticleSimulation.attractionRelativeDistanceCutout / ParticleSimulation.forceMultiplier){
+                // if at the last cycle the particle was not moving
+                if(!isMoving){
+                    // set the number of frames that need to be waited before the particle can be not moving again
+                    isMovingCoolDownFrames = 3;
+                }
+                isMovingBuffer = true;
             }
-            isMovingBuffer = true;
-        }
-        else{
-            if(isMoving){
-                if(isMovingCoolDownFrames<0){
-                    isMovingBuffer = false;
+            else{
+                if(isMoving){
+                    if(isMovingCoolDownFrames<0){
+                        isMovingBuffer = false;
+                        deltaPosition[0] = 0;
+                        deltaPosition[1] = 0;
+                    }
                 }
             }
         }
-
-
 
         position[0] += deltaPosition[0];
         position[1] += deltaPosition[1];
