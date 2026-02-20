@@ -18,7 +18,7 @@
         "node-fetch": "2.6.7",
         "tar": "^6.2.1",
         "yauzl": "^2.10.0",
-        "shelljs": "^0.8.4"
+        "shelljs": "^0.10.0"
     },
     "license": "ISC",
     "name": "particlesimulator",
